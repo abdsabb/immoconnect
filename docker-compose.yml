@@ -1,0 +1,48 @@
+# ImmoConnect — environnement de développement
+# Démarrage : docker compose up -d
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: immoconnect
+      MYSQL_USER: immo
+      MYSQL_PASSWORD: immo
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      # Le schéma (V1) et les données de test (V2) sont chargés au premier démarrage :
+      - ./db/migration:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      retries: 10
+
+  adminer:
+    image: adminer:latest
+    ports:
+      - "8081:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # --- À activer pendant le développement ---
+  # backend:
+  #   build: ./backend
+  #   ports: ["8080:8080"]
+  #   environment:
+  #     SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/immoconnect
+  #     SPRING_DATASOURCE_USERNAME: immo
+  #     SPRING_DATASOURCE_PASSWORD: immo
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #
+  # frontend:
+  #   build: ./frontend
+  #   ports: ["80:80"]
+  #   depends_on: [backend]
+
+volumes:
+  mysql-data:

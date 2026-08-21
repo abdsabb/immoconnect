@@ -1,0 +1,650 @@
+openapi: 3.0.3
+info:
+  title: API ImmoConnect
+  description: >
+    API RESTful de la plateforme ImmoConnect (agence immobilière) :
+    consultation des biens, favoris, messagerie, prise de rendez-vous de visite
+    avec créneaux premium payants (Stripe), blog et volet Open Data.
+    Documentation générée avec springdoc-openapi et servie par Swagger UI.
+  version: 1.0.0
+  contact:
+    name: ImmoConnect — support API
+    email: api@immoconnect.be
+  license:
+    name: Données Open Data sous licence CC BY 4.0
+    url: https://creativecommons.org/licenses/by/4.0/deed.fr
+servers:
+  - url: https://www.immoconnect.be/api/v1
+    description: Production
+  - url: http://localhost:8080/api/v1
+    description: Développement local
+tags:
+  - name: Authentification
+  - name: Biens
+  - name: Favoris
+  - name: Messages
+  - name: Rendez-vous
+  - name: Paiements
+  - name: Blog
+  - name: Traductions
+  - name: Open Data
+security:
+  - bearerAuth: []
+paths:
+  /auth/register:
+    post:
+      tags: [Authentification]
+      summary: Créer un compte membre
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/InscriptionRequete' }
+      responses:
+        '201':
+          description: Compte créé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/JetonReponse' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+  /auth/login:
+    post:
+      tags: [Authentification]
+      summary: Se connecter et obtenir un jeton JWT
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ConnexionRequete' }
+      responses:
+        '200':
+          description: Jeton délivré
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/JetonReponse' }
+        '401': { $ref: '#/components/responses/ErreurAuthentification' }
+  /auth/refresh:
+    post:
+      tags: [Authentification]
+      summary: Renouveler le jeton d'accès
+      responses:
+        '200':
+          description: Nouveau jeton
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/JetonReponse' }
+  /auth/me:
+    get:
+      tags: [Authentification]
+      summary: Profil de l'utilisateur connecté
+      responses:
+        '200':
+          description: Profil
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Utilisateur' }
+  /biens:
+    get:
+      tags: [Biens]
+      summary: Rechercher les biens (multicritères, paginé)
+      security: []
+      parameters:
+        - { name: ville, in: query, schema: { type: string }, example: Ixelles }
+        - { name: categorieId, in: query, schema: { type: integer } }
+        - { name: prixMin, in: query, schema: { type: number } }
+        - { name: prixMax, in: query, schema: { type: number }, example: 350000 }
+        - { name: chambresMin, in: query, schema: { type: integer } }
+        - { name: superficieMin, in: query, schema: { type: number } }
+        - { name: statut, in: query, schema: { $ref: '#/components/schemas/StatutBien' } }
+        - { name: page, in: query, schema: { type: integer, default: 0 } }
+        - { name: taille, in: query, schema: { type: integer, default: 20, maximum: 100 } }
+        - { name: tri, in: query, schema: { type: string, example: 'prix,asc' } }
+      responses:
+        '200':
+          description: Page de résultats
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageBiens' }
+    post:
+      tags: [Biens]
+      summary: Publier un bien (agent)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BienCreation' }
+      responses:
+        '201':
+          description: Bien créé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Bien' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+  /biens/{id}:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: integer } }
+    get:
+      tags: [Biens]
+      summary: Détail d'un bien
+      security: []
+      responses:
+        '200':
+          description: Le bien
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Bien' }
+        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
+    put:
+      tags: [Biens]
+      summary: Modifier un bien (agent responsable)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BienCreation' }
+      responses:
+        '200':
+          description: Bien mis à jour
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Bien' }
+    delete:
+      tags: [Biens]
+      summary: Archiver un bien (agent responsable)
+      responses:
+        '204': { description: Bien archivé }
+  /biens/{id}/photos:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: integer } }
+    get:
+      tags: [Biens]
+      summary: Photos d'un bien
+      security: []
+      responses:
+        '200':
+          description: Liste ordonnée des photos
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Photo' }
+    post:
+      tags: [Biens]
+      summary: Ajouter une photo (agent responsable)
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                fichier: { type: string, format: binary }
+                legende: { type: string }
+      responses:
+        '201': { description: Photo ajoutée }
+  /biens/{id}/favori:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: integer } }
+    put:
+      tags: [Favoris]
+      summary: Ajouter le bien aux favoris (membre)
+      responses:
+        '204': { description: Ajouté }
+    delete:
+      tags: [Favoris]
+      summary: Retirer le bien des favoris (membre)
+      responses:
+        '204': { description: Retiré }
+  /membres/moi/favoris:
+    get:
+      tags: [Favoris]
+      summary: Mes favoris (membre)
+      responses:
+        '200':
+          description: Liste des favoris
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageBiens' }
+  /messages:
+    get:
+      tags: [Messages]
+      summary: Mes conversations (membre ou agent)
+      responses:
+        '200':
+          description: Messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Message' }
+    post:
+      tags: [Messages]
+      summary: Envoyer un message à un agent (membre)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [agentId, contenu]
+              properties:
+                agentId: { type: integer, example: 101 }
+                contenu: { type: string, maxLength: 5000 }
+      responses:
+        '201': { description: Message envoyé }
+  /messages/{id}/lu:
+    patch:
+      tags: [Messages]
+      summary: Marquer un message comme lu (agent destinataire)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '204': { description: Marqué comme lu }
+  /biens/{id}/creneaux:
+    get:
+      tags: [Rendez-vous]
+      summary: Créneaux de visite disponibles pour un bien (membre)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+        - { name: du, in: query, schema: { type: string, format: date } }
+        - { name: au, in: query, schema: { type: string, format: date } }
+      responses:
+        '200':
+          description: Créneaux standard et premium encore libres (règle RA14)
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Creneau' }
+  /rendez-vous:
+    get:
+      tags: [Rendez-vous]
+      summary: Mes rendez-vous (membre) ou mon agenda (agent)
+      responses:
+        '200':
+          description: Rendez-vous
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/RendezVous' }
+    post:
+      tags: [Rendez-vous]
+      summary: Demander un rendez-vous de visite (membre)
+      description: >
+        Créneau standard : le rendez-vous est créé au statut « demande » (cas A1).
+        Créneau premium : fournir le paymentIntentId confirmé ; le rendez-vous est
+        créé au statut « confirme ». Si le créneau vient d'être pris : erreur 409 (cas A2).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [bienId, dateHeure]
+              properties:
+                bienId: { type: integer, example: 42 }
+                dateHeure: { type: string, format: date-time, example: '2026-08-29T18:30:00' }
+                motif: { type: string, maxLength: 255 }
+                paymentIntentId: { type: string, example: pi_3AbCdEf123 }
+      responses:
+        '201':
+          description: Rendez-vous créé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RendezVous' }
+        '409': { $ref: '#/components/responses/ErreurConflit' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+  /rendez-vous/{id}/confirmer:
+    patch:
+      tags: [Rendez-vous]
+      summary: Confirmer une demande (agent) — transition demande → confirme
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Rendez-vous confirmé, e-mail envoyé au membre
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RendezVous' }
+        '409': { $ref: '#/components/responses/ErreurConflit' }
+  /rendez-vous/{id}/annuler:
+    patch:
+      tags: [Rendez-vous]
+      summary: Annuler un rendez-vous (membre ou agent)
+      description: Si le créneau était premium payé, le remboursement Stripe est déclenché (règle RA8).
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Rendez-vous annulé (remboursé si premium)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RendezVous' }
+  /paiements/intent:
+    post:
+      tags: [Paiements]
+      summary: Créer un PaymentIntent Stripe pour un créneau premium (membre)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [bienId, dateHeure]
+              properties:
+                bienId: { type: integer }
+                dateHeure: { type: string, format: date-time }
+      responses:
+        '201':
+          description: Secret client Stripe à utiliser côté front (Stripe Elements)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clientSecret: { type: string, example: pi_3AbC_secret_XyZ }
+                  montant: { type: number, example: 15.00 }
+  /webhooks/stripe:
+    post:
+      tags: [Paiements]
+      summary: Webhook Stripe (signature vérifiée) — statut des paiements
+      security: []
+      responses:
+        '200': { description: Événement traité }
+  /articles:
+    get:
+      tags: [Blog]
+      summary: Articles publiés du blog (paginé)
+      security: []
+      parameters:
+        - { name: categorieId, in: query, schema: { type: integer } }
+        - { name: page, in: query, schema: { type: integer, default: 0 } }
+      responses:
+        '200':
+          description: Articles
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Article' }
+  /articles/{id}:
+    get:
+      tags: [Blog]
+      summary: Détail d'un article publié
+      security: []
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Article
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Article' }
+        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
+  /traductions/{codeLangue}:
+    get:
+      tags: [Traductions]
+      summary: Dictionnaire de traduction de l'interface (fr, nl, en)
+      security: []
+      parameters:
+        - { name: codeLangue, in: path, required: true, schema: { type: string, enum: [fr, nl, en] } }
+      responses:
+        '200':
+          description: Paires clé/valeur
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: { type: string }
+              example: { nav.accueil: Accueil, rdv.bouton: Prendre rendez-vous }
+  /open-data/biens:
+    get:
+      tags: [Open Data]
+      summary: Jeu de données ouvert des annonces publiées (CC BY 4.0)
+      description: >
+        Données anonymisées (aucune donnée personnelle) des biens au statut
+        « disponible » : catégorie, commune, code postal, prix, superficie,
+        chambres, coordonnées. Accès par clé API gratuite (en-tête X-API-Key).
+        Formats JSON (défaut) ou CSV (en-tête Accept text/csv).
+      security:
+        - apiKeyAuth: []
+      parameters:
+        - { name: format, in: query, schema: { type: string, enum: [json, csv], default: json } }
+      responses:
+        '200':
+          description: Jeu de données
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/BienOpenData' }
+            text/csv:
+              schema: { type: string }
+        '401': { $ref: '#/components/responses/ErreurAuthentification' }
+        '429': { $ref: '#/components/responses/ErreurQuota' }
+  /open-data/statistiques:
+    get:
+      tags: [Open Data]
+      summary: Statistiques agrégées du marché (CC BY 4.0)
+      description: Prix moyen et médian au m² par commune et par catégorie, calculés sur les annonces publiées.
+      security:
+        - apiKeyAuth: []
+      responses:
+        '200':
+          description: Statistiques agrégées
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    commune: { type: string, example: Ixelles }
+                    categorie: { type: string, example: Appartement }
+                    nbAnnonces: { type: integer, example: 14 }
+                    prixMoyen: { type: number, example: 342500 }
+                    prixMedianM2: { type: number, example: 3620 }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "Jeton JWT obtenu via POST /auth/login (en-tête Authorization: Bearer <jeton>)"
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Clé API délivrée par l'administrateur (table cle_api) — révocable (règle RA12)
+  responses:
+    ErreurValidation:
+      description: Données invalides (règles du dictionnaire de données)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Erreur' }
+    ErreurAuthentification:
+      description: Jeton ou clé API manquant, invalide ou révoqué
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Erreur' }
+    ErreurDroits:
+      description: Rôle insuffisant pour cette opération
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Erreur' }
+    ErreurIntrouvable:
+      description: Ressource inexistante
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Erreur' }
+    ErreurConflit:
+      description: Conflit d'état (créneau déjà réservé — A2, transition interdite — RA1)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Erreur' }
+    ErreurQuota:
+      description: Limite de requêtes atteinte (60/min par clé)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Erreur' }
+  schemas:
+    StatutBien:
+      type: string
+      enum: [disponible, sous_option, vendu, loue, archive]
+    StatutRendezVous:
+      type: string
+      enum: [demande, confirme, annule, honore]
+    Utilisateur:
+      type: object
+      properties:
+        id: { type: integer, example: 7 }
+        nom: { type: string, example: Dubois }
+        prenom: { type: string, example: Sarah }
+        email: { type: string, format: email, example: sarah.dubois@mail.be }
+        langue: { type: string, example: fr }
+        role: { type: string, enum: [membre, agent, admin] }
+    InscriptionRequete:
+      type: object
+      required: [nom, prenom, email, motDePasse]
+      properties:
+        nom: { type: string, maxLength: 80 }
+        prenom: { type: string, maxLength: 80 }
+        email: { type: string, format: email }
+        motDePasse: { type: string, format: password, minLength: 8 }
+        langue: { type: string, enum: [fr, nl, en], default: fr }
+    ConnexionRequete:
+      type: object
+      required: [email, motDePasse]
+      properties:
+        email: { type: string, format: email, example: lucas.peeters@mail.be }
+        motDePasse: { type: string, format: password, example: password }
+    JetonReponse:
+      type: object
+      properties:
+        jeton: { type: string, example: eyJhbGciOiJIUzI1NiJ9... }
+        type: { type: string, example: Bearer }
+        expireDans: { type: integer, example: 3600, description: Durée de vie en secondes }
+        utilisateur: { $ref: '#/components/schemas/Utilisateur' }
+    Photo:
+      type: object
+      properties:
+        id: { type: integer }
+        url: { type: string, example: /storage/biens/42/photo-1.jpg }
+        ordre: { type: integer, example: 1 }
+        legende: { type: string, nullable: true, example: Séjour }
+    Bien:
+      type: object
+      properties:
+        id: { type: integer, example: 42 }
+        titre: { type: string, example: Appartement 3 chambres — Ixelles }
+        description: { type: string }
+        categorie: { type: string, example: Appartement }
+        prix: { type: number, example: 285000 }
+        superficie: { type: number, example: 95 }
+        nbChambres: { type: integer, example: 3 }
+        adresse: { type: string, example: Rue du Bailli 27 }
+        ville: { type: string, example: Ixelles }
+        codePostal: { type: string, example: '1050' }
+        latitude: { type: number, example: 50.8275 }
+        longitude: { type: number, example: 4.3720 }
+        statut: { $ref: '#/components/schemas/StatutBien' }
+        publieLe: { type: string, format: date }
+        agent:
+          type: object
+          properties:
+            id: { type: integer, example: 101 }
+            nomComplet: { type: string, example: Sarah Dubois }
+        photos:
+          type: array
+          items: { $ref: '#/components/schemas/Photo' }
+    BienCreation:
+      type: object
+      required: [categorieId, titre, description, prix, superficie, nbChambres, adresse, ville, codePostal, latitude, longitude]
+      properties:
+        categorieId: { type: integer }
+        titre: { type: string, maxLength: 150 }
+        description: { type: string }
+        prix: { type: number, minimum: 0, exclusiveMinimum: true }
+        superficie: { type: number, minimum: 0, exclusiveMinimum: true }
+        nbChambres: { type: integer, minimum: 0, maximum: 20 }
+        adresse: { type: string }
+        ville: { type: string }
+        codePostal: { type: string, pattern: '^[1-9][0-9]{3}$' }
+        latitude: { type: number, minimum: -90, maximum: 90 }
+        longitude: { type: number, minimum: -180, maximum: 180 }
+    PageBiens:
+      type: object
+      properties:
+        contenu:
+          type: array
+          items: { $ref: '#/components/schemas/Bien' }
+        page: { type: integer, example: 0 }
+        taille: { type: integer, example: 20 }
+        totalElements: { type: integer, example: 128 }
+        totalPages: { type: integer, example: 7 }
+    Creneau:
+      type: object
+      properties:
+        dateHeure: { type: string, format: date-time, example: '2026-08-29T18:30:00' }
+        type: { type: string, enum: [standard, premium] }
+        prix: { type: number, example: 15.00, description: 0 pour un créneau standard }
+    RendezVous:
+      type: object
+      properties:
+        id: { type: integer, example: 118 }
+        bienId: { type: integer, example: 42 }
+        agent: { type: string, example: Sarah Dubois }
+        dateHeure: { type: string, format: date-time }
+        statut: { $ref: '#/components/schemas/StatutRendezVous' }
+        motif: { type: string, nullable: true }
+        paiement:
+          type: object
+          nullable: true
+          properties:
+            montant: { type: number, example: 15.00 }
+            statut: { type: string, enum: [initie, reussi, echoue, rembourse] }
+    Article:
+      type: object
+      properties:
+        id: { type: integer }
+        titre: { type: string, example: 'Acheter un appartement à Ixelles : le guide complet' }
+        contenu: { type: string }
+        categorie: { type: string, example: Conseils achat }
+        publieLe: { type: string, format: date }
+    Message:
+      type: object
+      properties:
+        id: { type: integer }
+        expediteur: { type: string, example: Lucas Peeters }
+        destinataire: { type: string, example: Sarah Dubois }
+        contenu: { type: string }
+        envoyeLe: { type: string, format: date-time }
+        lu: { type: boolean }
+    BienOpenData:
+      type: object
+      description: Version anonymisée pour l'Open Data (aucune donnée personnelle)
+      properties:
+        categorie: { type: string, example: Appartement }
+        ville: { type: string, example: Ixelles }
+        codePostal: { type: string, example: '1050' }
+        prix: { type: number, example: 285000 }
+        superficie: { type: number, example: 95 }
+        nbChambres: { type: integer, example: 3 }
+        latitude: { type: number, example: 50.8275 }
+        longitude: { type: number, example: 4.3720 }
+        publieLe: { type: string, format: date }
+    Erreur:
+      type: object
+      description: Format RFC 7807 (application/problem+json)
+      properties:
+        type: { type: string, example: https://www.immoconnect.be/erreurs/creneau-indisponible }
+        title: { type: string, example: Créneau indisponible }
+        status: { type: integer, example: 409 }
+        detail: { type: string, example: Ce créneau vient d'être réservé par un autre membre. }
+        champs:
+          type: object
+          additionalProperties: { type: string }
+          example: { email: L'adresse e-mail est invalide }
