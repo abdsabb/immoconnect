@@ -2,7 +2,7 @@
 
 Plateforme web d'agence immobilière — Épreuve intégrée, Bachelier en Informatique de gestion (ICC Bruxelles, 2025-2026).
 
-**Auteur :** Abdu [NOM]  ·  **Promoteur :** [Nom du professeur]
+**Auteur :** Abdulrahman Sabbagh .
 
 ## Le projet
 
