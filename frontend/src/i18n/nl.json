@@ -1,6 +1,17 @@
 {
-  "nav": { "accueil": "Home", "biens": "Panden", "blog": "Blog", "connexion": "Aanmelden", "inscription": "Registreren" },
-  "commun": { "chargement": "Laden…" },
+  "nav": {
+    "accueil": "Home",
+    "biens": "Panden",
+    "blog": "Blog",
+    "connexion": "Aanmelden",
+    "inscription": "Registreren",
+    "profil": "Mijn ruimte",
+    "deconnexion": "Afmelden"
+  },
+  "commun": {
+    "chargement": "Laden…",
+    "erreurReseau": "De server reageert niet, probeer het zo opnieuw."
+  },
   "accueil": {
     "titre": "Vind uw volgende thuis in Brussel",
     "sousTitre": "Appartementen, huizen en handelspanden geselecteerd door onze makelaars",
@@ -38,6 +49,48 @@
     "introuvable": "Dit pand bestaat niet of is niet meer beschikbaar.",
     "retour": "Terug naar de panden"
   },
-  "statut": { "disponible": "Beschikbaar", "sous_option": "Onder optie", "vendu": "Verkocht", "loue": "Verhuurd", "archive": "Gearchiveerd" },
-  "pied": { "mentions": "Wettelijke vermeldingen", "confidentialite": "Privacy", "osm": "© OpenStreetMap-bijdragers" }
+  "statut": {
+    "disponible": "Beschikbaar",
+    "sous_option": "Onder optie",
+    "vendu": "Verkocht",
+    "loue": "Verhuurd",
+    "archive": "Gearchiveerd"
+  },
+  "pied": {
+    "mentions": "Wettelijke vermeldingen",
+    "confidentialite": "Privacy",
+    "osm": "© OpenStreetMap-bijdragers"
+  },
+  "auth": {
+    "connexionTitre": "Aanmelden",
+    "connexionSousTitre": "Toegang tot uw favorieten, berichten en afspraken.",
+    "inscriptionTitre": "Account aanmaken",
+    "inscriptionSousTitre": "Gratis — maak online een afspraak om onze panden te bezoeken.",
+    "email": "E-mailadres",
+    "motDePasse": "Wachtwoord",
+    "prenom": "Voornaam",
+    "nom": "Naam",
+    "telephone": "Telefoon (optioneel)",
+    "langue": "Voorkeurstaal",
+    "requis": "Dit veld is verplicht",
+    "emailInvalide": "Ongeldig e-mailadres",
+    "motDePasseCourt": "Minstens 8 tekens",
+    "pasDeCompte": "Nog geen account?",
+    "dejaCompte": "Al geregistreerd?"
+  },
+  "profil": {
+    "titre": "Hallo {{prenom}}",
+    "informations": "Mijn gegevens",
+    "enregistrer": "Opslaan",
+    "enregistre": "Profiel opgeslagen.",
+    "motDePasse": "Wachtwoord",
+    "ancienMotDePasse": "Huidig wachtwoord",
+    "nouveauMotDePasse": "Nieuw wachtwoord",
+    "changerMotDePasse": "Wachtwoord wijzigen",
+    "motDePasseChange": "Wachtwoord gewijzigd.",
+    "desinscription": "Mijn account verwijderen",
+    "desinscriptionExplication": "Conform de AVG worden uw persoonsgegevens geanonimiseerd en uw favorieten verwijderd. De historiek van uw afspraken en betalingen blijft zonder identiteit bewaard (boekhoudkundige verplichtingen).",
+    "supprimerCompte": "Mijn account definitief verwijderen",
+    "confirmerDesinscription": "Het verwijderen van uw account bevestigen? Dit kan niet ongedaan worden gemaakt."
+  }
 }

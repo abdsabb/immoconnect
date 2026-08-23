@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '../auth/AuthContext'
 
 const LANGUES = ['fr', 'nl', 'en']
 
@@ -7,6 +8,7 @@ const LANGUES = ['fr', 'nl', 'en']
 // sélecteur de langue) et pied de page — structure du site du livrable 10.
 export default function Layout() {
   const { t, i18n } = useTranslation()
+  const { estConnecte, utilisateur, deconnecter } = useAuth()
   const lien = ({ isActive }) =>
     `px-3 py-2 rounded-md font-titre font-semibold ${isActive ? 'text-corail' : 'text-white hover:text-turquoise'}`
 
@@ -21,7 +23,16 @@ export default function Layout() {
             <NavLink to="/" end className={lien}>{t('nav.accueil')}</NavLink>
             <NavLink to="/biens" className={lien}>{t('nav.biens')}</NavLink>
             <NavLink to="/blog" className={lien}>{t('nav.blog')}</NavLink>
-            <NavLink to="/connexion" className={lien}>{t('nav.connexion')}</NavLink>
+            {estConnecte ? (
+              <>
+                <NavLink to="/profil" className={lien}>{t('nav.profil')}</NavLink>
+                <button type="button" onClick={deconnecter} className="px-3 py-2 rounded-md font-titre font-semibold text-white/80 hover:text-turquoise">
+                  {t('nav.deconnexion')} ({utilisateur?.prenom})
+                </button>
+              </>
+            ) : (
+              <NavLink to="/connexion" className={lien}>{t('nav.connexion')}</NavLink>
+            )}
           </nav>
           <div className="flex items-center gap-1" role="group" aria-label="Langue">
             {LANGUES.map((l) => (

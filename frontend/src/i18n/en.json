@@ -1,6 +1,17 @@
 {
-  "nav": { "accueil": "Home", "biens": "Properties", "blog": "Blog", "connexion": "Log in", "inscription": "Sign up" },
-  "commun": { "chargement": "Loading…" },
+  "nav": {
+    "accueil": "Home",
+    "biens": "Properties",
+    "blog": "Blog",
+    "connexion": "Log in",
+    "inscription": "Sign up",
+    "profil": "My account",
+    "deconnexion": "Log out"
+  },
+  "commun": {
+    "chargement": "Loading…",
+    "erreurReseau": "The server is not responding, please try again shortly."
+  },
   "accueil": {
     "titre": "Find your next home in Brussels",
     "sousTitre": "Flats, houses and commercial spaces hand-picked by our agents",
@@ -38,6 +49,48 @@
     "introuvable": "This property does not exist or is no longer available.",
     "retour": "Back to properties"
   },
-  "statut": { "disponible": "Available", "sous_option": "Under option", "vendu": "Sold", "loue": "Rented", "archive": "Archived" },
-  "pied": { "mentions": "Legal notice", "confidentialite": "Privacy", "osm": "© OpenStreetMap contributors" }
+  "statut": {
+    "disponible": "Available",
+    "sous_option": "Under option",
+    "vendu": "Sold",
+    "loue": "Rented",
+    "archive": "Archived"
+  },
+  "pied": {
+    "mentions": "Legal notice",
+    "confidentialite": "Privacy",
+    "osm": "© OpenStreetMap contributors"
+  },
+  "auth": {
+    "connexionTitre": "Log in",
+    "connexionSousTitre": "Access your favourites, messages and visits.",
+    "inscriptionTitre": "Create an account",
+    "inscriptionSousTitre": "Free — book visits online for our properties.",
+    "email": "E-mail address",
+    "motDePasse": "Password",
+    "prenom": "First name",
+    "nom": "Last name",
+    "telephone": "Phone (optional)",
+    "langue": "Preferred language",
+    "requis": "This field is required",
+    "emailInvalide": "Invalid e-mail address",
+    "motDePasseCourt": "At least 8 characters",
+    "pasDeCompte": "No account yet?",
+    "dejaCompte": "Already registered?"
+  },
+  "profil": {
+    "titre": "Hello {{prenom}}",
+    "informations": "My details",
+    "enregistrer": "Save",
+    "enregistre": "Profile saved.",
+    "motDePasse": "Password",
+    "ancienMotDePasse": "Current password",
+    "nouveauMotDePasse": "New password",
+    "changerMotDePasse": "Change password",
+    "motDePasseChange": "Password changed.",
+    "desinscription": "Delete my account",
+    "desinscriptionExplication": "In line with the GDPR, your personal data will be anonymised and your favourites deleted. The history of your visits and payments is kept without identity (accounting obligations).",
+    "supprimerCompte": "Permanently delete my account",
+    "confirmerDesinscription": "Confirm the deletion of your account? This cannot be undone."
+  }
 }

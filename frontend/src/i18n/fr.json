@@ -1,6 +1,17 @@
 {
-  "nav": { "accueil": "Accueil", "biens": "Biens", "blog": "Blog", "connexion": "Se connecter", "inscription": "S'inscrire" },
-  "commun": { "chargement": "Chargement…" },
+  "nav": {
+    "accueil": "Accueil",
+    "biens": "Biens",
+    "blog": "Blog",
+    "connexion": "Se connecter",
+    "inscription": "S'inscrire",
+    "profil": "Mon espace",
+    "deconnexion": "Se déconnecter"
+  },
+  "commun": {
+    "chargement": "Chargement…",
+    "erreurReseau": "Le serveur ne répond pas, réessayez dans un instant."
+  },
   "accueil": {
     "titre": "Trouvez votre prochain chez-vous à Bruxelles",
     "sousTitre": "Appartements, maisons et commerces sélectionnés par nos agents",
@@ -38,6 +49,48 @@
     "introuvable": "Ce bien n'existe pas ou n'est plus disponible.",
     "retour": "Retour aux biens"
   },
-  "statut": { "disponible": "Disponible", "sous_option": "Sous option", "vendu": "Vendu", "loue": "Loué", "archive": "Archivé" },
-  "pied": { "mentions": "Mentions légales", "confidentialite": "Confidentialité", "osm": "© les contributeurs OpenStreetMap" }
+  "statut": {
+    "disponible": "Disponible",
+    "sous_option": "Sous option",
+    "vendu": "Vendu",
+    "loue": "Loué",
+    "archive": "Archivé"
+  },
+  "pied": {
+    "mentions": "Mentions légales",
+    "confidentialite": "Confidentialité",
+    "osm": "© les contributeurs OpenStreetMap"
+  },
+  "auth": {
+    "connexionTitre": "Se connecter",
+    "connexionSousTitre": "Accédez à vos favoris, messages et rendez-vous.",
+    "inscriptionTitre": "Créer un compte",
+    "inscriptionSousTitre": "Gratuit — prenez rendez-vous en ligne pour visiter nos biens.",
+    "email": "Adresse e-mail",
+    "motDePasse": "Mot de passe",
+    "prenom": "Prénom",
+    "nom": "Nom",
+    "telephone": "Téléphone (facultatif)",
+    "langue": "Langue préférée",
+    "requis": "Ce champ est obligatoire",
+    "emailInvalide": "Adresse e-mail invalide",
+    "motDePasseCourt": "Au moins 8 caractères",
+    "pasDeCompte": "Pas encore de compte ?",
+    "dejaCompte": "Déjà inscrit ?"
+  },
+  "profil": {
+    "titre": "Bonjour {{prenom}}",
+    "informations": "Mes informations",
+    "enregistrer": "Enregistrer",
+    "enregistre": "Profil enregistré.",
+    "motDePasse": "Mot de passe",
+    "ancienMotDePasse": "Mot de passe actuel",
+    "nouveauMotDePasse": "Nouveau mot de passe",
+    "changerMotDePasse": "Changer le mot de passe",
+    "motDePasseChange": "Mot de passe modifié.",
+    "desinscription": "Supprimer mon compte",
+    "desinscriptionExplication": "Conformément au RGPD, vos données personnelles seront anonymisées et vos favoris supprimés. L'historique de vos rendez-vous et paiements est conservé sans identité (obligations comptables).",
+    "supprimerCompte": "Supprimer définitivement mon compte",
+    "confirmerDesinscription": "Confirmer la suppression de votre compte ? Cette action est irréversible."
+  }
 }
