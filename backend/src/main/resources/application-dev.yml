@@ -19,3 +19,7 @@ management:
   health:
     mail:
       enabled: false     # pas de serveur SMTP en dev : ne pas faire tomber le contrôle de santé
+
+immoconnect:
+  jwt:
+    secret: dev-immoconnect-secret-jwt-ne-pas-utiliser-en-production-2026   # dev uniquement
