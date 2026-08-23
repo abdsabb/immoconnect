@@ -1,0 +1,102 @@
+@startuml cas_utilisation
+title Diagramme de cas d'utilisation — ImmoConnect
+skinparam shadowing false
+skinparam dpi 220
+skinparam defaultFontName Arial
+skinparam actorStyle awesome
+left to right direction
+
+actor "Visiteur" as V
+actor "Membre / Client" as M
+actor "Agent immobilier" as AG
+actor "Administrateur" as AD
+M --|> V
+
+actor "OpenStreetMap\n«système»" as OSM
+actor "Serveur SMTP\n«système»" as SMTP
+actor "Stripe\n«système»" as STRIPE
+
+rectangle "ImmoConnect" {
+  ' --- Visiteur ---
+  usecase "Consulter les biens" as UC1
+  usecase "Rechercher un bien" as UC2
+  usecase "Consulter le détail\nd'une annonce" as UC3
+  usecase "Visualiser sur la carte" as UC3b
+  usecase "Lire le blog" as UC4
+  usecase "Changer la langue" as UC5
+  usecase "S'inscrire" as UC6
+  usecase "Valider par e-mail" as UC6b
+
+  ' --- Membre ---
+  usecase "Se connecter" as UC7
+  usecase "S'authentifier" as UC8b
+  usecase "Ajouter aux favoris" as UC8
+  usecase "Envoyer un message" as UC9
+  usecase "Prendre rendez-vous" as UC10
+  usecase "Effectuer un paiement" as UC10b
+  usecase "Modifier son profil" as UC11
+  usecase "Se désinscrire (RGPD)" as UC12
+
+  ' --- Agent ---
+  usecase "Publier une annonce" as UC13
+  usecase "Uploader des photos" as UC13b
+  usecase "Modifier une annonce" as UC14
+  usecase "Archiver une annonce" as UC15
+  usecase "Répondre aux messages" as UC16
+  usecase "Gérer les rendez-vous" as UC17
+  usecase "Notifier par e-mail" as UC17b
+  usecase "Consulter le tableau de bord" as UC18
+
+  ' --- Administrateur ---
+  usecase "Gérer les utilisateurs" as UC19
+  usecase "Gérer le blog" as UC20
+  usecase "Gérer les catégories" as UC21
+  usecase "Consulter les logs" as UC22
+  usecase "Configurer les paramètres" as UC23
+  usecase "Gérer les langues" as UC24
+  usecase "Gérer l'API RESTful" as UC25
+  usecase "Générer une clé API" as UC25b
+  usecase "Consulter les statistiques" as UC26
+}
+
+V --> UC1
+V --> UC2
+V --> UC3
+V --> UC4
+V --> UC5
+V --> UC6
+UC3 <.. UC3b : «extend»
+UC3b -- OSM
+UC6 ..> UC6b : «include»
+UC6b -- SMTP
+
+M --> UC7
+M --> UC8
+M --> UC9
+M --> UC10
+M --> UC11
+M --> UC12
+UC8 ..> UC8b : «include»
+UC10 <.. UC10b : «extend»
+UC10b -- STRIPE
+
+AG --> UC13
+AG --> UC14
+AG --> UC15
+AG --> UC16
+AG --> UC17
+AG --> UC18
+UC13 ..> UC13b : «include»
+UC17 <.. UC17b : «extend»
+UC17b -- SMTP
+
+AD --> UC19
+AD --> UC20
+AD --> UC21
+AD --> UC22
+AD --> UC23
+AD --> UC24
+AD --> UC25
+AD --> UC26
+UC25 ..> UC25b : «include»
+@enduml

@@ -2,9 +2,8 @@
 -- ImmoConnect — Schéma de la base de données (livrable 08/09)
 -- MySQL 8.0 · InnoDB · utf8mb4
 -- ============================================================
-DROP DATABASE IF EXISTS immoconnect;
-CREATE DATABASE immoconnect CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE immoconnect;
+-- Migration Flyway : la base (immoconnect, utf8mb4_unicode_ci) est créée par l'environnement
+-- (docker compose / VPS) ; le script ne gère que les tables.
 
 -- ---------- Tables de référence ----------
 CREATE TABLE langue (

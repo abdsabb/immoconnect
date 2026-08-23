@@ -1,0 +1,10 @@
+{
+  "nav": { "accueil": "Home", "biens": "Properties", "blog": "Blog", "connexion": "Log in", "inscription": "Sign up" },
+  "accueil": {
+    "titre": "Find your next home in Brussels",
+    "sousTitre": "Flats, houses and commercial spaces hand-picked by our agents",
+    "rechercher": "Search a property"
+  },
+  "biens": { "titre": "Our properties", "vide": "No property matches your search." },
+  "pied": { "mentions": "Legal notice", "confidentialite": "Privacy", "osm": "© OpenStreetMap contributors" }
+}

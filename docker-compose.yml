@@ -3,6 +3,7 @@
 services:
   db:
     image: mysql:8.4
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: immoconnect
@@ -12,8 +13,8 @@ services:
       - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
-      # Le schéma (V1) et les données de test (V2) sont chargés au premier démarrage :
-      - ./db/migration:/docker-entrypoint-initdb.d:ro
+      # Le schéma (V1) et les données de test (V2) sont appliqués par Flyway
+      # au démarrage du backend (backend/src/main/resources/db/migration).
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
       interval: 5s

@@ -1,0 +1,44 @@
+@startuml sequence
+title Diagramme de séquence système — Prendre rendez-vous pour visiter un bien
+skinparam shadowing false
+skinparam dpi 220
+skinparam defaultFontName Arial
+skinparam sequence {
+  LifeLineBorderColor #1B3A4B
+  ParticipantBorderColor #1B3A4B
+  ParticipantBackgroundColor #F8FAFC
+}
+
+actor Membre
+participant "«system»\n: Système\nImmoConnect" as SYS
+participant Stripe
+participant "Serveur\nSMTP" as SMTP
+actor "Agent\nimmobilier" as AG
+
+Membre -> SYS : cliquer « Prendre rendez-vous » (bien)
+SYS --> Membre : créneaux disponibles de l'agent
+
+Membre -> SYS : choisirCreneau(premium, motif)
+SYS --> Membre : récapitulatif (créneau + 15 €)
+
+Membre -> SYS : confirmerEtPayer(donnéesCarte)
+SYS -> Stripe : créer PaymentIntent (15 €)
+
+alt paiement réussi (nominal)
+  Stripe --> SYS : paiement confirmé (webhook signé)
+  SYS -> SYS : créer RendezVous « confirmé »\n+ Paiement « réussi »
+  SYS -> AG : notifier l'agent
+  SYS -> SMTP : envoyer l'e-mail de confirmation
+  SYS --> Membre : afficher la confirmation + récapitulatif
+else paiement refusé (E1)
+  Stripe --> SYS : paiement refusé (carte invalide, fonds insuffisants)
+  SYS --> Membre : afficher l'erreur — aucun rendez-vous créé\n(réessayer ou abandonner)
+end
+
+note over SYS, SMTP
+  A1 — créneau standard : les étapes de paiement sont sautées,
+  le RendezVous est créé au statut « demandé » et confirmé par l'agent.
+  A2 — créneau devenu indisponible : le système réaffiche les créneaux.
+  E2 — échec SMTP : le RendezVous reste valide, incident journalisé, envoi retenté.
+end note
+@enduml

@@ -1,0 +1,186 @@
+@startuml classes
+title Diagramme de classes (analyse) — ImmoConnect
+skinparam shadowing false
+skinparam dpi 220
+skinparam defaultFontName Arial
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #1B3A4B
+}
+hide circle
+
+abstract class Utilisateur {
+  -id : Integer
+  -nom : String
+  -prenom : String
+  -email : String
+  -motDePasse : String «bcrypt»
+  -photo : URL [0..1]
+  -dateInscription : Date
+  +exporterDonnees() : Fichier
+  +supprimerCompte()
+}
+
+class Membre {
+  -telephone : String [0..1]
+}
+
+class AgentImmobilier {
+  -matricule : String
+  -telephonePro : String
+}
+
+class Administrateur {
+  -niveauAcces : Integer
+}
+
+class Bien {
+  -id : Integer
+  -titre : String
+  -description : Text
+  -prix : Money
+  -superficie : Float
+  -nbChambres : Integer
+  -adresse : String
+  -ville : String
+  -codePostal : String
+  -latitude : Float
+  -longitude : Float
+  -statut : StatutBien
+  -publieLe : Date
+  +estDisponible() : Boolean
+}
+
+class Photo {
+  -url : URL
+  -ordre : Integer
+  -legende : String [0..1]
+}
+
+class Categorie {
+  -nom : String
+  -description : Text [0..1]
+}
+
+class Favori <<association class>> {
+  -dateAjout : DateTime
+}
+
+class Message {
+  -contenu : Text
+  -envoyeLe : DateTime
+  -lu : Boolean
+}
+
+class RendezVous {
+  -id : Integer
+  -dateHeure : DateTime
+  -statut : StatutRendezVous
+  -motif : String [0..1]
+  +confirmer()
+  +annuler()
+}
+
+class Paiement {
+  -id : Integer
+  -stripePaymentIntentId : String
+  -montant : Money
+  -statut : StatutPaiement
+  -payeLe : DateTime [0..1]
+  +rembourser()
+}
+
+class Article {
+  -id : Integer
+  -titre : String
+  -contenu : Text
+  -statut : StatutArticle
+  -publieLe : Date [0..1]
+  +publier()
+}
+
+class CategorieArticle {
+  -nom : String
+}
+
+class Langue {
+  -code : String
+  -nom : String
+}
+
+class Traduction {
+  -cle : String
+  -valeur : Text
+}
+
+class JournalAudit {
+  -action : String
+  -entite : String
+  -horodatage : DateTime
+  -ip : String
+}
+
+class CleAPI {
+  -cle : String
+  -creeLe : Date
+  -active : Boolean
+  +revoquer()
+}
+
+enum StatutBien {
+  disponible
+  sousOption
+  vendu
+  loue
+  archive
+}
+
+enum StatutRendezVous {
+  demande
+  confirme
+  annule
+  honore
+}
+
+enum StatutPaiement {
+  initie
+  reussi
+  echoue
+  rembourse
+}
+
+enum StatutArticle {
+  brouillon
+  publie
+  archive
+}
+
+Utilisateur <|-- Membre
+Utilisateur <|-- AgentImmobilier
+Utilisateur <|-- Administrateur
+
+Utilisateur "0..*" -- "1" Langue : préfère >
+Utilisateur "1" -- "0..*" JournalAudit : génère >
+Langue "1" -- "0..*" Traduction : possède >
+
+AgentImmobilier "1" -- "0..*" Bien : publie >
+Categorie "1" -- "0..*" Bien : regroupe <
+Bien "1" *-- "1..*" Photo : illustré par >
+
+Membre "0..*" -- "0..*" Bien
+(Membre, Bien) .. Favori
+
+Membre "1" -- "0..*" Message : expéditeur >
+AgentImmobilier "1" -- "0..*" Message : destinataire >
+
+Membre "1" -- "0..*" RendezVous : demande >
+AgentImmobilier "1" -- "0..*" RendezVous : gère >
+Bien "1" -- "0..*" RendezVous : concerne <
+RendezVous "1" -- "0..1" Paiement : réglé par >
+Membre "1" -- "0..*" Paiement : payeur >
+
+Administrateur "1" -- "0..*" Article : rédige >
+CategorieArticle "1" -- "0..*" Article : regroupe <
+Administrateur "1" -- "0..*" CleAPI : gère >
+@enduml

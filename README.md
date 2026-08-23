@@ -1,8 +1,8 @@
 # ImmoConnect
 
-Plateforme web d'agence immobilière — Épreuve intégrée, Bachelier en Informatique de gestion (ICC Bruxelles, 2025-2026).
+Plateforme web d'agence immobilière — Épreuve intégrée, Bachelier en Informatique, orientation développement d'applications (ICC Bruxelles, 2025-2026).
 
-**Auteur :** Abdulrahman Sabbagh .
+**Auteur :** Abdulrahman Sabbagh
 
 ## Le projet
 
@@ -16,36 +16,50 @@ documentée ainsi qu'un volet Open Data.
 
 | Couche | Technologie |
 |---|---|
-| Front-end | React 19 + Vite · Tailwind CSS · react-leaflet |
-| Back-end | Spring Boot (Java 21 LTS) — API REST `/api/v1` |
-| Base de données | MySQL 8.4 LTS — migrations Flyway (`db/migration`) |
+| Front-end | React 19 + Vite · Tailwind CSS 4 · React Router · react-i18next · TanStack Query · react-leaflet |
+| Back-end | Spring Boot 4.1 (Java 21 LTS) — API REST `/api/v1` · Spring Security · Spring Data JPA · springdoc (Swagger) |
+| Base de données | MySQL 8.4 LTS — migrations Flyway (`backend/src/main/resources/db/migration`) |
 | Paiement | Stripe (PaymentIntents + webhooks signés) |
-| Conteneurisation | Docker Compose |
+| Conteneurisation | Docker Compose (dev) · images Docker + Nginx (prod) |
+| Intégration continue | GitHub Actions à chaque push : tests backend (Testcontainers), build frontend, images Docker |
 
 ## Structure du dépôt
 
 ```
-├── backend/        API Spring Boot (Maven)
-├── frontend/       SPA React (Vite)
-├── db/migration/   Migrations Flyway : V1 = schéma (17 tables), V2 = données de test
-├── api/            Spécification OpenAPI 3.0 (Swagger)
-├── docker-compose.yml
-└── README.md
+├── backend/                 API Spring Boot (Maven) — Dockerfile multi-étapes
+│   └── src/main/resources/db/migration/   V1 = schéma (17 tables), V2 = données de test
+├── frontend/                SPA React (Vite) — Dockerfile + nginx.conf
+├── api/openapi.yaml         Spécification OpenAPI 3.0 de l'API (livrable 15)
+├── docs/uml/                Sources PlantUML des diagrammes d'analyse (livrable 07) et du schéma BDD
+├── .github/workflows/ci.yml Intégration continue
+└── docker-compose.yml       Environnement de développement (MySQL 8.4 + Adminer)
 ```
 
-## Démarrer en local
+## Démarrer en développement
 
 ```bash
-docker compose up -d        # MySQL 8.4 initialisé avec le schéma + les données de test
-# Adminer (client BDD web) : http://localhost:8081  —  serveur: db · user: immo · mdp: immo
+# 1. Base de données MySQL 8.4 (+ Adminer sur http://localhost:8081 — serveur: db, user: immo, mdp: immo)
+docker compose up -d db adminer
+
+# 2. Backend — profil dev par défaut ; Flyway crée le schéma et charge les données de test au premier démarrage
+cd backend && ./mvnw spring-boot:run
+#    API : http://localhost:8080/api/v1  ·  Swagger UI : http://localhost:8080/swagger-ui.html
+
+# 3. Frontend — serveur Vite avec proxy /api vers le backend
+cd frontend && npm install && npm run dev
+#    http://localhost:5173
 ```
+
+Tests backend (nécessitent Docker, un MySQL 8.4 jetable est lancé par Testcontainers) : `cd backend && ./mvnw verify`.
 
 Comptes de test : tous les mots de passe sont `password` (hachés bcrypt en base).
 
-## Branches
+## Branches, commits et releases
 
-- **`main`** : version stable — contient toujours la dernière version finale validée
-- **`dev`** : développement en cours ; fusion vers `main` par pull request
+- **`main`** : version stable — contient toujours la dernière version validée, fusion depuis `dev` par pull request
+- **`dev`** : développement en cours
+- Messages de commit conventionnels : `feat:`, `fix:`, `test:`, `docs:`, `ci:`, `chore:` — un commit = un changement cohérent
+- Releases : `v0.1.0-alpha` (MVP : authentification, profil, navigation, design, catalogue) · `v0.2.0-beta` (intégrations : Stripe, rendez-vous, messagerie) · `v1.0.0` (version déployée présentée à la défense)
 
 ## Livrables associés (Chamilo)
 

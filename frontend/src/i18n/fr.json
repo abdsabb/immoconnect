@@ -1,0 +1,10 @@
+{
+  "nav": { "accueil": "Accueil", "biens": "Biens", "blog": "Blog", "connexion": "Se connecter", "inscription": "S'inscrire" },
+  "accueil": {
+    "titre": "Trouvez votre prochain chez-vous à Bruxelles",
+    "sousTitre": "Appartements, maisons et commerces sélectionnés par nos agents",
+    "rechercher": "Rechercher un bien"
+  },
+  "biens": { "titre": "Nos biens", "vide": "Aucun bien ne correspond à votre recherche." },
+  "pied": { "mentions": "Mentions légales", "confidentialite": "Confidentialité", "osm": "© les contributeurs OpenStreetMap" }
+}

@@ -1,6 +1,4 @@
-USE immoconnect;
-SET NAMES utf8mb4;
-START TRANSACTION;
+-- Migration Flyway : données de test (exécutées dans la transaction gérée par Flyway)
 
 INSERT INTO langue (id, code, nom) VALUES
 (1,'fr','Français'),
@@ -2369,4 +2367,3 @@ INSERT INTO cle_api (id, administrateur_id, cle, cree_le, active) VALUES
 (5,111,'0ba96b2e2e0c27303dad4885f7cb2307518906c36daf9ec340cb569d7256cef7','2026-11-09',0),
 (6,110,'af5f81f6c45673f54d1c02e558bacf38212de58348f2861349b9408f8f921e36','2026-10-23',0);
 
-COMMIT;

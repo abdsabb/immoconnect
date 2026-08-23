@@ -1,0 +1,44 @@
+@startuml navigation
+title Diagramme de navigation — Prendre rendez-vous pour visiter un bien
+skinparam shadowing false
+skinparam dpi 220
+skinparam defaultFontName Arial
+skinparam state {
+  BackgroundColor #F8FAFC
+  BorderColor #1B3A4B
+}
+hide empty description
+
+state "«page»\nFiche du bien" as FICHE
+state "«page»\nConnexion" as LOGIN
+state "«page»\nChoix du créneau" as CRENEAU
+state "«page»\nDemande envoyée\n(créneau standard)" as DEMANDE
+state "«page»\nRécapitulatif\n(premium, 15 €)" as RECAP
+state "«page»\nPaiement Stripe" as PAIEMENT
+state "«page»\nÉchec du paiement" as ECHEC
+state "«page»\nConfirmation du\nrendez-vous" as CONF
+state "«page»\nMes rendez-vous\n(espace membre)" as MESRDV
+
+[*] -down-> FICHE
+
+FICHE -down-> LOGIN : « Prendre rendez-vous »\n[visiteur non connecté]
+LOGIN -down-> CRENEAU : connexion réussie\n(retour au parcours)
+FICHE -down-> CRENEAU : « Prendre rendez-vous »\n[membre connecté]
+
+CRENEAU -down-> CRENEAU : créneau devenu\nindisponible (A2)
+CRENEAU -down-> DEMANDE : créneau standard (A1)\n/ demande envoyée\nà l'agent
+CRENEAU -down-> RECAP : créneau premium
+
+RECAP -up-> CRENEAU : « Modifier\nle créneau »
+RECAP -down-> PAIEMENT : « Confirmer et\npayer 15 € »
+
+PAIEMENT -down-> CONF : paiement réussi\n/ e-mail + notification\nde l'agent
+PAIEMENT -down-> ECHEC : paiement\nrefusé (E1)
+ECHEC -up-> PAIEMENT : « Réessayer »
+ECHEC -up-> FICHE : « Abandonner »\n(retour à la fiche)
+
+DEMANDE -down-> MESRDV : suivre\nma demande
+CONF -down-> MESRDV : « Mes rendez-vous »
+
+MESRDV -down-> [*]
+@enduml

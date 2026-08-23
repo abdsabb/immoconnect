@@ -1,0 +1,40 @@
+# ImmoConnect — configuration commune (profil actif par défaut : dev)
+spring:
+  application:
+    name: immoconnect-backend
+  profiles:
+    default: dev
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate          # le schéma est géré par Flyway, jamais par Hibernate
+    properties:
+      hibernate.jdbc.time_zone: Europe/Brussels
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: false
+  jackson:
+    time-zone: Europe/Brussels   # Jackson 3 (Spring Boot 4) sérialise déjà les dates en ISO-8601
+
+server:
+  port: 8080
+  error:
+    include-message: always
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+immoconnect:
+  api-version: v1
+  creneau-premium:
+    prix: 15.00

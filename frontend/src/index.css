@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+/* Charte graphique ImmoConnect (livrable 10) déclinée en tokens Tailwind v4 */
+@theme {
+  --color-nuit: #1B3A4B;       /* bleu nuit : identité, titres, en-tête */
+  --color-turquoise: #2A9D8F;  /* éléments interactifs, liens, focus */
+  --color-corail: #E76F51;     /* action principale, prix */
+  --color-perle: #F5F7FA;      /* fonds alternés */
+  --color-succes: #2E7D32;
+  --color-ambre: #F4A261;
+  --color-erreur: #C62828;
+  --font-titre: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-texte: "Open Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+html { font-family: var(--font-texte); color: #1f2933; }
+h1, h2, h3, .font-titre { font-family: var(--font-titre); }
+body { background: #ffffff; font-size: 1rem; line-height: 1.6; }
+:focus-visible { outline: 2px solid var(--color-turquoise); outline-offset: 2px; }

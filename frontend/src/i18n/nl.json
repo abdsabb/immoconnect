@@ -1,0 +1,10 @@
+{
+  "nav": { "accueil": "Home", "biens": "Panden", "blog": "Blog", "connexion": "Aanmelden", "inscription": "Registreren" },
+  "accueil": {
+    "titre": "Vind uw volgende thuis in Brussel",
+    "sousTitre": "Appartementen, huizen en handelspanden geselecteerd door onze makelaars",
+    "rechercher": "Een pand zoeken"
+  },
+  "biens": { "titre": "Onze panden", "vide": "Geen enkel pand komt overeen met uw zoekopdracht." },
+  "pied": { "mentions": "Wettelijke vermeldingen", "confidentialite": "Privacy", "osm": "© OpenStreetMap-bijdragers" }
+}

@@ -1,0 +1,67 @@
+@startuml activite
+title Diagramme d'activité — Prendre rendez-vous pour visiter un bien
+skinparam shadowing false
+skinparam dpi 220
+skinparam defaultFontName Arial
+skinparam activity {
+  BackgroundColor #F8FAFC
+  BorderColor #1B3A4B
+}
+
+|Membre|
+start
+:Cliquer « Prendre rendez-vous »
+depuis la fiche du bien;
+|Système ImmoConnect|
+if (Bien encore disponible ?) then (non — E3)
+  :Informer le membre et rediriger
+  vers la recherche;
+  stop
+else (oui)
+endif
+repeat
+  :Afficher les créneaux disponibles
+  de l'agent responsable;
+  |Membre|
+  :Choisir un créneau
+  (+ motif optionnel);
+  |Système ImmoConnect|
+  backward :Informer le membre —
+  créneau devenu indisponible (A2);
+repeat while (Créneau encore libre ?) is (non) not (oui)
+if (Créneau premium ?) then (non — A1)
+  :Créer le RendezVous « demandé »
+  (à confirmer par l'agent);
+else (oui — 15 €)
+  :Afficher le récapitulatif
+  et demander confirmation;
+  |Membre|
+  :Confirmer et saisir
+  les données de paiement;
+  |Stripe|
+  :Traiter la demande
+  de paiement;
+  |Système ImmoConnect|
+  if (Paiement accepté ?) then (non — E1)
+    :Afficher l'erreur — aucun RendezVous créé
+    (le membre peut réessayer ou abandonner);
+    stop
+  else (oui)
+    :Créer le RendezVous « confirmé »
+    et enregistrer le Paiement « réussi »;
+  endif
+endif
+:Notifier l'agent;
+|Serveur SMTP|
+:Envoyer l'e-mail
+de confirmation au membre;
+|Système ImmoConnect|
+if (E-mail envoyé ?) then (non — E2)
+  :Journaliser l'incident (JournalAudit)
+  et retenter l'envoi;
+else (oui)
+endif
+:Afficher la confirmation
+avec le récapitulatif;
+stop
+@enduml
