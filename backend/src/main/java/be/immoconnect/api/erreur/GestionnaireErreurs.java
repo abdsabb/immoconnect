@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,6 +31,12 @@ public class GestionnaireErreurs {
     @ExceptionHandler({TransitionInterditeException.class, IllegalStateException.class})
     ProblemDetail conflit(RuntimeException e) {
         return probleme(HttpStatus.CONFLICT, "Conflit d'état", e.getMessage(), "conflit-etat");
+    }
+
+    /** Identifiants invalides : réponse 401 générique, sans révéler si l'adresse existe (livrable 16 §2.2). */
+    @ExceptionHandler(AuthenticationException.class)
+    ProblemDetail nonAuthentifie(AuthenticationException e) {
+        return probleme(HttpStatus.UNAUTHORIZED, "Non authentifié", "Identifiants invalides", "non-authentifie");
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
