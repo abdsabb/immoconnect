@@ -14,3 +14,8 @@ logging:
   level:
     be.immoconnect: DEBUG
     org.flywaydb: INFO
+
+management:
+  health:
+    mail:
+      enabled: false     # pas de serveur SMTP en dev : ne pas faire tomber le contrôle de santé
