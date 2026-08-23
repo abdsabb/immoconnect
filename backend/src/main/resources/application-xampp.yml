@@ -16,3 +16,8 @@ spring:
 logging:
   level:
     be.immoconnect: DEBUG
+
+management:
+  health:
+    mail:
+      enabled: false     # pas de serveur SMTP en dev : ne pas faire tomber le contrôle de santé
