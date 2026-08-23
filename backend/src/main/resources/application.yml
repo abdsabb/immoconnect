@@ -25,6 +25,8 @@ server:
   port: 8080
   error:
     include-message: always
+    include-stacktrace: never      # jamais de trace technique vers le client, même en dev
+    include-exception: false
 
 springdoc:
   api-docs:
