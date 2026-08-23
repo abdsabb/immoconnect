@@ -15,6 +15,9 @@ spring:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: false
+  web:
+    locale: fr_BE                # messages de validation en français
+    locale-resolver: fixed
   jackson:
     time-zone: Europe/Brussels   # Jackson 3 (Spring Boot 4) sérialise déjà les dates en ISO-8601
 
@@ -39,3 +42,6 @@ immoconnect:
   api-version: v1
   creneau-premium:
     prix: 15.00
+  jwt:
+    secret: ${JWT_SECRET}           # clé HS256 (>= 32 octets) — fournie par l'environnement
+    duree-secondes: 3600            # jeton d'accès valable 1 h (livrable 16, §2.1)
