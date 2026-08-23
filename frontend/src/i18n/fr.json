@@ -1,10 +1,96 @@
 {
-  "nav": { "accueil": "Accueil", "biens": "Biens", "blog": "Blog", "connexion": "Se connecter", "inscription": "S'inscrire" },
+  "nav": {
+    "accueil": "Accueil",
+    "biens": "Biens",
+    "blog": "Blog",
+    "connexion": "Se connecter",
+    "inscription": "S'inscrire",
+    "profil": "Mon espace",
+    "deconnexion": "Se déconnecter"
+  },
+  "commun": {
+    "chargement": "Chargement…",
+    "erreurReseau": "Le serveur ne répond pas, réessayez dans un instant."
+  },
   "accueil": {
     "titre": "Trouvez votre prochain chez-vous à Bruxelles",
     "sousTitre": "Appartements, maisons et commerces sélectionnés par nos agents",
     "rechercher": "Rechercher un bien"
   },
-  "biens": { "titre": "Nos biens", "vide": "Aucun bien ne correspond à votre recherche." },
-  "pied": { "mentions": "Mentions légales", "confidentialite": "Confidentialité", "osm": "© les contributeurs OpenStreetMap" }
+  "biens": {
+    "titre": "Nos biens",
+    "filtres": "Filtres de recherche",
+    "ville": "Ville ou commune",
+    "prixMax": "Budget maximum (€)",
+    "chambresMin": "Chambres minimum",
+    "triRecent": "Les plus récents",
+    "triPrixAsc": "Prix croissant",
+    "triPrixDesc": "Prix décroissant",
+    "triSurface": "Surface décroissante",
+    "resultats_one": "{{count}} bien trouvé",
+    "resultats_other": "{{count}} biens trouvés",
+    "vide": "Aucun bien ne correspond à votre recherche.",
+    "erreur": "Impossible de charger les biens pour le moment."
+  },
+  "bien": {
+    "chambres_one": "chambre",
+    "chambres_other": "chambres",
+    "chambresLabel": "Chambres",
+    "superficie": "Surface",
+    "statutLabel": "Statut",
+    "publieLe": "Publié le",
+    "description": "Description",
+    "localisation": "Localisation",
+    "adresseApres": "L'adresse exacte vous est communiquée après la prise de rendez-vous.",
+    "galerie": "Galerie de photos",
+    "prendreRdv": "Prendre rendez-vous",
+    "envoyerMessage": "Envoyer un message",
+    "agent": "Votre agent",
+    "introuvable": "Ce bien n'existe pas ou n'est plus disponible.",
+    "retour": "Retour aux biens"
+  },
+  "statut": {
+    "disponible": "Disponible",
+    "sous_option": "Sous option",
+    "vendu": "Vendu",
+    "loue": "Loué",
+    "archive": "Archivé"
+  },
+  "pied": {
+    "mentions": "Mentions légales",
+    "confidentialite": "Confidentialité",
+    "osm": "© les contributeurs OpenStreetMap"
+  },
+  "auth": {
+    "connexionTitre": "Se connecter",
+    "connexionSousTitre": "Accédez à vos favoris, messages et rendez-vous.",
+    "inscriptionTitre": "Créer un compte",
+    "inscriptionSousTitre": "Gratuit — prenez rendez-vous en ligne pour visiter nos biens.",
+    "email": "Adresse e-mail",
+    "motDePasse": "Mot de passe",
+    "prenom": "Prénom",
+    "nom": "Nom",
+    "telephone": "Téléphone (facultatif)",
+    "langue": "Langue préférée",
+    "requis": "Ce champ est obligatoire",
+    "emailInvalide": "Adresse e-mail invalide",
+    "motDePasseCourt": "Au moins 8 caractères",
+    "pasDeCompte": "Pas encore de compte ?",
+    "dejaCompte": "Déjà inscrit ?"
+  },
+  "profil": {
+    "titre": "Bonjour {{prenom}}",
+    "informations": "Mes informations",
+    "enregistrer": "Enregistrer",
+    "enregistre": "Profil enregistré.",
+    "motDePasse": "Mot de passe",
+    "ancienMotDePasse": "Mot de passe actuel",
+    "nouveauMotDePasse": "Nouveau mot de passe",
+    "changerMotDePasse": "Changer le mot de passe",
+    "motDePasseChange": "Mot de passe modifié.",
+    "desinscription": "Supprimer mon compte",
+    "desinscriptionExplication": "Conformément au RGPD, vos données personnelles seront anonymisées et vos favoris supprimés. L'historique de vos rendez-vous et paiements est conservé sans identité (obligations comptables).",
+    "supprimerCompte": "Supprimer définitivement mon compte",
+    "confirmerDesinscription": "Confirmer la suppression de votre compte ? Cette action est irréversible."
+  }
 }

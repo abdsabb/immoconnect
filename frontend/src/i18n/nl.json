@@ -1,10 +1,96 @@
 {
-  "nav": { "accueil": "Home", "biens": "Panden", "blog": "Blog", "connexion": "Aanmelden", "inscription": "Registreren" },
+  "nav": {
+    "accueil": "Home",
+    "biens": "Panden",
+    "blog": "Blog",
+    "connexion": "Aanmelden",
+    "inscription": "Registreren",
+    "profil": "Mijn ruimte",
+    "deconnexion": "Afmelden"
+  },
+  "commun": {
+    "chargement": "Laden…",
+    "erreurReseau": "De server reageert niet, probeer het zo opnieuw."
+  },
   "accueil": {
     "titre": "Vind uw volgende thuis in Brussel",
     "sousTitre": "Appartementen, huizen en handelspanden geselecteerd door onze makelaars",
     "rechercher": "Een pand zoeken"
   },
-  "biens": { "titre": "Onze panden", "vide": "Geen enkel pand komt overeen met uw zoekopdracht." },
-  "pied": { "mentions": "Wettelijke vermeldingen", "confidentialite": "Privacy", "osm": "© OpenStreetMap-bijdragers" }
+  "biens": {
+    "titre": "Onze panden",
+    "filtres": "Zoekfilters",
+    "ville": "Stad of gemeente",
+    "prixMax": "Maximumbudget (€)",
+    "chambresMin": "Minimum slaapkamers",
+    "triRecent": "Meest recent",
+    "triPrixAsc": "Prijs oplopend",
+    "triPrixDesc": "Prijs aflopend",
+    "triSurface": "Oppervlakte aflopend",
+    "resultats_one": "{{count}} pand gevonden",
+    "resultats_other": "{{count}} panden gevonden",
+    "vide": "Geen enkel pand komt overeen met uw zoekopdracht.",
+    "erreur": "De panden kunnen momenteel niet worden geladen."
+  },
+  "bien": {
+    "chambres_one": "slaapkamer",
+    "chambres_other": "slaapkamers",
+    "chambresLabel": "Slaapkamers",
+    "superficie": "Oppervlakte",
+    "statutLabel": "Status",
+    "publieLe": "Gepubliceerd op",
+    "description": "Beschrijving",
+    "localisation": "Ligging",
+    "adresseApres": "Het exacte adres wordt meegedeeld na het maken van een afspraak.",
+    "galerie": "Fotogalerij",
+    "prendreRdv": "Afspraak maken",
+    "envoyerMessage": "Bericht sturen",
+    "agent": "Uw makelaar",
+    "introuvable": "Dit pand bestaat niet of is niet meer beschikbaar.",
+    "retour": "Terug naar de panden"
+  },
+  "statut": {
+    "disponible": "Beschikbaar",
+    "sous_option": "Onder optie",
+    "vendu": "Verkocht",
+    "loue": "Verhuurd",
+    "archive": "Gearchiveerd"
+  },
+  "pied": {
+    "mentions": "Wettelijke vermeldingen",
+    "confidentialite": "Privacy",
+    "osm": "© OpenStreetMap-bijdragers"
+  },
+  "auth": {
+    "connexionTitre": "Aanmelden",
+    "connexionSousTitre": "Toegang tot uw favorieten, berichten en afspraken.",
+    "inscriptionTitre": "Account aanmaken",
+    "inscriptionSousTitre": "Gratis — maak online een afspraak om onze panden te bezoeken.",
+    "email": "E-mailadres",
+    "motDePasse": "Wachtwoord",
+    "prenom": "Voornaam",
+    "nom": "Naam",
+    "telephone": "Telefoon (optioneel)",
+    "langue": "Voorkeurstaal",
+    "requis": "Dit veld is verplicht",
+    "emailInvalide": "Ongeldig e-mailadres",
+    "motDePasseCourt": "Minstens 8 tekens",
+    "pasDeCompte": "Nog geen account?",
+    "dejaCompte": "Al geregistreerd?"
+  },
+  "profil": {
+    "titre": "Hallo {{prenom}}",
+    "informations": "Mijn gegevens",
+    "enregistrer": "Opslaan",
+    "enregistre": "Profiel opgeslagen.",
+    "motDePasse": "Wachtwoord",
+    "ancienMotDePasse": "Huidig wachtwoord",
+    "nouveauMotDePasse": "Nieuw wachtwoord",
+    "changerMotDePasse": "Wachtwoord wijzigen",
+    "motDePasseChange": "Wachtwoord gewijzigd.",
+    "desinscription": "Mijn account verwijderen",
+    "desinscriptionExplication": "Conform de AVG worden uw persoonsgegevens geanonimiseerd en uw favorieten verwijderd. De historiek van uw afspraken en betalingen blijft zonder identiteit bewaard (boekhoudkundige verplichtingen).",
+    "supprimerCompte": "Mijn account definitief verwijderen",
+    "confirmerDesinscription": "Het verwijderen van uw account bevestigen? Dit kan niet ongedaan worden gemaakt."
+  }
 }

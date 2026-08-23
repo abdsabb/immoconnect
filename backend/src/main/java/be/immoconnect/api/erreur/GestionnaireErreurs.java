@@ -1,12 +1,14 @@
 package be.immoconnect.api.erreur;
 
 import be.immoconnect.entite.RendezVous.TransitionInterditeException;
+import be.immoconnect.service.OperationInterditeException;
 import be.immoconnect.service.RessourceIntrouvableException;
 import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,6 +30,11 @@ public class GestionnaireErreurs {
         return probleme(HttpStatus.NOT_FOUND, "Ressource introuvable", e.getMessage(), "introuvable");
     }
 
+    @ExceptionHandler(OperationInterditeException.class)
+    ProblemDetail interdit(OperationInterditeException e) {
+        return probleme(HttpStatus.FORBIDDEN, "Opération interdite", e.getMessage(), "interdit");
+    }
+
     @ExceptionHandler({TransitionInterditeException.class, IllegalStateException.class})
     ProblemDetail conflit(RuntimeException e) {
         return probleme(HttpStatus.CONFLICT, "Conflit d'état", e.getMessage(), "conflit-etat");
@@ -37,6 +44,12 @@ public class GestionnaireErreurs {
     @ExceptionHandler(AuthenticationException.class)
     ProblemDetail nonAuthentifie(AuthenticationException e) {
         return probleme(HttpStatus.UNAUTHORIZED, "Non authentifié", "Identifiants invalides", "non-authentifie");
+    }
+
+    /** Corps JSON absent, mal formé ou mal encodé : 400 sans aucun détail technique (livrable 16 §1). */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    ProblemDetail corpsIllisible(HttpMessageNotReadableException e) {
+        return probleme(HttpStatus.BAD_REQUEST, "Requête invalide", "Le corps de la requête est illisible ou mal formé (JSON UTF-8 attendu)", "requete-invalide");
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

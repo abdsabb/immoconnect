@@ -52,7 +52,29 @@ cd frontend && npm install && npm run dev
 
 Tests backend (nécessitent Docker, un MySQL 8.4 jetable est lancé par Testcontainers) : `cd backend && ./mvnw verify`.
 
-Comptes de test : tous les mots de passe sont `password` (hachés bcrypt en base).
+> Dépannage sans Docker : le profil par défaut fonctionne aussi avec le MySQL/MariaDB de XAMPP
+> (base `immoconnect`, utilisateur `immo` / `immo`). La référence reste MySQL 8.4.
+
+### Comptes de test (mot de passe : `password` pour tous, hachés bcrypt en base)
+
+| Rôle | E-mail |
+|---|---|
+| Membre | alice.benali@mail.be |
+| Agent immobilier | sarah.dubois@mail.be |
+| Administrateur | david.moreau@mail.be |
+
+### API disponible (version 0.1.0-alpha)
+
+| Méthode | Endpoint | Accès |
+|---|---|---|
+| GET | `/api/v1/biens` — recherche multicritères paginée (ville, catégorie, prix, chambres, superficie, tri) | public |
+| GET | `/api/v1/biens/{id}` — détail, photos, agent (adresse exacte masquée) | public |
+| GET | `/api/v1/traductions/{fr\|nl\|en}` — dictionnaire d'interface | public |
+| POST | `/api/v1/auth/register` · `/api/v1/auth/login` — inscription, jeton JWT | public |
+| GET / PATCH / DELETE | `/api/v1/auth/me` — profil, modification, désinscription (soft delete RA11) | JWT |
+| PUT | `/api/v1/auth/me/mot-de-passe` | JWT |
+
+Documentation interactive : `/swagger-ui.html` · erreurs au format problem+json (RFC 7807).
 
 ## Branches, commits et releases
 
