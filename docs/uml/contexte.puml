@@ -1,0 +1,33 @@
+@startuml contexte
+title Diagramme de contexte — ImmoConnect
+skinparam shadowing false
+skinparam dpi 220
+skinparam defaultFontName Arial
+skinparam actorStyle awesome
+skinparam rectangle {
+  BackgroundColor #F8FAFC
+  BorderColor #1B3A4B
+}
+
+actor "Visiteur" as V
+actor "Membre / Client" as M
+actor "Agent immobilier" as AG
+actor "Administrateur" as AD
+
+rectangle "<b>ImmoConnect</b>\n«système étudié»\nPlateforme web d'agence immobilière" as SYS
+
+rectangle "Stripe\n(paiement)\n«système externe»" as STRIPE
+rectangle "OpenStreetMap\n(cartographie)\n«système externe»" as OSM
+rectangle "Serveur e-mail\n(SMTP)\n«système externe»" as SMTP
+rectangle "API RESTful\n(consommateurs)\n«système externe»" as API
+
+V -down- SYS
+M -down- SYS
+AG -down- SYS
+AD -down- SYS
+
+SYS -down- STRIPE
+SYS -down- OSM
+SYS -down- SMTP
+SYS -down- API
+@enduml

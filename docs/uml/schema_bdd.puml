@@ -1,0 +1,206 @@
+@startuml schema_bdd
+title Schéma de base de données — ImmoConnect (MySQL, 17 tables)
+skinparam shadowing false
+skinparam dpi 220
+skinparam defaultFontName Arial
+skinparam linetype ortho
+hide circle
+hide empty methods
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #1B3A4B
+}
+
+entity utilisateur {
+  * id : INT <<PK>>
+  --
+  * nom : VARCHAR(80)
+  * prenom : VARCHAR(80)
+  * email : VARCHAR(190) <<UQ>>
+  * mot_de_passe : VARCHAR(255) «bcrypt»
+  * langue_id : INT <<FK>>
+  o photo_url : VARCHAR(255)
+  * date_inscription : DATE
+  * role : ENUM
+}
+
+entity membre {
+  * utilisateur_id : INT <<PK, FK>>
+  --
+  o telephone : VARCHAR(20)
+}
+
+entity agent_immobilier {
+  * utilisateur_id : INT <<PK, FK>>
+  --
+  * matricule : VARCHAR(20) <<UQ>>
+  * telephone_pro : VARCHAR(20)
+}
+
+entity administrateur {
+  * utilisateur_id : INT <<PK, FK>>
+  --
+  * niveau_acces : TINYINT
+}
+
+entity langue {
+  * id : INT <<PK>>
+  --
+  * code : CHAR(2) <<UQ>>
+  * nom : VARCHAR(40)
+}
+
+entity traduction {
+  * id : INT <<PK>>
+  --
+  * langue_id : INT <<FK>>
+  * cle : VARCHAR(120)
+  * valeur : TEXT
+}
+
+entity journal_audit {
+  * id : INT <<PK>>
+  --
+  * utilisateur_id : INT <<FK>>
+  * action : VARCHAR(60)
+  * entite : VARCHAR(60)
+  * horodatage : DATETIME
+  * ip : VARCHAR(45)
+}
+
+entity categorie {
+  * id : INT <<PK>>
+  --
+  * nom : VARCHAR(60) <<UQ>>
+  o description : TEXT
+}
+
+entity bien {
+  * id : INT <<PK>>
+  --
+  * agent_id : INT <<FK>>
+  * categorie_id : INT <<FK>>
+  * titre : VARCHAR(150)
+  * description : TEXT
+  * prix : DECIMAL(12,2)
+  * superficie : DECIMAL(8,2)
+  * nb_chambres : TINYINT
+  * adresse : VARCHAR(150)
+  * ville : VARCHAR(80)
+  * code_postal : VARCHAR(10)
+  * latitude : DECIMAL(9,6)
+  * longitude : DECIMAL(9,6)
+  * statut : ENUM
+  * publie_le : DATE
+}
+
+entity photo {
+  * id : INT <<PK>>
+  --
+  * bien_id : INT <<FK, cascade>>
+  * url : VARCHAR(255)
+  * ordre : TINYINT
+  o legende : VARCHAR(150)
+}
+
+entity favori {
+  * membre_id : INT <<PK, FK>>
+  * bien_id : INT <<PK, FK>>
+  --
+  * date_ajout : DATETIME
+}
+
+entity message {
+  * id : INT <<PK>>
+  --
+  * membre_id : INT <<FK>>
+  * agent_id : INT <<FK>>
+  * contenu : TEXT
+  * envoye_le : DATETIME
+  * lu : BOOLEAN
+}
+
+entity rendez_vous {
+  * id : INT <<PK>>
+  --
+  * membre_id : INT <<FK>>
+  * agent_id : INT <<FK>>
+  * bien_id : INT <<FK>>
+  * date_heure : DATETIME
+  * statut : ENUM
+  o motif : VARCHAR(255)
+}
+
+entity paiement {
+  * id : INT <<PK>>
+  --
+  * rendez_vous_id : INT <<FK, UQ>>
+  * membre_id : INT <<FK>>
+  * stripe_payment_intent_id : VARCHAR(120) <<UQ>>
+  * montant : DECIMAL(8,2)
+  * statut : ENUM
+  o paye_le : DATETIME
+}
+
+entity article {
+  * id : INT <<PK>>
+  --
+  * administrateur_id : INT <<FK>>
+  * categorie_article_id : INT <<FK>>
+  * titre : VARCHAR(150)
+  * contenu : TEXT
+  * statut : ENUM
+  o publie_le : DATE
+}
+
+entity categorie_article {
+  * id : INT <<PK>>
+  --
+  * nom : VARCHAR(60) <<UQ>>
+}
+
+entity cle_api {
+  * id : INT <<PK>>
+  --
+  * administrateur_id : INT <<FK>>
+  * cle : VARCHAR(64) <<UQ>>
+  * cree_le : DATE
+  * active : BOOLEAN
+}
+
+' — Héritage (spécialisation 1-1)
+utilisateur ||--o| membre
+utilisateur ||--o| agent_immobilier
+utilisateur ||--o| administrateur
+
+' — Transversal
+langue ||--o{ utilisateur
+langue ||--o{ traduction
+utilisateur ||--o{ journal_audit
+
+' — Biens
+agent_immobilier ||--o{ bien
+categorie ||--o{ bien
+bien ||--|{ photo
+membre ||--o{ favori
+bien ||--o{ favori
+
+' — Interactions
+membre ||--o{ message
+agent_immobilier ||--o{ message
+membre ||--o{ rendez_vous
+agent_immobilier ||--o{ rendez_vous
+bien ||--o{ rendez_vous
+rendez_vous ||--o| paiement
+membre ||--o{ paiement
+
+' — Blog et API
+administrateur ||--o{ article
+categorie_article ||--o{ article
+administrateur ||--o{ cle_api
+
+legend bottom
+  Notation « patte d'oie » — RA6 : un bien publié possède au moins une photo (contrainte applicative).
+  Lien rendez_vous—paiement [1-0..1] : clé étrangère unique, au plus un paiement par rendez-vous.
+endlegend
+@enduml

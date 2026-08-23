@@ -1,0 +1,38 @@
+@startuml etat_transition
+title Diagramme d'état-transition — objet RendezVous
+skinparam shadowing false
+skinparam dpi 220
+skinparam defaultFontName Arial
+skinparam state {
+  BackgroundColor #F8FAFC
+  BorderColor #1B3A4B
+}
+
+state Demande
+state Confirme
+state Annule
+state Honore
+
+Demande : le membre a réservé,
+Demande : l'agent doit se prononcer
+Confirme : la visite est planifiée
+Annule : la visite n'aura pas lieu
+Honore : la visite a eu lieu
+
+[*] -down-> Demande : créneau standard (A1)\n/ notifier l'agent
+[*] -down-> Confirme : créneau premium\n[paiement réussi]\n/ enregistrer le\nPaiement + e-mail
+
+Demande -down-> Confirme : confirmation par l'agent\n/ e-mail au membre
+Demande -down-> Annule : refus de l'agent ou\nannulation du membre
+
+Confirme -down-> Honore : visite effectuée\n[dateHeure\npassée] (RA2)
+Confirme -down-> Annule : annulation\n[avant dateHeure] (RA2)\n/ remboursement si\npremium payé (RA8)
+
+Annule -down-> [*]
+Honore -down-> [*]
+
+legend bottom
+  RA1 — seules les transitions de ce diagramme sont acceptées :
+  un rendez-vous honoré ne peut plus être annulé, quel que soit le rôle.
+endlegend
+@enduml
