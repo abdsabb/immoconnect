@@ -1,0 +1,16 @@
+# Profil DEV — MySQL 8.4 du docker compose (docker compose up -d db)
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/immoconnect?serverTimezone=Europe/Brussels&characterEncoding=UTF-8
+    username: immo
+    password: immo
+  jpa:
+    show-sql: true
+  mail:
+    host: localhost
+    port: 1025                    # Mailpit / MailHog en dev (aucun vrai e-mail envoyé)
+
+logging:
+  level:
+    be.immoconnect: DEBUG
+    org.flywaydb: INFO
