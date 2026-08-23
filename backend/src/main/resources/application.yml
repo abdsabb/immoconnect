@@ -15,9 +15,7 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: false
   jackson:
-    time-zone: Europe/Brussels
-    serialization:
-      write-dates-as-timestamps: false
+    time-zone: Europe/Brussels   # Jackson 3 (Spring Boot 4) sérialise déjà les dates en ISO-8601
 
 server:
   port: 8080
