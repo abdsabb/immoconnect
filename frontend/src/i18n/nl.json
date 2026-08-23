@@ -1,10 +1,43 @@
 {
   "nav": { "accueil": "Home", "biens": "Panden", "blog": "Blog", "connexion": "Aanmelden", "inscription": "Registreren" },
+  "commun": { "chargement": "Laden…" },
   "accueil": {
     "titre": "Vind uw volgende thuis in Brussel",
     "sousTitre": "Appartementen, huizen en handelspanden geselecteerd door onze makelaars",
     "rechercher": "Een pand zoeken"
   },
-  "biens": { "titre": "Onze panden", "vide": "Geen enkel pand komt overeen met uw zoekopdracht." },
+  "biens": {
+    "titre": "Onze panden",
+    "filtres": "Zoekfilters",
+    "ville": "Stad of gemeente",
+    "prixMax": "Maximumbudget (€)",
+    "chambresMin": "Minimum slaapkamers",
+    "triRecent": "Meest recent",
+    "triPrixAsc": "Prijs oplopend",
+    "triPrixDesc": "Prijs aflopend",
+    "triSurface": "Oppervlakte aflopend",
+    "resultats_one": "{{count}} pand gevonden",
+    "resultats_other": "{{count}} panden gevonden",
+    "vide": "Geen enkel pand komt overeen met uw zoekopdracht.",
+    "erreur": "De panden kunnen momenteel niet worden geladen."
+  },
+  "bien": {
+    "chambres_one": "slaapkamer",
+    "chambres_other": "slaapkamers",
+    "chambresLabel": "Slaapkamers",
+    "superficie": "Oppervlakte",
+    "statutLabel": "Status",
+    "publieLe": "Gepubliceerd op",
+    "description": "Beschrijving",
+    "localisation": "Ligging",
+    "adresseApres": "Het exacte adres wordt meegedeeld na het maken van een afspraak.",
+    "galerie": "Fotogalerij",
+    "prendreRdv": "Afspraak maken",
+    "envoyerMessage": "Bericht sturen",
+    "agent": "Uw makelaar",
+    "introuvable": "Dit pand bestaat niet of is niet meer beschikbaar.",
+    "retour": "Terug naar de panden"
+  },
+  "statut": { "disponible": "Beschikbaar", "sous_option": "Onder optie", "vendu": "Verkocht", "loue": "Verhuurd", "archive": "Gearchiveerd" },
   "pied": { "mentions": "Wettelijke vermeldingen", "confidentialite": "Privacy", "osm": "© OpenStreetMap-bijdragers" }
 }

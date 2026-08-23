@@ -1,10 +1,43 @@
 {
   "nav": { "accueil": "Home", "biens": "Properties", "blog": "Blog", "connexion": "Log in", "inscription": "Sign up" },
+  "commun": { "chargement": "Loading…" },
   "accueil": {
     "titre": "Find your next home in Brussels",
     "sousTitre": "Flats, houses and commercial spaces hand-picked by our agents",
     "rechercher": "Search a property"
   },
-  "biens": { "titre": "Our properties", "vide": "No property matches your search." },
+  "biens": {
+    "titre": "Our properties",
+    "filtres": "Search filters",
+    "ville": "City or municipality",
+    "prixMax": "Maximum budget (€)",
+    "chambresMin": "Minimum bedrooms",
+    "triRecent": "Most recent",
+    "triPrixAsc": "Price ascending",
+    "triPrixDesc": "Price descending",
+    "triSurface": "Largest surface",
+    "resultats_one": "{{count}} property found",
+    "resultats_other": "{{count}} properties found",
+    "vide": "No property matches your search.",
+    "erreur": "Properties cannot be loaded right now."
+  },
+  "bien": {
+    "chambres_one": "bedroom",
+    "chambres_other": "bedrooms",
+    "chambresLabel": "Bedrooms",
+    "superficie": "Surface",
+    "statutLabel": "Status",
+    "publieLe": "Published on",
+    "description": "Description",
+    "localisation": "Location",
+    "adresseApres": "The exact address is shared once a visit is booked.",
+    "galerie": "Photo gallery",
+    "prendreRdv": "Book a visit",
+    "envoyerMessage": "Send a message",
+    "agent": "Your agent",
+    "introuvable": "This property does not exist or is no longer available.",
+    "retour": "Back to properties"
+  },
+  "statut": { "disponible": "Available", "sous_option": "Under option", "vendu": "Sold", "loue": "Rented", "archive": "Archived" },
   "pied": { "mentions": "Legal notice", "confidentialite": "Privacy", "osm": "© OpenStreetMap contributors" }
 }
