@@ -10,6 +10,7 @@ spring:
       ddl-auto: validate          # le schéma est géré par Flyway, jamais par Hibernate
     properties:
       hibernate.jdbc.time_zone: Europe/Brussels
+      hibernate.default_batch_fetch_size: 50   # charge agents/catégories/photos par lots (anti N+1)
   flyway:
     enabled: true
     locations: classpath:db/migration
