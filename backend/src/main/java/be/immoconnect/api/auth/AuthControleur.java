@@ -1,5 +1,7 @@
 package be.immoconnect.api.auth;
 
+import static be.immoconnect.api.RequeteHttp.adresseIp;
+
 import be.immoconnect.service.ServiceAuthentification;
 import be.immoconnect.service.ServiceProfil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -79,11 +81,5 @@ public class AuthControleur {
                     + "rendez-vous, paiements et journal d'audit conservés sans identité.")
     public void desinscrire(@AuthenticationPrincipal Jwt jeton, HttpServletRequest http) {
         profil.desinscrire(Integer.valueOf(jeton.getSubject()), adresseIp(http));
-    }
-
-    /** Adresse IP réelle, en tenant compte du proxy Nginx (X-Forwarded-For) — pour le journal d'audit. */
-    private static String adresseIp(HttpServletRequest http) {
-        String transmise = http.getHeader("X-Forwarded-For");
-        return transmise != null && !transmise.isBlank() ? transmise.split(",")[0].trim() : http.getRemoteAddr();
     }
 }
