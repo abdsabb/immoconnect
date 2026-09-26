@@ -1,0 +1,9 @@
+package be.immoconnect.service;
+
+/** Le bien n'accepte plus de rendez-vous : sous option, vendu ou loué (réponse 409, règle RA5, cas d'erreur E3). */
+public class BienIndisponibleException extends IllegalStateException {
+
+    public BienIndisponibleException(Integer bienId) {
+        super("Le bien " + bienId + " n'est plus disponible à la visite");
+    }
+}
