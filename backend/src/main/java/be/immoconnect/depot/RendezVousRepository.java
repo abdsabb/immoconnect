@@ -28,6 +28,16 @@ public interface RendezVousRepository extends JpaRepository<RendezVous, Integer>
 
     boolean existsByMembreIdAndDateHeureAndStatutIn(Integer membreId, LocalDateTime dateHeure, Collection<StatutRendezVous> statuts);
 
+    boolean existsByBienIdAndStatutInAndDateHeureAfter(Integer bienId, Collection<StatutRendezVous> statuts, LocalDateTime apres);
+
+    /** Visites à venir par bien et par statut, pour un agent : lignes [identifiant du bien, statut, nombre]. */
+    @Query("""
+            select r.bien.id, r.statut, count(r) from RendezVous r
+            where r.agent.id = :agentId and r.statut in :statuts and r.dateHeure > :apres
+            group by r.bien.id, r.statut
+            """)
+    List<Object[]> compterAVenirParBien(Integer agentId, Collection<StatutRendezVous> statuts, LocalDateTime apres);
+
     /** Créneaux déjà pris dans l'agenda d'un agent sur une période. */
     @Query("""
             select r.dateHeure from RendezVous r

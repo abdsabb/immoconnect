@@ -48,9 +48,17 @@ public class ConfigurationSecurite {
                 .requestMatchers(HttpMethod.GET, "/api/v1/paiements/config").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/webhooks/stripe").permitAll()
                 .requestMatchers("/api/v1/paiements/**").hasRole("MEMBRE")
+                // Back-office de l'agent : ses annonces et leurs photos. Toute écriture sur un bien est le fait
+                // d'un agent — les favoris, déclarés plus haut, sont déjà attribués au membre.
+                .requestMatchers("/api/v1/agents/moi/**").hasRole("AGENT")
+                .requestMatchers(HttpMethod.POST, "/api/v1/biens", "/api/v1/biens/**").hasRole("AGENT")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/biens/**").hasRole("AGENT")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/biens/**").hasRole("AGENT")
+                // Back-office de l'administrateur
+                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 // Niveau d'accès « public » (livrable 15, §4) : consultation et authentification
                 .requestMatchers(HttpMethod.GET, "/api/v1/biens/**", "/api/v1/articles/**",
-                        "/api/v1/traductions/**").permitAll()
+                        "/api/v1/traductions/**", "/api/v1/categories", "/storage/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login").permitAll()
                 // Tout le reste exige un jeton valide
                 .anyRequest().authenticated())

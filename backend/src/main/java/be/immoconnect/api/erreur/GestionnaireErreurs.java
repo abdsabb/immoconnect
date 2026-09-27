@@ -17,6 +17,10 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -77,6 +81,18 @@ public class GestionnaireErreurs {
     @ExceptionHandler(SignatureInvalideException.class)
     ProblemDetail signatureInvalide(SignatureInvalideException e) {
         return probleme(HttpStatus.BAD_REQUEST, "Requête invalide", e.getMessage(), "requete-invalide");
+    }
+
+    /** Fichier téléversé au-delà de la limite (5 Mo par photo). */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    ProblemDetail fichierTropVolumineux(MaxUploadSizeExceededException e) {
+        return probleme(HttpStatus.CONTENT_TOO_LARGE, "Fichier trop volumineux", "Une photo pèse 5 Mo au plus", "fichier-trop-volumineux");
+    }
+
+    /** Requête multipart sans le fichier attendu, ou qui n'est pas multipart. */
+    @ExceptionHandler({MissingServletRequestPartException.class, MissingServletRequestParameterException.class, MultipartException.class})
+    ProblemDetail fichierManquant(Exception e) {
+        return probleme(HttpStatus.BAD_REQUEST, "Requête invalide", "Un élément attendu manque à la requête", "requete-invalide");
     }
 
     /** Paramètre d'URL du mauvais type (identifiant non numérique, date mal formée) : 400, sans détail technique. */
