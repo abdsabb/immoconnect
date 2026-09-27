@@ -5,6 +5,7 @@ import static be.immoconnect.api.RequeteHttp.adresseIp;
 import be.immoconnect.api.PageReponse;
 import be.immoconnect.api.categorie.CategorieControleur.CategorieResume;
 import be.immoconnect.service.ServiceCategories;
+import be.immoconnect.service.ServiceClesApi;
 import be.immoconnect.service.ServiceComptes;
 import be.immoconnect.service.ServiceJournal;
 import be.immoconnect.service.ServiceStatistiques;
@@ -50,9 +51,11 @@ public class AdministrationControleur {
     private final ServiceJournal journal;
     private final ServiceStatistiques statistiques;
     private final ServiceCategories categories;
+    private final ServiceClesApi clesApi;
 
     public AdministrationControleur(ServiceComptes comptes, ServiceJournal journal, ServiceStatistiques statistiques,
-                                    ServiceCategories categories) {
+                                    ServiceCategories categories, ServiceClesApi clesApi) {
+        this.clesApi = clesApi;
         this.comptes = comptes;
         this.journal = journal;
         this.statistiques = statistiques;
@@ -119,6 +122,27 @@ public class AdministrationControleur {
     @Operation(summary = "Statistiques du site", description = "Biens, comptes, rendez-vous, revenus des créneaux premium, prix par commune.")
     public Statistiques statistiques(@AuthenticationPrincipal Jwt jeton) {
         return statistiques.calculer(identifiant(jeton));
+    }
+
+    // ---------- A7 — Clés API ----------
+
+    @GetMapping("/cles-api")
+    @Operation(summary = "Clés API délivrées", description = "Libellé, date de création, état et dernière utilisation. La clé elle-même n'est jamais renvoyée.")
+    public List<CleApiResume> clesApi(@AuthenticationPrincipal Jwt jeton) {
+        return clesApi.lister(identifiant(jeton));
+    }
+
+    @PostMapping("/cles-api")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Générer une clé API", description = "La clé figure dans cette réponse et nulle part ailleurs : elle ne pourra plus être affichée.")
+    public CleApiResume genererCleApi(@AuthenticationPrincipal Jwt jeton, @Valid @RequestBody RequeteCleApi requete, HttpServletRequest http) {
+        return clesApi.generer(identifiant(jeton), requete, adresseIp(http));
+    }
+
+    @PatchMapping("/cles-api/{id}/revoquer")
+    @Operation(summary = "Révoquer une clé API", description = "Effet immédiat et définitif (RA12).")
+    public CleApiResume revoquerCleApi(@AuthenticationPrincipal Jwt jeton, @PathVariable Integer id, HttpServletRequest http) {
+        return clesApi.revoquer(identifiant(jeton), id, adresseIp(http));
     }
 
     // ---------- A3 — Catégories de biens ----------

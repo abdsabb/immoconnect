@@ -46,6 +46,8 @@ management:
 
 immoconnect:
   api-version: v1
+  api:
+    appels-par-minute: 60           # quota de l'API ouverte, par clé (au-delà : 429)
   creneau-premium:
     prix: 15.00
   courriel:
