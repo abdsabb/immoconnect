@@ -8,7 +8,8 @@
     "profil": "Mon espace",
     "visites": "Mes visites",
     "agenda": "Agenda",
-    "deconnexion": "Se déconnecter"
+    "deconnexion": "Se déconnecter",
+    "favoris": "Favoris"
   },
   "commun": {
     "chargement": "Chargement…",
@@ -164,9 +165,18 @@
     "confirmerAnnulation": "Annuler ce rendez-vous ?",
     "confirmerAnnulationPayee": "Annuler ce rendez-vous ? Le paiement du créneau premium sera remboursé."
   },
+  "favori": {
+    "titre": "Mes favoris",
+    "ajouter": "Ajouter aux favoris",
+    "retirer": "Retirer des favoris",
+    "reserveAuxMembres": "Les favoris sont réservés aux membres.",
+    "vide": "Vous n'avez pas encore de favori. Ajoutez un bien avec le cœur de sa fiche.",
+    "nombre_one": "{{count}} bien en favori",
+    "nombre_other": "{{count}} biens en favori"
+  },
   "erreur": {
     "creneau-indisponible": "Ce créneau vient d'être réservé. Choisissez-en un autre.",
-    "bien-indisponible": "Ce bien n'est plus ouvert aux visites.",
+    "bien-indisponible": "Ce bien n'est plus disponible.",
     "paiement-indisponible": "Le service de paiement est momentanément indisponible. Réessayez dans un instant.",
     "conflit-etat": "Cette action n'est plus possible pour ce rendez-vous.",
     "interdit": "Vous n'avez pas le droit d'effectuer cette action."

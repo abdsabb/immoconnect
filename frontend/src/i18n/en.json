@@ -8,7 +8,8 @@
     "profil": "My account",
     "visites": "My visits",
     "agenda": "Schedule",
-    "deconnexion": "Log out"
+    "deconnexion": "Log out",
+    "favoris": "Favourites"
   },
   "commun": {
     "chargement": "Loading…",
@@ -164,9 +165,18 @@
     "confirmerAnnulation": "Cancel this visit?",
     "confirmerAnnulationPayee": "Cancel this visit? The premium slot payment will be refunded."
   },
+  "favori": {
+    "titre": "My favourites",
+    "ajouter": "Add to favourites",
+    "retirer": "Remove from favourites",
+    "reserveAuxMembres": "Only members can save favourites.",
+    "vide": "You have no favourite yet. Add a property with the heart on its page.",
+    "nombre_one": "{{count}} favourite property",
+    "nombre_other": "{{count}} favourite properties"
+  },
   "erreur": {
     "creneau-indisponible": "This slot has just been booked. Please choose another one.",
-    "bien-indisponible": "This property is no longer open for visits.",
+    "bien-indisponible": "This property is no longer available.",
     "paiement-indisponible": "The payment service is temporarily unavailable. Please try again shortly.",
     "conflit-etat": "This action is no longer possible for this visit.",
     "interdit": "You are not allowed to perform this action."

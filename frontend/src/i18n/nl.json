@@ -8,7 +8,8 @@
     "profil": "Mijn ruimte",
     "visites": "Mijn bezoeken",
     "agenda": "Agenda",
-    "deconnexion": "Afmelden"
+    "deconnexion": "Afmelden",
+    "favoris": "Favorieten"
   },
   "commun": {
     "chargement": "Laden…",
@@ -164,9 +165,18 @@
     "confirmerAnnulation": "Deze afspraak annuleren?",
     "confirmerAnnulationPayee": "Deze afspraak annuleren? De betaling van het premium tijdslot wordt terugbetaald."
   },
+  "favori": {
+    "titre": "Mijn favorieten",
+    "ajouter": "Toevoegen aan favorieten",
+    "retirer": "Verwijderen uit favorieten",
+    "reserveAuxMembres": "Alleen leden kunnen favorieten bewaren.",
+    "vide": "U hebt nog geen favorieten. Voeg een pand toe met het hartje op zijn pagina.",
+    "nombre_one": "{{count}} pand in favorieten",
+    "nombre_other": "{{count}} panden in favorieten"
+  },
   "erreur": {
     "creneau-indisponible": "Dit tijdslot is zopas gereserveerd. Kies een ander.",
-    "bien-indisponible": "Dit pand kan niet meer worden bezocht.",
+    "bien-indisponible": "Dit pand is niet meer beschikbaar.",
     "paiement-indisponible": "De betaaldienst is tijdelijk niet beschikbaar. Probeer het zo opnieuw.",
     "conflit-etat": "Deze actie is niet meer mogelijk voor deze afspraak.",
     "interdit": "U mag deze actie niet uitvoeren."

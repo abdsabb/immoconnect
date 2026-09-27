@@ -25,6 +25,7 @@ export default function Layout() {
             <NavLink to="/blog" className={lien}>{t('nav.blog')}</NavLink>
             {estConnecte ? (
               <>
+                {utilisateur?.role === 'membre' && <NavLink to="/favoris" className={lien}>{t('nav.favoris')}</NavLink>}
                 {utilisateur?.role !== 'admin' && (
                   <NavLink to="/rendez-vous" className={lien}>{t(utilisateur?.role === 'agent' ? 'nav.agenda' : 'nav.visites')}</NavLink>
                 )}

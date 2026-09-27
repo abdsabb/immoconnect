@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { chargerBien, formatPrix } from '../services/biens'
 import { Photo } from '../components/CarteBien'
 import CarteOSM from '../components/CarteOSM'
+import BoutonFavori from '../components/BoutonFavori'
 
 // Fiche d'un bien (gabarit « article », maquette Figure 15) : galerie, caractéristiques,
 // localisation OSM et panneau d'action persistant « Prendre rendez-vous » / « Envoyer un message ».
@@ -47,9 +48,12 @@ export default function BienDetail() {
             )}
           </div>
 
-          <div>
-            <h1 className="text-3xl font-bold text-nuit">{bien.titre}</h1>
-            <p className="text-gray-600">{bien.categorie.nom} · {bien.codePostal} {bien.ville}</p>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-nuit">{bien.titre}</h1>
+              <p className="text-gray-600">{bien.categorie.nom} · {bien.codePostal} {bien.ville}</p>
+            </div>
+            <BoutonFavori bien={bien} className="shrink-0 border border-gray-200" />
           </div>
 
           <dl className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-perle rounded-xl p-4">
