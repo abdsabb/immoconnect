@@ -8,6 +8,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import be.immoconnect.TestcontainersConfiguration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +126,37 @@ class RendezVousControleurTest {
         assertThat(creneauxLibres(membre)).contains(creneau);
     }
 
+    /** A2 en conditions réelles : six membres visent le même créneau au même instant, un seul l'obtient. */
+    @Test
+    void deSixReservationsSimultaneesUneSeuleAboutit() throws Exception {
+        String creneau = premierCreneau(connecter(MEMBRE), "standard");
+        List<String> jetons = new ArrayList<>();
+        for (int membre = 10; membre < 16; membre++) {
+            jetons.add(connecter(emailDuMembre(membre)));
+        }
+
+        CountDownLatch depart = new CountDownLatch(1);
+        List<Future<Integer>> reponses = new ArrayList<>();
+        try (ExecutorService fils = Executors.newFixedThreadPool(jetons.size())) {
+            for (String jeton : jetons) {
+                reponses.add(fils.submit(() -> {
+                    depart.await();
+                    return reserver(jeton, BIEN, creneau, null).andReturn().getResponse().getStatus();
+                }));
+            }
+            depart.countDown();
+        }
+
+        List<Integer> statuts = new ArrayList<>();
+        for (Future<Integer> reponse : reponses) {
+            statuts.add(reponse.get());
+        }
+        assertThat(statuts).containsOnly(201, 409);
+        assertThat(statuts).filteredOn(statut -> statut == 201).hasSize(1);
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM rendez_vous WHERE agent_id = ? AND date_heure = ? "
+                + "AND statut IN ('demande', 'confirme')", Integer.class, AGENTE, creneau.replace('T', ' '))).isEqualTo(1);
+    }
+
     @Test
     void unMembreNAnnulePasLeRendezVousDUnAutre() throws Exception {
         String membre = connecter(MEMBRE);
@@ -191,7 +228,7 @@ class RendezVousControleurTest {
         throw new AssertionError("Aucun créneau " + type + " libre");
     }
 
-    private java.util.List<String> creneauxLibres(String jeton) throws Exception {
+    private List<String> creneauxLibres(String jeton) throws Exception {
         return creneaux(jeton).valueStream().map(c -> c.get("dateHeure").asString()).toList();
     }
 

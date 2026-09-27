@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -86,8 +87,12 @@ public class ServiceRendezVous {
     /**
      * Réserve un créneau standard : le rendez-vous naît au statut « demande » et attend la
      * confirmation de l'agent (scénario alternatif A1).
+     * <p>
+     * Isolation READ COMMITTED : avec l'isolation par défaut de MySQL (REPEATABLE READ), la transaction
+     * qui a attendu le verrou de l'agenda relirait son instantané de départ et ne verrait pas le
+     * rendez-vous que la transaction précédente vient de valider — le créneau serait attribué deux fois.
      */
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public RendezVousResume reserver(Integer membreId, RequeteRendezVous requete, String ip) {
         Membre membre = membres.findById(membreId)
                 .orElseThrow(() -> new OperationInterditeException("Seul un membre peut prendre rendez-vous"));
