@@ -28,6 +28,10 @@ tags:
   - name: Blog
   - name: Traductions
   - name: Open Data
+  - name: Administration
+    description: >
+      Back-office de l'administrateur. Rôle « admin » exigé, puis niveau d'accès : éditeur (1),
+      gestionnaire (2) ou super-administrateur (3).
 security:
   - bearerAuth: []
 paths:
@@ -65,16 +69,6 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/JetonReponse' }
         '401': { $ref: '#/components/responses/ErreurAuthentification' }
-  /auth/refresh:
-    post:
-      tags: [Authentification]
-      summary: Renouveler le jeton d'accès
-      responses:
-        '200':
-          description: Nouveau jeton
-          content:
-            application/json:
-              schema: { $ref: '#/components/schemas/JetonReponse' }
   /auth/me:
     get:
       tags: [Authentification]
@@ -109,7 +103,10 @@ paths:
               schema: { $ref: '#/components/schemas/PageBiens' }
     post:
       tags: [Biens]
-      summary: Publier un bien (agent)
+      summary: Créer une annonce (agent)
+      description: >
+        L'annonce est créée hors ligne (statut « archive ») : elle ne se publie qu'une fois sa
+        première photo ajoutée (règle RA6). L'agent responsable est l'agent connecté.
       requestBody:
         required: true
         content:
@@ -117,10 +114,10 @@ paths:
             schema: { $ref: '#/components/schemas/BienCreation' }
       responses:
         '201':
-          description: Bien créé
+          description: Annonce créée
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Bien' }
+              schema: { $ref: '#/components/schemas/BienGestion' }
         '403': { $ref: '#/components/responses/ErreurDroits' }
         '422': { $ref: '#/components/responses/ErreurValidation' }
   /biens/{id}:
@@ -139,7 +136,10 @@ paths:
         '404': { $ref: '#/components/responses/ErreurIntrouvable' }
     put:
       tags: [Biens]
-      summary: Modifier un bien (agent responsable)
+      summary: Modifier une annonce et son statut (agent responsable)
+      description: >
+        Le champ « statut » est facultatif. Publier exige au moins une photo (RA6) ; vendu, loué ou
+        archivé est refusé tant que des visites sont prévues. L'annonce d'un autre agent renvoie 403.
       requestBody:
         required: true
         content:
@@ -147,43 +147,117 @@ paths:
             schema: { $ref: '#/components/schemas/BienCreation' }
       responses:
         '200':
-          description: Bien mis à jour
+          description: Annonce mise à jour
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Bien' }
+              schema: { $ref: '#/components/schemas/BienGestion' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+        '409': { $ref: '#/components/responses/ErreurConflit' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
     delete:
       tags: [Biens]
-      summary: Archiver un bien (agent responsable)
+      summary: Archiver une annonce (agent responsable)
+      description: Suppression logique — l'annonce quitte la recherche et reste dans l'historique du back-office.
       responses:
-        '204': { description: Bien archivé }
+        '204': { description: Annonce archivée }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+        '409': { $ref: '#/components/responses/ErreurConflit' }
   /biens/{id}/photos:
     parameters:
       - { name: id, in: path, required: true, schema: { type: integer } }
-    get:
-      tags: [Biens]
-      summary: Photos d'un bien
-      security: []
-      responses:
-        '200':
-          description: Liste ordonnée des photos
-          content:
-            application/json:
-              schema:
-                type: array
-                items: { $ref: '#/components/schemas/Photo' }
     post:
       tags: [Biens]
       summary: Ajouter une photo (agent responsable)
+      description: >
+        JPEG ou PNG, 5 Mo au plus, 400 pixels de côté au moins, 20 photos par annonce. Le type est
+        vérifié sur le contenu du fichier ; l'image est redimensionnée et ré-encodée en JPEG, ce
+        qui efface ses métadonnées.
       requestBody:
+        required: true
         content:
           multipart/form-data:
             schema:
               type: object
+              required: [fichier]
               properties:
                 fichier: { type: string, format: binary }
-                legende: { type: string }
+                legende: { type: string, maxLength: 150 }
       responses:
-        '201': { description: Photo ajoutée }
+        '201':
+          description: Photo ajoutée
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BienGestion' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+        '413': { description: Fichier de plus de 5 Mo }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+  /biens/{id}/photos/{photoId}:
+    delete:
+      tags: [Biens]
+      summary: Supprimer une photo (agent responsable)
+      description: La dernière photo d'une annonce en ligne ne se supprime pas (RA6).
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+        - { name: photoId, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Galerie mise à jour
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BienGestion' }
+        '409': { $ref: '#/components/responses/ErreurConflit' }
+  /biens/{id}/photos/{photoId}/couverture:
+    put:
+      tags: [Biens]
+      summary: Choisir la photo de couverture (agent responsable)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+        - { name: photoId, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Galerie réordonnée
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BienGestion' }
+  /agents/moi/biens:
+    get:
+      tags: [Biens]
+      summary: Mes annonces et leur tableau de bord (agent)
+      description: Toutes les annonces de l'agent, hors ligne comprises, avec favoris, demandes en attente et visites à venir.
+      responses:
+        '200':
+          description: Annonces de l'agent
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/BienGestion' }
+  /agents/moi/biens/{id}:
+    get:
+      tags: [Biens]
+      summary: Une de mes annonces, adresse exacte comprise (agent responsable)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: L'annonce
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BienGestion' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+  /categories:
+    get:
+      tags: [Biens]
+      summary: Catégories de biens
+      security: []
+      responses:
+        '200':
+          description: Catégories, par ordre alphabétique
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Categorie' }
   /biens/{id}/favori:
     parameters:
       - { name: id, in: path, required: true, schema: { type: integer } }
@@ -484,18 +558,35 @@ paths:
       parameters:
         - { name: categorieId, in: query, schema: { type: integer } }
         - { name: page, in: query, schema: { type: integer, default: 0 } }
+        - { name: taille, in: query, schema: { type: integer, default: 9, maximum: 50 } }
       responses:
         '200':
-          description: Articles
+          description: Page d'articles, du plus récent au plus ancien (le contenu complet n'est pas inclus)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageArticles' }
+  /articles/categories:
+    get:
+      tags: [Blog]
+      summary: Catégories du blog
+      security: []
+      responses:
+        '200':
+          description: Catégories éditoriales
           content:
             application/json:
               schema:
                 type: array
-                items: { $ref: '#/components/schemas/Article' }
+                items:
+                  type: object
+                  properties:
+                    id: { type: integer }
+                    nom: { type: string, example: Conseils achat }
   /articles/{id}:
     get:
       tags: [Blog]
       summary: Détail d'un article publié
+      description: Un brouillon ou un article archivé est introuvable pour le public (règle RA4).
       security: []
       parameters:
         - { name: id, in: path, required: true, schema: { type: integer } }
@@ -506,6 +597,330 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/Article' }
         '404': { $ref: '#/components/responses/ErreurIntrouvable' }
+  /admin/utilisateurs:
+    get:
+      tags: [Administration]
+      summary: Comptes de la plateforme (gestionnaire)
+      parameters:
+        - { name: role, in: query, schema: { type: string, enum: [membre, agent, admin] } }
+        - { name: recherche, in: query, description: Nom, prénom ou e-mail, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer, default: 0 } }
+        - { name: taille, in: query, schema: { type: integer, default: 20, maximum: 100 } }
+      responses:
+        '200':
+          description: Page de comptes
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageComptes' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+  /admin/agents:
+    post:
+      tags: [Administration]
+      summary: Ouvrir le compte d'un agent (gestionnaire)
+      description: Le matricule est attribué par le serveur ; l'agent change ensuite son mot de passe provisoire.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nom, prenom, email, telephonePro, motDePasse]
+              properties:
+                nom: { type: string, maxLength: 80 }
+                prenom: { type: string, maxLength: 80 }
+                email: { type: string, format: email }
+                telephonePro: { type: string, example: '+32 470 12 34 56' }
+                langue: { type: string, enum: [fr, nl, en], default: fr }
+                motDePasse: { type: string, format: password, minLength: 8 }
+      responses:
+        '201':
+          description: Compte créé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Compte' }
+        '409': { $ref: '#/components/responses/ErreurConflit' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+  /admin/utilisateurs/{id}/desactiver:
+    patch:
+      tags: [Administration]
+      summary: Désactiver un compte (gestionnaire)
+      description: >
+        Le compte ne peut plus se connecter ; son historique est conservé. Nul ne se désactive
+        lui-même, et seul un super-administrateur agit sur le compte d'un administrateur.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Compte désactivé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Compte' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+  /admin/utilisateurs/{id}/activer:
+    patch:
+      tags: [Administration]
+      summary: Réactiver un compte (gestionnaire)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Compte réactivé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Compte' }
+  /admin/journal:
+    get:
+      tags: [Administration]
+      summary: Journal d'audit (gestionnaire)
+      description: Du plus récent au plus ancien. Le journal se consulte ; aucune opération ne le modifie.
+      parameters:
+        - { name: action, in: query, schema: { type: string, example: connexion } }
+        - { name: utilisateurId, in: query, schema: { type: integer } }
+        - { name: du, in: query, schema: { type: string, format: date } }
+        - { name: au, in: query, schema: { type: string, format: date } }
+        - { name: page, in: query, schema: { type: integer, default: 0 } }
+        - { name: taille, in: query, schema: { type: integer, default: 50, maximum: 100 } }
+      responses:
+        '200':
+          description: Page de traces
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageTraces' }
+  /admin/journal/actions:
+    get:
+      tags: [Administration]
+      summary: Actions présentes dans le journal (gestionnaire)
+      responses:
+        '200':
+          description: Valeurs possibles du filtre « action »
+          content:
+            application/json:
+              schema: { type: array, items: { type: string } }
+  /admin/statistiques:
+    get:
+      tags: [Administration]
+      summary: Statistiques du site (gestionnaire)
+      responses:
+        '200':
+          description: Agrégats — biens, comptes, rendez-vous, revenus premium, prix par commune
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Statistiques' }
+  /admin/categories:
+    post:
+      tags: [Administration]
+      summary: Créer une catégorie de biens (éditeur)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CategorieRequete' }
+      responses:
+        '201':
+          description: Catégorie créée
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Categorie' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+  /admin/categories/{id}:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: integer } }
+    put:
+      tags: [Administration]
+      summary: Modifier une catégorie de biens (éditeur)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CategorieRequete' }
+      responses:
+        '200':
+          description: Catégorie mise à jour
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Categorie' }
+    delete:
+      tags: [Administration]
+      summary: Supprimer une catégorie de biens (éditeur)
+      description: Refusé (409) tant que des biens portent cette catégorie.
+      responses:
+        '204': { description: Catégorie supprimée }
+        '409': { $ref: '#/components/responses/ErreurConflit' }
+  /admin/articles:
+    get:
+      tags: [Administration]
+      summary: Tous les articles, brouillons compris (éditeur)
+      parameters:
+        - { name: statut, in: query, schema: { type: string, enum: [brouillon, publie, archive] } }
+        - { name: page, in: query, schema: { type: integer, default: 0 } }
+        - { name: taille, in: query, schema: { type: integer, default: 20, maximum: 50 } }
+      responses:
+        '200':
+          description: Page d'articles
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageArticles' }
+    post:
+      tags: [Administration]
+      summary: Rédiger un article (éditeur)
+      description: L'article est créé à l'état de brouillon, invisible du public.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ArticleRequete' }
+      responses:
+        '201':
+          description: Brouillon créé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Article' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+  /admin/articles/{id}:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: integer } }
+    get:
+      tags: [Administration]
+      summary: Un article, quel que soit son statut (éditeur)
+      responses:
+        '200':
+          description: Article
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Article' }
+    put:
+      tags: [Administration]
+      summary: Modifier un article (éditeur)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ArticleRequete' }
+      responses:
+        '200':
+          description: Article mis à jour
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Article' }
+    delete:
+      tags: [Administration]
+      summary: Supprimer un article (éditeur)
+      responses:
+        '204': { description: Article supprimé }
+  /admin/articles/{id}/publier:
+    patch:
+      tags: [Administration]
+      summary: Publier un article (éditeur)
+      description: La date de publication est renseignée automatiquement (règle RA4).
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Article publié
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Article' }
+  /admin/articles/{id}/archiver:
+    patch:
+      tags: [Administration]
+      summary: Archiver un article (éditeur)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Article archivé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Article' }
+  /admin/traductions:
+    get:
+      tags: [Administration]
+      summary: Textes du site dans toutes les langues (éditeur)
+      responses:
+        '200':
+          description: Une ligne par clé
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/TraductionLigne' }
+  /admin/traductions/{cle}:
+    parameters:
+      - { name: cle, in: path, required: true, schema: { type: string, example: accueil.titre } }
+    put:
+      tags: [Administration]
+      summary: Créer ou modifier un texte du site (éditeur)
+      description: Seules les langues transmises sont modifiées. Effet immédiat sur GET /traductions/{codeLangue}.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [valeurs]
+              properties:
+                valeurs:
+                  type: object
+                  additionalProperties: { type: string, maxLength: 2000 }
+                  example: { fr: Trouvez le bien qui vous ressemble, nl: Vind het pand dat bij u past }
+      responses:
+        '200':
+          description: Texte enregistré
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TraductionLigne' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+    delete:
+      tags: [Administration]
+      summary: Supprimer un texte du site dans toutes les langues (éditeur)
+      responses:
+        '204': { description: Texte supprimé }
+        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
+  /admin/cles-api:
+    get:
+      tags: [Administration]
+      summary: Clés API délivrées (gestionnaire)
+      description: La clé elle-même n'est jamais renvoyée — le serveur n'en conserve que l'empreinte SHA-256.
+      responses:
+        '200':
+          description: Clés, de la plus récente à la plus ancienne
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/CleApi' }
+    post:
+      tags: [Administration]
+      summary: Générer une clé API (gestionnaire)
+      description: La clé figure dans cette réponse et nulle part ailleurs — elle ne pourra plus être affichée.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [libelle]
+              properties:
+                libelle: { type: string, maxLength: 80, example: Observatoire des loyers }
+      responses:
+        '201':
+          description: Clé créée, valeur comprise
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CleApi' }
+  /admin/cles-api/{id}/revoquer:
+    patch:
+      tags: [Administration]
+      summary: Révoquer une clé API (gestionnaire)
+      description: Effet immédiat et définitif (règle RA12).
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Clé révoquée
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CleApi' }
   /traductions/{codeLangue}:
     get:
       tags: [Traductions]
@@ -529,12 +944,11 @@ paths:
       description: >
         Données anonymisées (aucune donnée personnelle) des biens au statut
         « disponible » : catégorie, commune, code postal, prix, superficie,
-        chambres, coordonnées. Accès par clé API gratuite (en-tête X-API-Key).
-        Formats JSON (défaut) ou CSV (en-tête Accept text/csv).
+        chambres, position arrondie à trois décimales (une centaine de mètres). Accès par clé API
+        gratuite (en-tête X-API-Key), limité à 60 appels par minute et par clé.
+        Format JSON par défaut ; CSV avec l'en-tête « Accept: text/csv ».
       security:
         - apiKeyAuth: []
-      parameters:
-        - { name: format, in: query, schema: { type: string, enum: [json, csv], default: json } }
       responses:
         '200':
           description: Jeu de données
@@ -748,9 +1162,150 @@ components:
       properties:
         id: { type: integer }
         titre: { type: string, example: 'Acheter un appartement à Ixelles : le guide complet' }
-        contenu: { type: string }
+        extrait: { type: string, description: Début du contenu (220 caractères) }
+        contenu: { type: string, nullable: true, description: Texte brut ; absent des listes }
+        categorieId: { type: integer }
         categorie: { type: string, example: Conseils achat }
+        statut: { type: string, enum: [brouillon, publie, archive] }
+        publieLe: { type: string, format: date, nullable: true }
+        auteur: { type: string, example: Yasmine Benali }
+    ArticleRequete:
+      type: object
+      required: [titre, contenu, categorieId]
+      properties:
+        titre: { type: string, maxLength: 150 }
+        contenu: { type: string, maxLength: 20000 }
+        categorieId: { type: integer }
+    PageArticles:
+      type: object
+      properties:
+        contenu: { type: array, items: { $ref: '#/components/schemas/Article' } }
+        page: { type: integer, example: 0 }
+        taille: { type: integer, example: 9 }
+        totalElements: { type: integer, example: 77 }
+        totalPages: { type: integer, example: 9 }
+    Categorie:
+      type: object
+      properties:
+        id: { type: integer, example: 2 }
+        nom: { type: string, example: Appartement }
+        description: { type: string, nullable: true }
+    CategorieRequete:
+      type: object
+      required: [nom]
+      properties:
+        nom: { type: string, maxLength: 60 }
+        description: { type: string, maxLength: 1000 }
+    BienGestion:
+      type: object
+      description: Annonce vue par son agent — adresse exacte comprise, jamais renvoyée au public
+      properties:
+        id: { type: integer, example: 42 }
+        titre: { type: string }
+        description: { type: string }
+        prix: { type: number, example: 285000 }
+        superficie: { type: number, example: 95 }
+        nbChambres: { type: integer, example: 3 }
+        adresse: { type: string, example: Rue du Bailli 27 }
+        ville: { type: string, example: Ixelles }
+        codePostal: { type: string, example: '1050' }
+        latitude: { type: number, example: 50.8275 }
+        longitude: { type: number, example: 4.3720 }
+        statut: { $ref: '#/components/schemas/StatutBien' }
         publieLe: { type: string, format: date }
+        categorieId: { type: integer }
+        categorie: { type: string, example: Appartement }
+        photos: { type: array, items: { $ref: '#/components/schemas/Photo' } }
+        indicateurs:
+          type: object
+          properties:
+            favoris: { type: integer, example: 6 }
+            demandesEnAttente: { type: integer, example: 1 }
+            visitesAVenir: { type: integer, example: 2 }
+    Compte:
+      type: object
+      description: Compte vu par l'administrateur — le mot de passe, même haché, n'est jamais exposé
+      properties:
+        id: { type: integer, example: 101 }
+        prenom: { type: string, example: Sarah }
+        nom: { type: string, example: Dubois }
+        email: { type: string, format: email }
+        role: { type: string, enum: [membre, agent, admin] }
+        langue: { type: string, example: fr }
+        actif: { type: boolean }
+        dateInscription: { type: string, format: date }
+        matricule: { type: string, nullable: true, example: AG-2023-001 }
+        niveauAcces: { type: integer, nullable: true, example: 2 }
+    PageComptes:
+      type: object
+      properties:
+        contenu: { type: array, items: { $ref: '#/components/schemas/Compte' } }
+        page: { type: integer }
+        taille: { type: integer }
+        totalElements: { type: integer }
+        totalPages: { type: integer }
+    TraceAudit:
+      type: object
+      properties:
+        id: { type: integer }
+        horodatage: { type: string, format: date-time }
+        action: { type: string, example: connexion }
+        entite: { type: string, example: 'rendez_vous#218' }
+        ip: { type: string, example: 84.8.145.40 }
+        utilisateurId: { type: integer }
+        utilisateur: { type: string, example: David Moreau }
+        role: { type: string, enum: [membre, agent, admin] }
+    PageTraces:
+      type: object
+      properties:
+        contenu: { type: array, items: { $ref: '#/components/schemas/TraceAudit' } }
+        page: { type: integer }
+        taille: { type: integer }
+        totalElements: { type: integer }
+        totalPages: { type: integer }
+    CleApi:
+      type: object
+      properties:
+        id: { type: integer }
+        libelle: { type: string, nullable: true, example: Observatoire des loyers }
+        creeLe: { type: string, format: date }
+        active: { type: boolean }
+        derniereUtilisation: { type: string, format: date-time, nullable: true }
+        creeePar: { type: string, example: Lotte Goossens }
+        cle:
+          type: string
+          nullable: true
+          example: ic_a762098493b17f323023fa5819374854997fddaa7364a62c5f83012c187f680a
+          description: Renseignée uniquement dans la réponse à la création
+    TraductionLigne:
+      type: object
+      properties:
+        cle: { type: string, example: accueil.titre }
+        valeurs:
+          type: object
+          additionalProperties: { type: string }
+          example: { fr: Trouvez le bien qui vous ressemble, nl: Vind het pand dat bij u past, en: Find the property that suits you }
+    Statistiques:
+      type: object
+      properties:
+        biensParStatut: { type: object, additionalProperties: { type: integer } }
+        comptesParRole: { type: object, additionalProperties: { type: integer } }
+        comptesDesactives: { type: integer }
+        rendezVousParStatut: { type: object, additionalProperties: { type: integer } }
+        visitesAVenir: { type: integer }
+        paiementsReussis: { type: integer }
+        revenusPremium: { type: number, example: 1560.00 }
+        montantRembourse: { type: number, example: 270.00 }
+        favoris: { type: integer }
+        messages: { type: integer }
+        communes:
+          type: array
+          items:
+            type: object
+            properties:
+              ville: { type: string, example: Jette }
+              biensDisponibles: { type: integer, example: 6 }
+              prixMoyen: { type: number, example: 384167 }
     Message:
       type: object
       properties:
