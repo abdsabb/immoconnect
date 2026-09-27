@@ -17,6 +17,7 @@ import be.immoconnect.entite.RendezVous;
 import be.immoconnect.entite.StatutBien;
 import be.immoconnect.entite.StatutPaiement;
 import be.immoconnect.entite.Utilisateur;
+import be.immoconnect.notification.EvenementRendezVous;
 import be.immoconnect.paiement.EvenementPaiement;
 import be.immoconnect.paiement.IntentionPaiement;
 import be.immoconnect.paiement.PasserellePaiement;
@@ -35,6 +36,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,11 +75,14 @@ public class ServiceRendezVous {
     private final GrilleCreneaux grille;
     private final PasserellePaiement passerelle;
     private final ServiceAudit audit;
+    private final ApplicationEventPublisher evenements;
     private final Clock horloge;
 
     public ServiceRendezVous(RendezVousRepository rendezVous, PaiementRepository paiements, BienRepository biens,
                              MembreRepository membres, AgentImmobilierRepository agents, GrilleCreneaux grille,
-                             PasserellePaiement passerelle, ServiceAudit audit, Clock horloge) {
+                             PasserellePaiement passerelle, ServiceAudit audit, ApplicationEventPublisher evenements,
+                             Clock horloge) {
+        this.evenements = evenements;
         this.rendezVous = rendezVous;
         this.paiements = paiements;
         this.biens = biens;
@@ -169,6 +174,7 @@ public class ServiceRendezVous {
         exigerCreneauLibre(membre, bien, requete.dateHeure());
         RendezVous rdv = rendezVous.save(new RendezVous(membre, bien, requete.dateHeure(), nettoyer(requete.motif())));
         audit.enregistrer(membre, "reservation_rendez_vous", "rendez_vous#" + rdv.getId(), ip);
+        publier(rdv, EvenementRendezVous.Type.demande);
         return RendezVousResume.pourMembre(rdv);
     }
 
@@ -193,6 +199,7 @@ public class ServiceRendezVous {
         exigerAgentDuRendezVous(rdv, agentId);
         rdv.confirmer(maintenant());
         audit.enregistrer(rdv.getAgent(), "confirmation_rendez_vous", "rendez_vous#" + id, ip);
+        publier(rdv, EvenementRendezVous.Type.confirme_par_agent);
         return RendezVousResume.pourAgent(rdv);
     }
 
@@ -218,6 +225,7 @@ public class ServiceRendezVous {
             paiement.rembourser();
             audit.enregistrer(auteur, "remboursement_paiement", "paiement#" + paiement.getId(), ip);
         }
+        publier(rdv, parLAgent ? EvenementRendezVous.Type.annule_par_agent : EvenementRendezVous.Type.annule_par_membre);
         return parLAgent ? RendezVousResume.pourAgent(rdv) : RendezVousResume.pourMembre(rdv);
     }
 
@@ -292,6 +300,7 @@ public class ServiceRendezVous {
             paiement.marquerReussi();
             rdv.setPaiement(paiements.save(paiement));
             audit.enregistrer(membre, "paiement_creneau_premium", "rendez_vous#" + rdv.getId(), origine);
+            publier(rdv, EvenementRendezVous.Type.confirme_par_paiement);
             return rdv;
         } catch (CreneauIndisponibleException e) {
             rembourserFauteDeVisite(intention, e);
@@ -336,6 +345,7 @@ public class ServiceRendezVous {
                     RendezVous rdv = paiement.getRendezVous();
                     if (RendezVousRepository.ACTIFS.contains(rdv.getStatut()) && rdv.getDateHeure().isAfter(maintenant())) {
                         rdv.annuler(maintenant());
+                        publier(rdv, EvenementRendezVous.Type.annule_par_agent);
                     }
                     audit.enregistrer(paiement.getMembre(), "remboursement_paiement", "paiement#" + paiement.getId(), ORIGINE_WEBHOOK);
                 });
@@ -411,6 +421,11 @@ public class ServiceRendezVous {
         if (!rdv.getAgent().getId().equals(agentId)) {
             throw new OperationInterditeException("Ce rendez-vous appartient à l'agenda d'un autre agent");
         }
+    }
+
+    /** Pattern Observer : le service annonce le changement d'état, les observateurs (e-mails) en font leur affaire. */
+    private void publier(RendezVous rdv, EvenementRendezVous.Type type) {
+        evenements.publishEvent(new EvenementRendezVous(rdv.getId(), type));
     }
 
     private static String nettoyer(String motif) {
