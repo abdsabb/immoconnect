@@ -28,4 +28,9 @@ public class Categorie {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    public Categorie(String nom, String description) {
+        this.nom = nom;
+        this.description = description;
+    }
 }

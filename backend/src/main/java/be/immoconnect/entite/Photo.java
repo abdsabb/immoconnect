@@ -43,6 +43,13 @@ public class Photo {
     @Column(length = 150)
     private String legende;
 
+    public Photo(Bien bien, String url, Integer ordre, String legende) {
+        this.bien = bien;
+        this.url = url;
+        this.ordre = ordre;
+        this.legende = legende;
+    }
+
     public boolean estCouverture() {
         return ordre != null && ordre == 1;
     }

@@ -27,7 +27,8 @@ documentée ainsi qu'un volet Open Data.
 
 ```
 ├── backend/                 API Spring Boot (Maven) — Dockerfile multi-étapes
-│   └── src/main/resources/db/migration/   V1 = schéma (17 tables), V2 = données de test, V3 = expéditeur des messages
+│   └── src/main/resources/db/migration/   V1 = schéma (17 tables), V2 = données de test,
+│                                          V3 = expéditeur des messages, V4 = back-office administrateur
 ├── frontend/                SPA React (Vite) — Dockerfile + nginx.conf
 ├── api/openapi.yaml         Spécification OpenAPI 3.0 de l'API (livrable 15)
 ├── docs/uml/                Sources PlantUML des diagrammes d'analyse (livrable 07) et du schéma BDD
@@ -77,7 +78,15 @@ export STRIPE_WEBHOOK_SECRET=whsec_...       # affiché par : stripe listen --fo
 |---|---|
 | Membre | alice.benali@mail.be |
 | Agent immobilier | sarah.dubois@mail.be |
-| Administrateur | david.moreau@mail.be |
+| Administrateur — super-administrateur (niveau 3) | david.moreau@mail.be |
+| Administrateur — gestionnaire (niveau 2) | lotte.goossens@mail.be |
+| Administrateur — éditeur (niveau 1) | yasmine.benali@mail.be |
+
+Le niveau d'accès d'un administrateur limite ce qu'il peut faire dans le back-office : l'éditeur gère le blog,
+les catégories et les traductions ; le gestionnaire gère en plus les comptes, le journal d'audit, les statistiques
+et les clés API ; le super-administrateur agit aussi sur les comptes des administrateurs.
+
+Les photos téléversées sont enregistrées dans `backend/stockage/` (variable `STORAGE_DIR`), hors du dépôt.
 
 ### API disponible
 
@@ -102,6 +111,16 @@ export STRIPE_WEBHOOK_SECRET=whsec_...       # affiché par : stripe listen --fo
 | GET | `/api/v1/paiements/config` — mode de paiement, clé publiable, prix du créneau premium | public |
 | POST | `/api/v1/paiements/intent` — préparer le paiement Stripe d'un créneau premium | JWT membre |
 | POST | `/api/v1/webhooks/stripe` — notifications de paiement | signature Stripe |
+| GET | `/api/v1/categories` — catégories de biens | public |
+| GET | `/api/v1/articles` · `/articles/{id}` · `/articles/categories` — blog, articles publiés uniquement (RA4) | public |
+| GET | `/api/v1/agents/moi/biens` — mes annonces et leur tableau de bord | JWT agent |
+| POST / PUT / DELETE | `/api/v1/biens` · `/biens/{id}` — créer, modifier, archiver une annonce (RA6) | JWT agent responsable |
+| POST / DELETE / PUT | `/api/v1/biens/{id}/photos` · `/photos/{photoId}` · `/photos/{photoId}/couverture` | JWT agent responsable |
+| GET / POST / PATCH | `/api/v1/admin/utilisateurs` · `/admin/agents` · `/utilisateurs/{id}/activer` · `/desactiver` | JWT admin, niveau 2 |
+| GET | `/api/v1/admin/journal` · `/admin/statistiques` — journal d'audit filtrable, statistiques | JWT admin, niveau 2 |
+| GET / POST / PATCH | `/api/v1/admin/cles-api` · `/cles-api/{id}/revoquer` — clés API (RA12) | JWT admin, niveau 2 |
+| POST / PUT / DELETE | `/api/v1/admin/categories` · `/admin/articles` · `/admin/traductions/{cle}` | JWT admin, niveau 1 |
+| GET | `/api/v1/open-data/biens` · `/open-data/statistiques` — données anonymisées, CC BY 4.0, 60 appels/min | clé API (`X-API-Key`) |
 
 Documentation interactive : `/swagger-ui.html` · erreurs au format problem+json (RFC 7807).
 

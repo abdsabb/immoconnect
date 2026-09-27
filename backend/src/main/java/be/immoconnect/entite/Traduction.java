@@ -35,4 +35,10 @@ public class Traduction {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String valeur;
+
+    public Traduction(Langue langue, String cle, String valeur) {
+        this.langue = langue;
+        this.cle = cle;
+        this.valeur = valeur;
+    }
 }

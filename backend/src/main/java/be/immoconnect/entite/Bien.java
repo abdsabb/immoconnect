@@ -89,6 +89,21 @@ public class Bien {
     @OrderBy("ordre ASC")
     private List<Photo> photos = new ArrayList<>();
 
+    /**
+     * Nouvelle annonce d'un agent. Elle naît hors ligne (statut « archive ») : sans photo, elle ne
+     * peut pas encore être publiée (RA6).
+     */
+    public Bien(AgentImmobilier agent) {
+        this.agent = agent;
+        this.statut = StatutBien.archive;
+        this.publieLe = LocalDate.now();
+    }
+
+    /** RA6 : un bien visible du public possède au moins une photo. */
+    public boolean estPubliable() {
+        return !photos.isEmpty();
+    }
+
     /** Un bien n'accepte ni rendez-vous ni favori s'il n'est plus disponible (RA5). */
     public boolean estDisponible() {
         return statut.estDisponible();

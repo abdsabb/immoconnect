@@ -28,3 +28,6 @@ Thumbs.db
 # Données locales
 mysql-data/
 *.log
+
+# Photos téléversées en développement
+/backend/stockage/

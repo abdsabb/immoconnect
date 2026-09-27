@@ -26,6 +26,13 @@ public class AgentImmobilier extends Utilisateur {
     @Column(name = "telephone_pro", nullable = false, length = 20)
     private String telephonePro;
 
+    public AgentImmobilier(String nom, String prenom, String email, String motDePasseHache, Langue langue,
+                           String matricule, String telephonePro) {
+        super(nom, prenom, email, motDePasseHache, langue);
+        this.matricule = matricule;
+        this.telephonePro = telephonePro;
+    }
+
     @Override
     public String getRole() {
         return "agent";

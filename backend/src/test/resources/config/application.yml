@@ -1,0 +1,4 @@
+# Réglages propres aux tests, fusionnés par-dessus la configuration de l'application
+immoconnect:
+  stockage:
+    dossier: target/stockage-tests     # effacé par « mvn clean », jamais versionné
