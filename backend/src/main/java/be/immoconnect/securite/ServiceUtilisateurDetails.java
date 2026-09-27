@@ -23,6 +23,8 @@ public class ServiceUtilisateurDetails implements UserDetailsService {
                 .map(u -> User.withUsername(u.getEmail())
                         .password(u.getMotDePasse())
                         .roles(u.getRole().toUpperCase())
+                        // Compte désactivé par l'administrateur : connexion refusée, avec le même message générique
+                        .disabled(!u.isActif())
                         .build())
                 // Message générique : ne jamais révéler si l'adresse existe (livrable 16, §2.2)
                 .orElseThrow(() -> new UsernameNotFoundException("Identifiants invalides"));

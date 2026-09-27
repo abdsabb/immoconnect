@@ -14,6 +14,10 @@ public interface AgentImmobilierRepository extends JpaRepository<AgentImmobilier
      * Deux réservations simultanées dans le même agenda passent ainsi l'une après l'autre : la
      * seconde voit le rendez-vous créé par la première et reçoit un conflit 409 (scénario A2).
      */
+    long countByMatriculeStartingWith(String prefixe);
+
+    boolean existsByMatricule(String matricule);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select a from AgentImmobilier a where a.id = :id")
     Optional<AgentImmobilier> verrouiller(Integer id);
