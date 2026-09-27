@@ -134,6 +134,12 @@
 			<artifactId>testcontainers-mysql</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- Paiement des créneaux premium : SDK officiel Stripe (livrable 13) -->
+		<dependency>
+			<groupId>com.stripe</groupId>
+			<artifactId>stripe-java</artifactId>
+			<version>33.4.2</version>
+		</dependency>
 		<!-- Documentation OpenAPI / Swagger UI (livrable 15) -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
