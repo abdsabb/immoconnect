@@ -153,7 +153,10 @@ class AnnonceControleurTest {
     @Test
     void unBienNeSArchivePasTantQueDesVisitesSontPrevues() throws Exception {
         String agent = connecter(AGENT);
-        String membre = connecter(MEMBRE);
+        // Un membre créé pour ce test : son agenda est vide, quel que soit l'ordre d'exécution des tests
+        String membre = corps(mvc.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"nom\":\"Test\",\"prenom\":\"Visiteur\",\"email\":\"visiteur.annonce@test.immoconnect.be\",\"motDePasse\":\"motdepasse123\"}"))
+                .andExpect(status().isCreated())).get("jeton").asString();
         int id = corps(creer(agent).andExpect(status().isCreated())).get("id").asInt();
         televerser(agent, id, image("jpg", 800, 600), "facade.jpg", null).andExpect(status().isCreated());
         modifier(agent, id, "disponible").andExpect(status().isOk());
