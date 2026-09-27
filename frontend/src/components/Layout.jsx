@@ -25,6 +25,9 @@ export default function Layout() {
             <NavLink to="/blog" className={lien}>{t('nav.blog')}</NavLink>
             {estConnecte ? (
               <>
+                {utilisateur?.role !== 'admin' && (
+                  <NavLink to="/rendez-vous" className={lien}>{t(utilisateur?.role === 'agent' ? 'nav.agenda' : 'nav.visites')}</NavLink>
+                )}
                 <NavLink to="/profil" className={lien}>{t('nav.profil')}</NavLink>
                 <button type="button" onClick={deconnecter} className="px-3 py-2 rounded-md font-titre font-semibold text-white/80 hover:text-turquoise">
                   {t('nav.deconnexion')} ({utilisateur?.prenom})

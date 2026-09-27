@@ -6,6 +6,8 @@
     "connexion": "Se connecter",
     "inscription": "S'inscrire",
     "profil": "Mon espace",
+    "visites": "Mes visites",
+    "agenda": "Agenda",
     "deconnexion": "Se déconnecter"
   },
   "commun": {
@@ -44,6 +46,7 @@
     "adresseApres": "L'adresse exacte vous est communiquée après la prise de rendez-vous.",
     "galerie": "Galerie de photos",
     "prendreRdv": "Prendre rendez-vous",
+    "plusDeVisite": "Ce bien n'est plus ouvert aux visites.",
     "envoyerMessage": "Envoyer un message",
     "agent": "Votre agent",
     "introuvable": "Ce bien n'existe pas ou n'est plus disponible.",
@@ -92,5 +95,80 @@
     "desinscriptionExplication": "Conformément au RGPD, vos données personnelles seront anonymisées et vos favoris supprimés. L'historique de vos rendez-vous et paiements est conservé sans identité (obligations comptables).",
     "supprimerCompte": "Supprimer définitivement mon compte",
     "confirmerDesinscription": "Confirmer la suppression de votre compte ? Cette action est irréversible."
+  },
+  "rdv": {
+    "titre": "Prendre rendez-vous",
+    "avec": "visite avec {{agent}}",
+    "etapes": "Étapes de la prise de rendez-vous",
+    "etape": {
+      "creneau": "Créneau",
+      "recapitulatif": "Récapitulatif",
+      "paiement": "Paiement",
+      "confirmation": "Confirmation"
+    },
+    "reserveAuxMembres": "La prise de rendez-vous est réservée aux membres.",
+    "legende": "Les créneaux en journée sont gratuits. Les créneaux premium, en soirée et le week-end, coûtent {{prix}}.",
+    "aucunCreneau": "Aucun créneau n'est libre dans les deux prochaines semaines.",
+    "premium": "Premium",
+    "gratuit": "Gratuit",
+    "motif": "Motif de la visite (facultatif)",
+    "motifCourt": "Motif",
+    "motifExemple": "Par exemple : seconde visite avec mon architecte",
+    "continuer": "Continuer",
+    "bien": "Bien",
+    "date": "Date de la visite",
+    "prix": "Prix du créneau",
+    "explicationStandard": "Votre demande est envoyée à l'agent, qui la confirme ou vous propose un autre moment.",
+    "explicationPremium": "Un créneau premium est confirmé dès le paiement. En cas d'annulation, vous êtes remboursé.",
+    "envoyerDemande": "Envoyer ma demande",
+    "passerAuPaiement": "Passer au paiement",
+    "changerCreneau": "Choisir un autre créneau",
+    "abandonner": "Abandonner le paiement",
+    "payer": "Payer {{montant}}",
+    "paiementRefuse": "Le paiement a été refusé. Aucun montant n'est débité : vous pouvez réessayer avec une autre carte.",
+    "rembourse": "Votre paiement est remboursé.",
+    "simulation": "Mode démonstration : aucun paiement réel. Carte acceptée : 4242 4242 4242 4242 — carte refusée : 4000 0000 0000 0002.",
+    "numeroCarte": "Numéro de carte",
+    "demandeEnvoyee": "Votre demande est envoyée à {{agent}}. Vous serez prévenu dès sa confirmation.",
+    "confirme": "Votre visite est confirmée. {{agent}} vous attend sur place.",
+    "statutLabel": "Statut",
+    "statut": {
+      "demande": "En attente",
+      "confirme": "Confirmé",
+      "annule": "Annulé",
+      "honore": "Visite effectuée"
+    },
+    "adresse": "Adresse",
+    "adresseApresConfirmation": "communiquée dès la confirmation",
+    "paiement": "Paiement",
+    "paiementStatut": {
+      "initie": "en cours",
+      "reussi": "payé",
+      "echoue": "refusé",
+      "rembourse": "remboursé"
+    },
+    "voirMesVisites": "Voir mes visites",
+    "mesVisites": "Mes visites",
+    "agenda": "Agenda des visites",
+    "aVenir": "À venir",
+    "aucunAVenir": "Aucune visite à venir.",
+    "passes": "Passées",
+    "aucunPasse": "Aucune visite passée.",
+    "trouverUnBien": "Trouver un bien à visiter",
+    "membre": "Membre",
+    "action": {
+      "confirmer": "Confirmer",
+      "annuler": "Annuler",
+      "honorer": "Visite effectuée"
+    },
+    "confirmerAnnulation": "Annuler ce rendez-vous ?",
+    "confirmerAnnulationPayee": "Annuler ce rendez-vous ? Le paiement du créneau premium sera remboursé."
+  },
+  "erreur": {
+    "creneau-indisponible": "Ce créneau vient d'être réservé. Choisissez-en un autre.",
+    "bien-indisponible": "Ce bien n'est plus ouvert aux visites.",
+    "paiement-indisponible": "Le service de paiement est momentanément indisponible. Réessayez dans un instant.",
+    "conflit-etat": "Cette action n'est plus possible pour ce rendez-vous.",
+    "interdit": "Vous n'avez pas le droit d'effectuer cette action."
   }
 }

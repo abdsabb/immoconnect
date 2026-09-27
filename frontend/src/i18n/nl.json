@@ -6,6 +6,8 @@
     "connexion": "Aanmelden",
     "inscription": "Registreren",
     "profil": "Mijn ruimte",
+    "visites": "Mijn bezoeken",
+    "agenda": "Agenda",
     "deconnexion": "Afmelden"
   },
   "commun": {
@@ -44,6 +46,7 @@
     "adresseApres": "Het exacte adres wordt meegedeeld na het maken van een afspraak.",
     "galerie": "Fotogalerij",
     "prendreRdv": "Afspraak maken",
+    "plusDeVisite": "Dit pand kan niet meer worden bezocht.",
     "envoyerMessage": "Bericht sturen",
     "agent": "Uw makelaar",
     "introuvable": "Dit pand bestaat niet of is niet meer beschikbaar.",
@@ -92,5 +95,80 @@
     "desinscriptionExplication": "Conform de AVG worden uw persoonsgegevens geanonimiseerd en uw favorieten verwijderd. De historiek van uw afspraken en betalingen blijft zonder identiteit bewaard (boekhoudkundige verplichtingen).",
     "supprimerCompte": "Mijn account definitief verwijderen",
     "confirmerDesinscription": "Het verwijderen van uw account bevestigen? Dit kan niet ongedaan worden gemaakt."
+  },
+  "rdv": {
+    "titre": "Afspraak maken",
+    "avec": "bezoek met {{agent}}",
+    "etapes": "Stappen om een afspraak te maken",
+    "etape": {
+      "creneau": "Tijdslot",
+      "recapitulatif": "Overzicht",
+      "paiement": "Betaling",
+      "confirmation": "Bevestiging"
+    },
+    "reserveAuxMembres": "Alleen leden kunnen een afspraak maken.",
+    "legende": "Tijdslots overdag zijn gratis. Premium tijdslots, 's avonds en in het weekend, kosten {{prix}}.",
+    "aucunCreneau": "Er is geen enkel tijdslot vrij in de komende twee weken.",
+    "premium": "Premium",
+    "gratuit": "Gratis",
+    "motif": "Reden van het bezoek (optioneel)",
+    "motifCourt": "Reden",
+    "motifExemple": "Bijvoorbeeld: tweede bezoek met mijn architect",
+    "continuer": "Doorgaan",
+    "bien": "Pand",
+    "date": "Datum van het bezoek",
+    "prix": "Prijs van het tijdslot",
+    "explicationStandard": "Uw aanvraag wordt naar de makelaar gestuurd, die ze bevestigt of een ander moment voorstelt.",
+    "explicationPremium": "Een premium tijdslot is bevestigd zodra het betaald is. Bij annulering wordt u terugbetaald.",
+    "envoyerDemande": "Mijn aanvraag versturen",
+    "passerAuPaiement": "Naar de betaling",
+    "changerCreneau": "Een ander tijdslot kiezen",
+    "abandonner": "Betaling afbreken",
+    "payer": "{{montant}} betalen",
+    "paiementRefuse": "De betaling is geweigerd. Er is niets afgeschreven: u kunt het opnieuw proberen met een andere kaart.",
+    "rembourse": "Uw betaling wordt terugbetaald.",
+    "simulation": "Demomodus: geen echte betaling. Aanvaarde kaart: 4242 4242 4242 4242 — geweigerde kaart: 4000 0000 0000 0002.",
+    "numeroCarte": "Kaartnummer",
+    "demandeEnvoyee": "Uw aanvraag is verstuurd naar {{agent}}. U wordt verwittigd zodra ze bevestigd is.",
+    "confirme": "Uw bezoek is bevestigd. {{agent}} verwacht u ter plaatse.",
+    "statutLabel": "Status",
+    "statut": {
+      "demande": "In afwachting",
+      "confirme": "Bevestigd",
+      "annule": "Geannuleerd",
+      "honore": "Bezoek afgelegd"
+    },
+    "adresse": "Adres",
+    "adresseApresConfirmation": "meegedeeld na bevestiging",
+    "paiement": "Betaling",
+    "paiementStatut": {
+      "initie": "bezig",
+      "reussi": "betaald",
+      "echoue": "geweigerd",
+      "rembourse": "terugbetaald"
+    },
+    "voirMesVisites": "Mijn bezoeken bekijken",
+    "mesVisites": "Mijn bezoeken",
+    "agenda": "Agenda van de bezoeken",
+    "aVenir": "Gepland",
+    "aucunAVenir": "Geen gepland bezoek.",
+    "passes": "Voorbij",
+    "aucunPasse": "Geen voorbij bezoek.",
+    "trouverUnBien": "Een pand zoeken om te bezoeken",
+    "membre": "Lid",
+    "action": {
+      "confirmer": "Bevestigen",
+      "annuler": "Annuleren",
+      "honorer": "Bezoek afgelegd"
+    },
+    "confirmerAnnulation": "Deze afspraak annuleren?",
+    "confirmerAnnulationPayee": "Deze afspraak annuleren? De betaling van het premium tijdslot wordt terugbetaald."
+  },
+  "erreur": {
+    "creneau-indisponible": "Dit tijdslot is zopas gereserveerd. Kies een ander.",
+    "bien-indisponible": "Dit pand kan niet meer worden bezocht.",
+    "paiement-indisponible": "De betaaldienst is tijdelijk niet beschikbaar. Probeer het zo opnieuw.",
+    "conflit-etat": "Deze actie is niet meer mogelijk voor deze afspraak.",
+    "interdit": "U mag deze actie niet uitvoeren."
   }
 }

@@ -73,9 +73,14 @@ export default function BienDetail() {
 
         <aside className="lg:sticky lg:top-6 self-start bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
           <p className="font-titre text-3xl font-extrabold text-corail">{formatPrix(bien.prix)}</p>
-          <Link to="/connexion" state={{ from: `/biens/${id}` }} className="block text-center bg-corail hover:bg-corail/90 text-white font-titre font-bold rounded-lg px-4 py-3">
-            {t('bien.prendreRdv')}
-          </Link>
+          {/* Route protégée : un visiteur passe par la connexion puis revient à la prise de rendez-vous */}
+          {bien.statut === 'disponible' ? (
+            <Link to={`/biens/${id}/rendez-vous`} className="block text-center bg-corail hover:bg-corail/90 text-white font-titre font-bold rounded-lg px-4 py-3">
+              {t('bien.prendreRdv')}
+            </Link>
+          ) : (
+            <p className="rounded-lg bg-perle px-4 py-3 text-sm text-gray-700">{t('bien.plusDeVisite')}</p>
+          )}
           <Link to="/connexion" state={{ from: `/biens/${id}` }} className="block text-center border-2 border-nuit text-nuit hover:bg-perle font-titre font-semibold rounded-lg px-4 py-3">
             {t('bien.envoyerMessage')}
           </Link>
