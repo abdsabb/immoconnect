@@ -9,6 +9,7 @@ import be.immoconnect.service.ServiceClesApi;
 import be.immoconnect.service.ServiceComptes;
 import be.immoconnect.service.ServiceJournal;
 import be.immoconnect.service.ServiceStatistiques;
+import be.immoconnect.service.ServiceTraductions;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,10 +53,12 @@ public class AdministrationControleur {
     private final ServiceStatistiques statistiques;
     private final ServiceCategories categories;
     private final ServiceClesApi clesApi;
+    private final ServiceTraductions traductions;
 
     public AdministrationControleur(ServiceComptes comptes, ServiceJournal journal, ServiceStatistiques statistiques,
-                                    ServiceCategories categories, ServiceClesApi clesApi) {
+                                    ServiceCategories categories, ServiceClesApi clesApi, ServiceTraductions traductions) {
         this.clesApi = clesApi;
+        this.traductions = traductions;
         this.comptes = comptes;
         this.journal = journal;
         this.statistiques = statistiques;
@@ -143,6 +146,28 @@ public class AdministrationControleur {
     @Operation(summary = "Révoquer une clé API", description = "Effet immédiat et définitif (RA12).")
     public CleApiResume revoquerCleApi(@AuthenticationPrincipal Jwt jeton, @PathVariable Integer id, HttpServletRequest http) {
         return clesApi.revoquer(identifiant(jeton), id, adresseIp(http));
+    }
+
+    // ---------- A6 — Langues et traductions ----------
+
+    @GetMapping("/traductions")
+    @Operation(summary = "Textes du site dans toutes les langues", description = "Une ligne par clé, avec sa valeur en français, néerlandais et anglais.")
+    public List<TraductionLigne> traductions(@AuthenticationPrincipal Jwt jeton) {
+        return traductions.lister(identifiant(jeton));
+    }
+
+    @PutMapping("/traductions/{cle}")
+    @Operation(summary = "Créer ou modifier un texte du site", description = "Seules les langues transmises sont modifiées. Effet immédiat sur le site public.")
+    public TraductionLigne enregistrerTraduction(@AuthenticationPrincipal Jwt jeton, @PathVariable String cle,
+                                                 @Valid @RequestBody TraductionLigne.Requete requete, HttpServletRequest http) {
+        return traductions.enregistrer(identifiant(jeton), cle, requete, adresseIp(http));
+    }
+
+    @DeleteMapping("/traductions/{cle}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Supprimer un texte du site dans toutes les langues")
+    public void supprimerTraduction(@AuthenticationPrincipal Jwt jeton, @PathVariable String cle, HttpServletRequest http) {
+        traductions.supprimer(identifiant(jeton), cle, adresseIp(http));
     }
 
     // ---------- A3 — Catégories de biens ----------

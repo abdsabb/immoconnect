@@ -50,9 +50,26 @@ public class Article {
     @Column(name = "publie_le")
     private LocalDate publieLe;
 
+    /** Un article naît à l'état de brouillon, invisible du public. */
+    public Article(Administrateur administrateur, CategorieArticle categorie, String titre, String contenu) {
+        this.administrateur = administrateur;
+        this.categorie = categorie;
+        this.titre = titre;
+        this.contenu = contenu;
+    }
+
     /** RA4 : un article n'est visible que s'il est publié ; publie_le est alors renseigné automatiquement. */
-    public void publier() {
+    public void publier(LocalDate aujourdHui) {
         this.statut = StatutArticle.publie;
-        this.publieLe = LocalDate.now();
+        this.publieLe = aujourdHui;
+    }
+
+    /** L'article quitte le blog public ; sa date de publication est conservée pour l'historique. */
+    public void archiver() {
+        this.statut = StatutArticle.archive;
+    }
+
+    public boolean estPublie() {
+        return statut == StatutArticle.publie;
     }
 }
