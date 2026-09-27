@@ -12,11 +12,13 @@
     "favoris": "Favourites",
     "messages": "Messages",
     "monProfil": "My profile",
-    "annonces": "My listings"
+    "annonces": "My listings",
+    "administration": "Administration"
   },
   "commun": {
     "chargement": "Loading…",
-    "erreurReseau": "The server is not responding, please try again shortly."
+    "erreurReseau": "The server is not responding, please try again shortly.",
+    "page": "Page {{page}} of {{total}}"
   },
   "accueil": {
     "titre": "Find your next home in Brussels",
@@ -248,12 +250,148 @@
     "photoFormat": "Only JPEG and PNG photos are accepted.",
     "photoTropLourde": "A photo weighs 5 MB at most."
   },
+  "blog": {
+    "titre": "Blog",
+    "sousTitre": "Advice, market and property news in Brussels and Belgium.",
+    "categories": "Blog categories",
+    "toutes": "All",
+    "vide": "No article in this category yet.",
+    "introuvable": "This article does not exist or is no longer published.",
+    "retour": "Back to the blog"
+  },
+  "admin": {
+    "titre": "Administration",
+    "filtrer": "Filter",
+    "ajouter": "Add",
+    "annuler": "Cancel",
+    "rubrique": {
+      "statistiques": "Statistics",
+      "comptes": "Users",
+      "journal": "Audit log",
+      "articles": "Blog",
+      "categories": "Categories",
+      "traductions": "Languages",
+      "clesApi": "API keys"
+    },
+    "role": {
+      "membre": "Member",
+      "agent": "Agent",
+      "admin": "Administrator",
+      "desactive": "Deactivated accounts"
+    },
+    "stat": {
+      "biensEnLigne": "Properties online",
+      "membres": "Registered members",
+      "visitesAVenir": "Upcoming visits",
+      "revenus": "Premium revenue",
+      "paiements": "Successful payments",
+      "rembourse": "Refunded amount",
+      "favoris": "Favourites",
+      "messages": "Messages exchanged",
+      "biens": "Properties by status",
+      "rendezVous": "Visits by status",
+      "comptes": "Accounts by role",
+      "communes": "Municipalities with the most listings",
+      "biensDisponibles": "Available properties",
+      "prixMoyen": "Average price"
+    },
+    "compte": {
+      "recherche": "Last name, first name or e-mail",
+      "role": "Role",
+      "tousLesRoles": "All roles",
+      "nombre_one": "{{count}} account",
+      "nombre_other": "{{count}} accounts",
+      "inscritLe": "Registered on",
+      "etat": "State",
+      "actif": "Active",
+      "inactif": "Deactivated",
+      "niveau": "level {{niveau}}",
+      "desactiver": "Deactivate",
+      "reactiver": "Reactivate",
+      "confirmerDesactivation": "Deactivate the account of {{nom}}? This person will no longer be able to log in; their history is kept.",
+      "desactive": "The account of {{nom}} is deactivated.",
+      "reactive": "The account of {{nom}} is reactivated.",
+      "nouvelAgent": "Open an agent account",
+      "explicationAgent": "Public sign-up only creates members. The staff number is assigned automatically; the agent will change the temporary password from their profile.",
+      "telephonePro": "Work phone",
+      "motDePasseProvisoire": "Temporary password",
+      "creerAgent": "Create account",
+      "agentCree": "Account of {{nom}} created, staff number {{matricule}}."
+    },
+    "journal": {
+      "explication": "Every sensitive action is logged: who, what, when and from which address. The log can be read; it cannot be changed.",
+      "action": "Action",
+      "toutes": "All actions",
+      "utilisateur": "User",
+      "du": "From",
+      "au": "To",
+      "effacer": "Clear filters",
+      "date": "Date",
+      "objet": "Object",
+      "ip": "IP address",
+      "nombre_one": "{{count}} entry",
+      "nombre_other": "{{count}} entries"
+    },
+    "categorie": {
+      "nom": "Name",
+      "enregistree": "Category saved.",
+      "supprimee": "Category deleted.",
+      "confirmerSuppression": "Delete the category “{{nom}}”?"
+    },
+    "cle": {
+      "explication": "An API key gives access to the open datasets (anonymised listings and statistics). It is sent in the X-API-Key header, is limited to 60 calls per minute and can be revoked at any time.",
+      "libelle": "Issued to",
+      "libelleExemple": "For example: Rent observatory",
+      "generer": "Generate a key",
+      "creee": "Key created for “{{libelle}}”",
+      "avertissement": "Copy this key now: it will never be shown again. Only its fingerprint is kept.",
+      "creeLe": "Created on",
+      "creeePar": "Created by",
+      "derniereUtilisation": "Last used",
+      "jamais": "never",
+      "active": "Active",
+      "revoquee": "Revoked",
+      "revoquer": "Revoke",
+      "confirmerRevocation": "Revoke the key “{{libelle}}”? This takes effect immediately and is permanent."
+    },
+    "traduction": {
+      "explication": "The texts below are those of the public site, in its three languages. A change is visible as soon as it is saved.",
+      "recherche": "Search a key or a text",
+      "nouvelle": "New text",
+      "cle": "Key",
+      "manquante": "to translate",
+      "enregistree": "Text saved.",
+      "supprimee": "Text deleted.",
+      "confirmerSuppression": "Delete “{{cle}}” in all languages?",
+      "nombre_one": "{{count}} text",
+      "nombre_other": "{{count}} texts"
+    },
+    "article": {
+      "tousLesStatuts": "All statuses",
+      "statut": {
+        "brouillon": "Draft",
+        "publie": "Published",
+        "archive": "Archived"
+      },
+      "nouveau": "New article",
+      "modifier": "Edit article",
+      "retour": "Back to articles",
+      "contenu": "Content",
+      "consigne": "Plain text: line breaks are kept, no tag is interpreted. A new article is a draft, hidden from the public until it is published.",
+      "publier": "Publish",
+      "publie": "Article published.",
+      "archive": "Article archived.",
+      "supprime": "Article deleted.",
+      "confirmerSuppression": "Permanently delete “{{titre}}”?"
+    }
+  },
   "erreur": {
     "creneau-indisponible": "This slot has just been booked. Please choose another one.",
     "bien-indisponible": "This property is no longer available.",
     "paiement-indisponible": "The payment service is temporarily unavailable. Please try again shortly.",
     "conflit-etat": "This action is no longer possible for this visit.",
     "interdit": "You are not allowed to perform this action.",
-    "fichier-trop-volumineux": "A photo weighs 5 MB at most."
+    "fichier-trop-volumineux": "A photo weighs 5 MB at most.",
+    "quota-depasse": "Too many calls: try again in a minute."
   }
 }

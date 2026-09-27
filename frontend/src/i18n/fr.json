@@ -12,11 +12,13 @@
     "favoris": "Favoris",
     "messages": "Messages",
     "monProfil": "Mon profil",
-    "annonces": "Mes annonces"
+    "annonces": "Mes annonces",
+    "administration": "Administration"
   },
   "commun": {
     "chargement": "Chargement…",
-    "erreurReseau": "Le serveur ne répond pas, réessayez dans un instant."
+    "erreurReseau": "Le serveur ne répond pas, réessayez dans un instant.",
+    "page": "Page {{page}} sur {{total}}"
   },
   "accueil": {
     "titre": "Trouvez votre prochain chez-vous à Bruxelles",
@@ -248,12 +250,148 @@
     "photoFormat": "Seules les photos JPEG et PNG sont acceptées.",
     "photoTropLourde": "Une photo pèse 5 Mo au plus."
   },
+  "blog": {
+    "titre": "Blog",
+    "sousTitre": "Conseils, marché et actualité de l'immobilier à Bruxelles et en Belgique.",
+    "categories": "Catégories du blog",
+    "toutes": "Toutes",
+    "vide": "Aucun article dans cette catégorie pour le moment.",
+    "introuvable": "Cet article n'existe pas ou n'est plus publié.",
+    "retour": "Retour au blog"
+  },
+  "admin": {
+    "titre": "Administration",
+    "filtrer": "Filtrer",
+    "ajouter": "Ajouter",
+    "annuler": "Annuler",
+    "rubrique": {
+      "statistiques": "Statistiques",
+      "comptes": "Utilisateurs",
+      "journal": "Journal d'audit",
+      "articles": "Blog",
+      "categories": "Catégories",
+      "traductions": "Langues",
+      "clesApi": "Clés API"
+    },
+    "role": {
+      "membre": "Membre",
+      "agent": "Agent",
+      "admin": "Administrateur",
+      "desactive": "Comptes désactivés"
+    },
+    "stat": {
+      "biensEnLigne": "Biens en ligne",
+      "membres": "Membres inscrits",
+      "visitesAVenir": "Visites à venir",
+      "revenus": "Revenus premium",
+      "paiements": "Paiements réussis",
+      "rembourse": "Montant remboursé",
+      "favoris": "Favoris",
+      "messages": "Messages échangés",
+      "biens": "Biens par statut",
+      "rendezVous": "Rendez-vous par statut",
+      "comptes": "Comptes par rôle",
+      "communes": "Communes les plus fournies",
+      "biensDisponibles": "Biens disponibles",
+      "prixMoyen": "Prix moyen"
+    },
+    "compte": {
+      "recherche": "Nom, prénom ou e-mail",
+      "role": "Rôle",
+      "tousLesRoles": "Tous les rôles",
+      "nombre_one": "{{count}} compte",
+      "nombre_other": "{{count}} comptes",
+      "inscritLe": "Inscrit le",
+      "etat": "État",
+      "actif": "Actif",
+      "inactif": "Désactivé",
+      "niveau": "niveau {{niveau}}",
+      "desactiver": "Désactiver",
+      "reactiver": "Réactiver",
+      "confirmerDesactivation": "Désactiver le compte de {{nom}} ? Cette personne ne pourra plus se connecter ; son historique est conservé.",
+      "desactive": "Le compte de {{nom}} est désactivé.",
+      "reactive": "Le compte de {{nom}} est réactivé.",
+      "nouvelAgent": "Ouvrir un compte agent",
+      "explicationAgent": "L'inscription publique ne crée que des membres. Le matricule est attribué automatiquement ; l'agent changera son mot de passe provisoire depuis son profil.",
+      "telephonePro": "Téléphone professionnel",
+      "motDePasseProvisoire": "Mot de passe provisoire",
+      "creerAgent": "Créer le compte",
+      "agentCree": "Compte de {{nom}} créé, matricule {{matricule}}."
+    },
+    "journal": {
+      "explication": "Toute action sensible est tracée : qui, quoi, quand et depuis quelle adresse. Le journal se consulte ; il ne se modifie pas.",
+      "action": "Action",
+      "toutes": "Toutes les actions",
+      "utilisateur": "Utilisateur",
+      "du": "Du",
+      "au": "Au",
+      "effacer": "Effacer les filtres",
+      "date": "Date",
+      "objet": "Objet",
+      "ip": "Adresse IP",
+      "nombre_one": "{{count}} trace",
+      "nombre_other": "{{count}} traces"
+    },
+    "categorie": {
+      "nom": "Nom",
+      "enregistree": "Catégorie enregistrée.",
+      "supprimee": "Catégorie supprimée.",
+      "confirmerSuppression": "Supprimer la catégorie « {{nom}} » ?"
+    },
+    "cle": {
+      "explication": "Une clé API donne accès aux jeux de données ouverts (annonces et statistiques anonymisées). Elle se transmet dans l'en-tête X-API-Key, est limitée à 60 appels par minute et se révoque à tout moment.",
+      "libelle": "Délivrée à",
+      "libelleExemple": "Par exemple : Observatoire des loyers",
+      "generer": "Générer une clé",
+      "creee": "Clé créée pour « {{libelle}} »",
+      "avertissement": "Copiez cette clé maintenant : elle ne sera plus jamais affichée. Seule son empreinte est conservée.",
+      "creeLe": "Créée le",
+      "creeePar": "Créée par",
+      "derniereUtilisation": "Dernière utilisation",
+      "jamais": "jamais",
+      "active": "Active",
+      "revoquee": "Révoquée",
+      "revoquer": "Révoquer",
+      "confirmerRevocation": "Révoquer la clé « {{libelle}} » ? L'effet est immédiat et définitif."
+    },
+    "traduction": {
+      "explication": "Les textes ci-dessous sont ceux du site public, dans ses trois langues. Une modification est visible dès son enregistrement.",
+      "recherche": "Rechercher une clé ou un texte",
+      "nouvelle": "Nouveau texte",
+      "cle": "Clé",
+      "manquante": "à traduire",
+      "enregistree": "Texte enregistré.",
+      "supprimee": "Texte supprimé.",
+      "confirmerSuppression": "Supprimer « {{cle}} » dans toutes les langues ?",
+      "nombre_one": "{{count}} texte",
+      "nombre_other": "{{count}} textes"
+    },
+    "article": {
+      "tousLesStatuts": "Tous les statuts",
+      "statut": {
+        "brouillon": "Brouillon",
+        "publie": "Publié",
+        "archive": "Archivé"
+      },
+      "nouveau": "Nouvel article",
+      "modifier": "Modifier l'article",
+      "retour": "Retour aux articles",
+      "contenu": "Contenu",
+      "consigne": "Texte brut : les sauts de ligne sont conservés, aucune balise n'est interprétée. Un nouvel article est un brouillon, invisible du public tant qu'il n'est pas publié.",
+      "publier": "Publier",
+      "publie": "Article publié.",
+      "archive": "Article archivé.",
+      "supprime": "Article supprimé.",
+      "confirmerSuppression": "Supprimer définitivement « {{titre}} » ?"
+    }
+  },
   "erreur": {
     "creneau-indisponible": "Ce créneau vient d'être réservé. Choisissez-en un autre.",
     "bien-indisponible": "Ce bien n'est plus disponible.",
     "paiement-indisponible": "Le service de paiement est momentanément indisponible. Réessayez dans un instant.",
     "conflit-etat": "Cette action n'est plus possible pour ce rendez-vous.",
     "interdit": "Vous n'avez pas le droit d'effectuer cette action.",
-    "fichier-trop-volumineux": "Une photo pèse 5 Mo au plus."
+    "fichier-trop-volumineux": "Une photo pèse 5 Mo au plus.",
+    "quota-depasse": "Trop d'appels : réessayez dans une minute."
   }
 }

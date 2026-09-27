@@ -13,9 +13,20 @@ import MesFavoris from './pages/MesFavoris'
 import Messagerie from './pages/Messagerie'
 import MesAnnonces from './pages/MesAnnonces'
 import AnnonceFormulaire from './pages/AnnonceFormulaire'
+import Blog from './pages/Blog'
+import Article from './pages/Article'
+import Administration from './pages/admin/Administration'
+import TableauDeBord from './pages/admin/TableauDeBord'
+import Comptes from './pages/admin/Comptes'
+import Journal from './pages/admin/Journal'
+import Articles from './pages/admin/Articles'
+import ArticleFormulaire from './pages/admin/ArticleFormulaire'
+import Categories from './pages/admin/Categories'
+import Traductions from './pages/admin/Traductions'
+import ClesApi from './pages/admin/ClesApi'
 
 // Arborescence issue de la charte (livrable 10) : pages publiques, connexion/inscription,
-// espace membre, espace agent.
+// espace membre, espace agent, back-office administrateur.
 export default function App() {
   return (
     <Routes>
@@ -23,6 +34,8 @@ export default function App() {
         <Route index element={<Accueil />} />
         <Route path="biens" element={<Biens />} />
         <Route path="biens/:id" element={<BienDetail />} />
+        <Route path="blog" element={<Blog />} />
+        <Route path="blog/:id" element={<Article />} />
         <Route path="connexion" element={<Connexion />} />
         <Route path="inscription" element={<Inscription />} />
         <Route element={<RouteProtegee />}>
@@ -38,6 +51,20 @@ export default function App() {
           <Route path="annonces" element={<MesAnnonces />} />
           <Route path="annonces/nouvelle" element={<AnnonceFormulaire key="nouvelle" />} />
           <Route path="annonces/:id" element={<AnnonceFormulaire key="existante" />} />
+        </Route>
+        {/* Back-office de l'administrateur : une rubrique par cas d'utilisation */}
+        <Route element={<RouteProtegee roles={['admin']} />}>
+          <Route path="admin" element={<Administration />}>
+            <Route index element={<TableauDeBord />} />
+            <Route path="utilisateurs" element={<Comptes />} />
+            <Route path="journal" element={<Journal />} />
+            <Route path="articles" element={<Articles />} />
+            <Route path="articles/nouveau" element={<ArticleFormulaire key="nouveau" />} />
+            <Route path="articles/:id" element={<ArticleFormulaire key="existant" />} />
+            <Route path="categories" element={<Categories />} />
+            <Route path="traductions" element={<Traductions />} />
+            <Route path="cles-api" element={<ClesApi />} />
+          </Route>
         </Route>
         <Route path="*" element={<Biens />} />
       </Route>

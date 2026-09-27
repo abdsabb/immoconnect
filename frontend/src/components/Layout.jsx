@@ -26,6 +26,7 @@ function BarreEspace({ role }) {
             {nonLus > 0 && <span className="ml-2 rounded-full bg-corail text-white text-xs font-bold px-2 py-0.5">{nonLus}</span>}
           </NavLink>
         )}
+        {role === 'admin' && <NavLink to="/admin" className={lien}>{t('nav.administration')}</NavLink>}
         <NavLink to="/profil" className={lien}>{t('nav.monProfil')}</NavLink>
       </div>
     </nav>
@@ -37,6 +38,8 @@ function BarreEspace({ role }) {
 export default function Layout() {
   const { t, i18n } = useTranslation()
   const { estConnecte, utilisateur, deconnecter } = useAuth()
+  // Textes du site gérés par l'administrateur (cas A6) ; à défaut, le texte livré avec l'interface
+  const contenu = (cle, repli) => t(`contenu:${cle}`, { defaultValue: t(repli) })
   const lien = ({ isActive }) =>
     `px-3 py-2 rounded-md font-titre font-semibold ${isActive ? 'text-corail' : 'text-white hover:text-turquoise'}`
 
@@ -48,15 +51,15 @@ export default function Layout() {
             Immo<span className="text-corail">Connect</span>
           </NavLink>
           <nav aria-label="Navigation principale" className="hidden md:flex items-center gap-1">
-            <NavLink to="/" end className={lien}>{t('nav.accueil')}</NavLink>
-            <NavLink to="/biens" className={lien}>{t('nav.biens')}</NavLink>
-            <NavLink to="/blog" className={lien}>{t('nav.blog')}</NavLink>
+            <NavLink to="/" end className={lien}>{contenu('nav.accueil', 'nav.accueil')}</NavLink>
+            <NavLink to="/biens" className={lien}>{contenu('nav.biens', 'nav.biens')}</NavLink>
+            <NavLink to="/blog" className={lien}>{contenu('nav.blog', 'nav.blog')}</NavLink>
             {estConnecte ? (
               <button type="button" onClick={deconnecter} className="px-3 py-2 rounded-md font-titre font-semibold text-white/80 hover:text-turquoise">
                 {t('nav.deconnexion')} ({utilisateur?.prenom})
               </button>
             ) : (
-              <NavLink to="/connexion" className={lien}>{t('nav.connexion')}</NavLink>
+              <NavLink to="/connexion" className={lien}>{contenu('nav.connexion', 'nav.connexion')}</NavLink>
             )}
           </nav>
           <div className="flex items-center gap-1" role="group" aria-label="Langue">
@@ -86,8 +89,8 @@ export default function Layout() {
         <div className="mx-auto max-w-6xl px-4 py-6 flex flex-wrap justify-between gap-2">
           <span>© {new Date().getFullYear()} ImmoConnect — Bruxelles</span>
           <span className="flex gap-4">
-            <a href="/mentions-legales" className="hover:text-white">{t('pied.mentions')}</a>
-            <a href="/confidentialite" className="hover:text-white">{t('pied.confidentialite')}</a>
+            <a href="/mentions-legales" className="hover:text-white">{contenu('footer.mentions', 'pied.mentions')}</a>
+            <a href="/confidentialite" className="hover:text-white">{contenu('footer.rgpd', 'pied.confidentialite')}</a>
             <span>{t('pied.osm')}</span>
           </span>
         </div>
