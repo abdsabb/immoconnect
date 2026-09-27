@@ -39,7 +39,8 @@ documentée ainsi qu'un volet Open Data.
 
 ```bash
 # 1. Base de données MySQL 8.4 (+ Adminer sur http://localhost:8081 — serveur: db, user: immo, mdp: immo)
-docker compose up -d db adminer
+#    et boîte de réception Mailpit, qui capture les e-mails de l'application (http://localhost:8025)
+docker compose up -d db adminer mailpit
 
 # 2. Backend — profil dev par défaut ; Flyway crée le schéma et charge les données de test au premier démarrage
 cd backend && ./mvnw spring-boot:run
@@ -55,6 +56,21 @@ Tests backend (nécessitent Docker, un MySQL 8.4 jetable est lancé par Testcont
 > Dépannage sans Docker : le profil par défaut fonctionne aussi avec le MySQL/MariaDB de XAMPP
 > (base `immoconnect`, utilisateur `immo` / `immo`). La référence reste MySQL 8.4.
 
+### Paiements : Stripe ou mode simulation
+
+Sans clé Stripe, le backend démarre en **mode simulation** : le parcours de paiement est complet, avec
+les cartes de test `4242 4242 4242 4242` (acceptée) et `4000 0000 0000 0002` (refusée), sans aucun appel réseau.
+C'est aussi le mode utilisé par les tests automatisés.
+
+Pour utiliser Stripe en mode test, fournir les clés par variables d'environnement avant de lancer le backend
+(elles ne sont jamais versionnées ; en production, leur absence arrête le démarrage) :
+
+```bash
+export STRIPE_SECRET_KEY=sk_test_...        # PowerShell : $env:STRIPE_SECRET_KEY = "sk_test_..."
+export STRIPE_PUBLISHABLE_KEY=pk_test_...
+export STRIPE_WEBHOOK_SECRET=whsec_...       # affiché par : stripe listen --forward-to localhost:8080/api/v1/webhooks/stripe
+```
+
 ### Comptes de test (mot de passe : `password` pour tous, hachés bcrypt en base)
 
 | Rôle | E-mail |
@@ -63,7 +79,7 @@ Tests backend (nécessitent Docker, un MySQL 8.4 jetable est lancé par Testcont
 | Agent immobilier | sarah.dubois@mail.be |
 | Administrateur | david.moreau@mail.be |
 
-### API disponible (version 0.1.0-alpha)
+### API disponible
 
 | Méthode | Endpoint | Accès |
 |---|---|---|
@@ -73,6 +89,14 @@ Tests backend (nécessitent Docker, un MySQL 8.4 jetable est lancé par Testcont
 | POST | `/api/v1/auth/register` · `/api/v1/auth/login` — inscription, jeton JWT | public |
 | GET / PATCH / DELETE | `/api/v1/auth/me` — profil, modification, désinscription (soft delete RA11) | JWT |
 | PUT | `/api/v1/auth/me/mot-de-passe` | JWT |
+| GET | `/api/v1/biens/{id}/creneaux` — créneaux de visite libres, standard et premium | JWT membre |
+| GET | `/api/v1/rendez-vous` — mes visites (membre) ou mon agenda (agent) | JWT |
+| POST | `/api/v1/rendez-vous` — réserver un créneau (409 si le créneau vient d'être pris) | JWT membre |
+| PATCH | `/api/v1/rendez-vous/{id}/confirmer` · `/honorer` | JWT agent du rendez-vous |
+| PATCH | `/api/v1/rendez-vous/{id}/annuler` — rembourse un créneau premium payé (RA8) | JWT membre ou agent du rendez-vous |
+| GET | `/api/v1/paiements/config` — mode de paiement, clé publiable, prix du créneau premium | public |
+| POST | `/api/v1/paiements/intent` — préparer le paiement Stripe d'un créneau premium | JWT membre |
+| POST | `/api/v1/webhooks/stripe` — notifications de paiement | signature Stripe |
 
 Documentation interactive : `/swagger-ui.html` · erreurs au format problem+json (RFC 7807).
 
