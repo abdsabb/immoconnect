@@ -9,7 +9,9 @@
     "visites": "Mijn bezoeken",
     "agenda": "Agenda",
     "deconnexion": "Afmelden",
-    "favoris": "Favorieten"
+    "favoris": "Favorieten",
+    "messages": "Berichten",
+    "monProfil": "Mijn profiel"
   },
   "commun": {
     "chargement": "Laden…",
@@ -173,6 +175,24 @@
     "vide": "U hebt nog geen favorieten. Voeg een pand toe met het hartje op zijn pagina.",
     "nombre_one": "{{count}} pand in favorieten",
     "nombre_other": "{{count}} panden in favorieten"
+  },
+  "message": {
+    "titre": "Berichten",
+    "reserve": "Alleen leden en makelaars kunnen berichten sturen.",
+    "conversations": "Gesprekken",
+    "conversation": "Gesprek",
+    "aucune": "Geen gesprekken. Schrijf een makelaar aan via de pagina van een pand.",
+    "aucuneAgent": "Nog geen enkel lid heeft u geschreven.",
+    "choisir": "Kies een gesprek.",
+    "premier": "Nog geen berichten. Schrijf het eerste.",
+    "vous": "U",
+    "lu": "gelezen",
+    "nonLus_one": "{{count}} ongelezen bericht",
+    "nonLus_other": "{{count}} ongelezen berichten",
+    "votreMessage": "Uw bericht",
+    "envoyer": "Versturen",
+    "retour": "Terug naar de gesprekken",
+    "brouillon": "Dag, ik heb interesse in « {{titre}} ». "
   },
   "erreur": {
     "creneau-indisponible": "Dit tijdslot is zopas gereserveerd. Kies een ander.",

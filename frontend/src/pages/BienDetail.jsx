@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '../auth/AuthContext'
 import { chargerBien, formatPrix } from '../services/biens'
 import { Photo } from '../components/CarteBien'
 import CarteOSM from '../components/CarteOSM'
@@ -12,6 +13,8 @@ import BoutonFavori from '../components/BoutonFavori'
 export default function BienDetail() {
   const { id } = useParams()
   const { t } = useTranslation()
+  const { utilisateur } = useAuth()
+  const peutAgir = !utilisateur || utilisateur.role === 'membre'
   const [photoActive, setPhotoActive] = useState(0)
   const { data: bien, isPending, error } = useQuery({ queryKey: ['bien', id], queryFn: () => chargerBien(id) })
 
@@ -77,17 +80,22 @@ export default function BienDetail() {
 
         <aside className="lg:sticky lg:top-6 self-start bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
           <p className="font-titre text-3xl font-extrabold text-corail">{formatPrix(bien.prix)}</p>
-          {/* Route protégée : un visiteur passe par la connexion puis revient à la prise de rendez-vous */}
-          {bien.statut === 'disponible' ? (
+          {/* Routes protégées : un visiteur passe par la connexion puis revient à son action.
+              Prendre rendez-vous et écrire à l'agent sont le fait d'un membre, pas d'un agent ni d'un administrateur. */}
+          {peutAgir && (bien.statut === 'disponible' ? (
             <Link to={`/biens/${id}/rendez-vous`} className="block text-center bg-corail hover:bg-corail/90 text-white font-titre font-bold rounded-lg px-4 py-3">
               {t('bien.prendreRdv')}
             </Link>
           ) : (
             <p className="rounded-lg bg-perle px-4 py-3 text-sm text-gray-700">{t('bien.plusDeVisite')}</p>
+          ))}
+          {peutAgir && (
+            <Link to={`/messages/${bien.agent.id}`}
+              state={{ interlocuteur: bien.agent.nomComplet, brouillon: t('message.brouillon', { titre: bien.titre }) }}
+              className="block text-center border-2 border-nuit text-nuit hover:bg-perle font-titre font-semibold rounded-lg px-4 py-3">
+              {t('bien.envoyerMessage')}
+            </Link>
           )}
-          <Link to="/connexion" state={{ from: `/biens/${id}` }} className="block text-center border-2 border-nuit text-nuit hover:bg-perle font-titre font-semibold rounded-lg px-4 py-3">
-            {t('bien.envoyerMessage')}
-          </Link>
           <div className="pt-4 border-t border-gray-200 text-sm">
             <p className="text-xs uppercase text-gray-500">{t('bien.agent')}</p>
             <p className="font-semibold text-nuit">{bien.agent.nomComplet}</p>

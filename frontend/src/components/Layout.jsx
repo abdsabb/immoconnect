@@ -1,8 +1,35 @@
 import { NavLink, Outlet } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
+import { useConversations } from '../services/messages'
 
 const LANGUES = ['fr', 'nl', 'en']
+
+// Seconde barre, réservée au compte connecté : ses liens dépendent du rôle. La navigation
+// principale garde ainsi ses quatre entrées, quelle que soit la personne connectée.
+function BarreEspace({ role }) {
+  const { t } = useTranslation()
+  const { nonLus } = useConversations()
+  const lien = ({ isActive }) =>
+    `whitespace-nowrap px-3 py-2 text-sm font-semibold border-b-2 ${
+      isActive ? 'border-corail text-white' : 'border-transparent text-white/80 hover:text-white'
+    }`
+  return (
+    <nav aria-label={t('nav.profil')} className="bg-nuit border-t border-white/10">
+      <div className="mx-auto max-w-6xl px-4 flex gap-1 overflow-x-auto">
+        {role !== 'admin' && <NavLink to="/rendez-vous" className={lien}>{t(role === 'agent' ? 'nav.agenda' : 'nav.visites')}</NavLink>}
+        {role === 'membre' && <NavLink to="/favoris" className={lien}>{t('nav.favoris')}</NavLink>}
+        {role !== 'admin' && (
+          <NavLink to="/messages" className={lien}>
+            {t('nav.messages')}
+            {nonLus > 0 && <span className="ml-2 rounded-full bg-corail text-white text-xs font-bold px-2 py-0.5">{nonLus}</span>}
+          </NavLink>
+        )}
+        <NavLink to="/profil" className={lien}>{t('nav.monProfil')}</NavLink>
+      </div>
+    </nav>
+  )
+}
 
 // Gabarit commun à toutes les pages : en-tête (logo, navigation à 4 entrées,
 // sélecteur de langue) et pied de page — structure du site du livrable 10.
@@ -24,16 +51,9 @@ export default function Layout() {
             <NavLink to="/biens" className={lien}>{t('nav.biens')}</NavLink>
             <NavLink to="/blog" className={lien}>{t('nav.blog')}</NavLink>
             {estConnecte ? (
-              <>
-                {utilisateur?.role === 'membre' && <NavLink to="/favoris" className={lien}>{t('nav.favoris')}</NavLink>}
-                {utilisateur?.role !== 'admin' && (
-                  <NavLink to="/rendez-vous" className={lien}>{t(utilisateur?.role === 'agent' ? 'nav.agenda' : 'nav.visites')}</NavLink>
-                )}
-                <NavLink to="/profil" className={lien}>{t('nav.profil')}</NavLink>
-                <button type="button" onClick={deconnecter} className="px-3 py-2 rounded-md font-titre font-semibold text-white/80 hover:text-turquoise">
-                  {t('nav.deconnexion')} ({utilisateur?.prenom})
-                </button>
-              </>
+              <button type="button" onClick={deconnecter} className="px-3 py-2 rounded-md font-titre font-semibold text-white/80 hover:text-turquoise">
+                {t('nav.deconnexion')} ({utilisateur?.prenom})
+              </button>
             ) : (
               <NavLink to="/connexion" className={lien}>{t('nav.connexion')}</NavLink>
             )}
@@ -54,6 +74,7 @@ export default function Layout() {
             ))}
           </div>
         </div>
+        {estConnecte && <BarreEspace role={utilisateur?.role} />}
       </header>
 
       <main className="flex-1">

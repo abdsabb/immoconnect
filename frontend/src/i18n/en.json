@@ -9,7 +9,9 @@
     "visites": "My visits",
     "agenda": "Schedule",
     "deconnexion": "Log out",
-    "favoris": "Favourites"
+    "favoris": "Favourites",
+    "messages": "Messages",
+    "monProfil": "My profile"
   },
   "commun": {
     "chargement": "Loading…",
@@ -173,6 +175,24 @@
     "vide": "You have no favourite yet. Add a property with the heart on its page.",
     "nombre_one": "{{count}} favourite property",
     "nombre_other": "{{count}} favourite properties"
+  },
+  "message": {
+    "titre": "Messages",
+    "reserve": "Only members and agents can use messaging.",
+    "conversations": "Conversations",
+    "conversation": "Conversation",
+    "aucune": "No conversation yet. Write to an agent from a property page.",
+    "aucuneAgent": "No member has written to you yet.",
+    "choisir": "Choose a conversation.",
+    "premier": "No message yet. Write the first one.",
+    "vous": "You",
+    "lu": "read",
+    "nonLus_one": "{{count}} unread message",
+    "nonLus_other": "{{count}} unread messages",
+    "votreMessage": "Your message",
+    "envoyer": "Send",
+    "retour": "Back to conversations",
+    "brouillon": "Hello, I am interested in “{{titre}}”. "
   },
   "erreur": {
     "creneau-indisponible": "This slot has just been booked. Please choose another one.",

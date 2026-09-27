@@ -9,7 +9,9 @@
     "visites": "Mes visites",
     "agenda": "Agenda",
     "deconnexion": "Se déconnecter",
-    "favoris": "Favoris"
+    "favoris": "Favoris",
+    "messages": "Messages",
+    "monProfil": "Mon profil"
   },
   "commun": {
     "chargement": "Chargement…",
@@ -173,6 +175,24 @@
     "vide": "Vous n'avez pas encore de favori. Ajoutez un bien avec le cœur de sa fiche.",
     "nombre_one": "{{count}} bien en favori",
     "nombre_other": "{{count}} biens en favori"
+  },
+  "message": {
+    "titre": "Messagerie",
+    "reserve": "La messagerie est réservée aux membres et aux agents.",
+    "conversations": "Conversations",
+    "conversation": "Conversation",
+    "aucune": "Aucune conversation. Écrivez à un agent depuis la fiche d'un bien.",
+    "aucuneAgent": "Aucun membre ne vous a encore écrit.",
+    "choisir": "Choisissez une conversation.",
+    "premier": "Aucun message pour l'instant. Écrivez le premier.",
+    "vous": "Vous",
+    "lu": "lu",
+    "nonLus_one": "{{count}} message non lu",
+    "nonLus_other": "{{count}} messages non lus",
+    "votreMessage": "Votre message",
+    "envoyer": "Envoyer",
+    "retour": "Retour aux conversations",
+    "brouillon": "Bonjour, je suis intéressé par « {{titre}} ». "
   },
   "erreur": {
     "creneau-indisponible": "Ce créneau vient d'être réservé. Choisissez-en un autre.",
