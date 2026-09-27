@@ -27,7 +27,7 @@ documentée ainsi qu'un volet Open Data.
 
 ```
 ├── backend/                 API Spring Boot (Maven) — Dockerfile multi-étapes
-│   └── src/main/resources/db/migration/   V1 = schéma (17 tables), V2 = données de test
+│   └── src/main/resources/db/migration/   V1 = schéma (17 tables), V2 = données de test, V3 = expéditeur des messages
 ├── frontend/                SPA React (Vite) — Dockerfile + nginx.conf
 ├── api/openapi.yaml         Spécification OpenAPI 3.0 de l'API (livrable 15)
 ├── docs/uml/                Sources PlantUML des diagrammes d'analyse (livrable 07) et du schéma BDD
@@ -94,6 +94,11 @@ export STRIPE_WEBHOOK_SECRET=whsec_...       # affiché par : stripe listen --fo
 | POST | `/api/v1/rendez-vous` — réserver un créneau (409 si le créneau vient d'être pris) | JWT membre |
 | PATCH | `/api/v1/rendez-vous/{id}/confirmer` · `/honorer` | JWT agent du rendez-vous |
 | PATCH | `/api/v1/rendez-vous/{id}/annuler` — rembourse un créneau premium payé (RA8) | JWT membre ou agent du rendez-vous |
+| PUT / DELETE | `/api/v1/biens/{id}/favori` — ajouter ou retirer un favori (idempotent) | JWT membre |
+| GET | `/api/v1/membres/moi/favoris` — mes favoris, paginés | JWT membre |
+| GET / POST | `/api/v1/messages` — mes conversations, envoyer un message | JWT membre ou agent |
+| GET | `/api/v1/messages/conversations/{interlocuteurId}` — messages échangés avec un interlocuteur | JWT membre ou agent |
+| PATCH | `/api/v1/messages/conversations/{interlocuteurId}/lu` — marquer les messages reçus comme lus | JWT membre ou agent |
 | GET | `/api/v1/paiements/config` — mode de paiement, clé publiable, prix du créneau premium | public |
 | POST | `/api/v1/paiements/intent` — préparer le paiement Stripe d'un créneau premium | JWT membre |
 | POST | `/api/v1/webhooks/stripe` — notifications de paiement | signature Stripe |

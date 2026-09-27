@@ -190,17 +190,25 @@ paths:
     put:
       tags: [Favoris]
       summary: Ajouter le bien aux favoris (membre)
+      description: Idempotent. Un bien vendu, loué ou sous option n'accepte plus de favori (règle RA5).
       responses:
         '204': { description: Ajouté }
+        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
+        '409': { $ref: '#/components/responses/ErreurConflit' }
     delete:
       tags: [Favoris]
       summary: Retirer le bien des favoris (membre)
+      description: Idempotent.
       responses:
         '204': { description: Retiré }
   /membres/moi/favoris:
     get:
       tags: [Favoris]
       summary: Mes favoris (membre)
+      description: Du plus récemment ajouté au plus ancien. Le membre vient du jeton, jamais de l'URL.
+      parameters:
+        - { name: page, in: query, schema: { type: integer, default: 0 } }
+        - { name: taille, in: query, schema: { type: integer, default: 20, maximum: 100 } }
       responses:
         '200':
           description: Liste des favoris
@@ -211,37 +219,66 @@ paths:
     get:
       tags: [Messages]
       summary: Mes conversations (membre ou agent)
+      description: Une ligne par interlocuteur, la conversation la plus récemment active en premier.
       responses:
         '200':
-          description: Messages
+          description: Conversations
           content:
             application/json:
               schema:
                 type: array
-                items: { $ref: '#/components/schemas/Message' }
+                items: { $ref: '#/components/schemas/Conversation' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
     post:
       tags: [Messages]
-      summary: Envoyer un message à un agent (membre)
+      summary: Envoyer un message (membre ou agent)
+      description: >
+        Un membre écrit à l'agent de son choix. Un agent répond à un membre qui lui a déjà
+        écrit ; il ne peut pas engager la conversation (403). L'expéditeur vient du jeton.
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [agentId, contenu]
+              required: [destinataireId, contenu]
               properties:
-                agentId: { type: integer, example: 101 }
+                destinataireId: { type: integer, example: 101 }
                 contenu: { type: string, maxLength: 5000 }
       responses:
-        '201': { description: Message envoyé }
-  /messages/{id}/lu:
+        '201':
+          description: Message envoyé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Message' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+  /messages/conversations/{interlocuteurId}:
+    get:
+      tags: [Messages]
+      summary: Messages échangés avec un interlocuteur
+      description: >
+        Dans l'ordre chronologique ; liste vide si rien n'a encore été échangé. L'utilisateur
+        connecté est toujours l'une des deux parties : il ne peut pas lire la conversation d'un autre.
+      parameters:
+        - { name: interlocuteurId, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Messages de la conversation
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Message' }
+  /messages/conversations/{interlocuteurId}/lu:
     patch:
       tags: [Messages]
-      summary: Marquer un message comme lu (agent destinataire)
+      summary: Marquer comme lus les messages reçus d'un interlocuteur
       parameters:
-        - { name: id, in: path, required: true, schema: { type: integer } }
+        - { name: interlocuteurId, in: path, required: true, schema: { type: integer } }
       responses:
-        '204': { description: Marqué comme lu }
+        '204': { description: Messages marqués comme lus }
   /biens/{id}/creneaux:
     get:
       tags: [Rendez-vous]
@@ -722,7 +759,17 @@ components:
         destinataire: { type: string, example: Sarah Dubois }
         contenu: { type: string }
         envoyeLe: { type: string, format: date-time }
-        lu: { type: boolean }
+        lu: { type: boolean, description: Lu par son destinataire }
+        deMoi: { type: boolean, description: Vrai si l'utilisateur connecté en est l'auteur }
+    Conversation:
+      type: object
+      properties:
+        interlocuteurId: { type: integer, example: 101 }
+        interlocuteur: { type: string, example: Sarah Dubois }
+        dernierMessage: { type: string, description: Aperçu du dernier message échangé (120 caractères) }
+        dernierEnvoi: { type: string, format: date-time }
+        dernierDeMoi: { type: boolean }
+        nonLus: { type: integer, example: 2, description: Messages reçus et non encore lus }
     BienOpenData:
       type: object
       description: Version anonymisée pour l'Open Data (aucune donnée personnelle)
