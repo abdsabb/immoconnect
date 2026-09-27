@@ -87,7 +87,7 @@ class RendezVousControleurTest {
                 .andExpect(jsonPath("$.agent").value("Sarah Dubois")));
         int id = cree.get("id").asInt();
         assertThat(creneauxLibres(membre)).doesNotContain(creneau);
-        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM journal_audit WHERE action = 'reservation_rendez_vous' AND entite = ?",
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM journal_audit WHERE action = 'creation_rdv' AND entite = ?",
                 Integer.class, "rendez_vous#" + id)).isEqualTo(1);
 
         // A2 — un autre membre arrive trop tard sur le même créneau.

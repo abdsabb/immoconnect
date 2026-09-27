@@ -173,7 +173,7 @@ public class ServiceRendezVous {
         verrouillerAgenda(bien);
         exigerCreneauLibre(membre, bien, requete.dateHeure());
         RendezVous rdv = rendezVous.save(new RendezVous(membre, bien, requete.dateHeure(), nettoyer(requete.motif())));
-        audit.enregistrer(membre, "reservation_rendez_vous", "rendez_vous#" + rdv.getId(), ip);
+        audit.enregistrer(membre, "creation_rdv", "rendez_vous#" + rdv.getId(), ip);
         publier(rdv, EvenementRendezVous.Type.demande);
         return RendezVousResume.pourMembre(rdv);
     }
@@ -198,7 +198,7 @@ public class ServiceRendezVous {
         RendezVous rdv = charger(id);
         exigerAgentDuRendezVous(rdv, agentId);
         rdv.confirmer(maintenant());
-        audit.enregistrer(rdv.getAgent(), "confirmation_rendez_vous", "rendez_vous#" + id, ip);
+        audit.enregistrer(rdv.getAgent(), "confirmation_rdv", "rendez_vous#" + id, ip);
         publier(rdv, EvenementRendezVous.Type.confirme_par_agent);
         return RendezVousResume.pourAgent(rdv);
     }
@@ -217,13 +217,13 @@ public class ServiceRendezVous {
         }
         rdv.annuler(maintenant());
         Utilisateur auteur = parLAgent ? rdv.getAgent() : rdv.getMembre();
-        audit.enregistrer(auteur, "annulation_rendez_vous", "rendez_vous#" + id, ip);
+        audit.enregistrer(auteur, "annulation_rdv", "rendez_vous#" + id, ip);
 
         Paiement paiement = rdv.getPaiement();
         if (paiement != null && paiement.getStatut() == StatutPaiement.reussi) {
             passerelle.rembourser(paiement.getStripePaymentIntentId());
             paiement.rembourser();
-            audit.enregistrer(auteur, "remboursement_paiement", "paiement#" + paiement.getId(), ip);
+            audit.enregistrer(auteur, "remboursement", "paiement#" + paiement.getId(), ip);
         }
         publier(rdv, parLAgent ? EvenementRendezVous.Type.annule_par_agent : EvenementRendezVous.Type.annule_par_membre);
         return parLAgent ? RendezVousResume.pourAgent(rdv) : RendezVousResume.pourMembre(rdv);
@@ -299,7 +299,7 @@ public class ServiceRendezVous {
             Paiement paiement = new Paiement(rdv, membre, intention.id(), grille.prix(dateHeure));
             paiement.marquerReussi();
             rdv.setPaiement(paiements.save(paiement));
-            audit.enregistrer(membre, "paiement_creneau_premium", "rendez_vous#" + rdv.getId(), origine);
+            audit.enregistrer(membre, "paiement_reussi", "rendez_vous#" + rdv.getId(), origine);
             publier(rdv, EvenementRendezVous.Type.confirme_par_paiement);
             return rdv;
         } catch (CreneauIndisponibleException e) {
@@ -347,7 +347,7 @@ public class ServiceRendezVous {
                         rdv.annuler(maintenant());
                         publier(rdv, EvenementRendezVous.Type.annule_par_agent);
                     }
-                    audit.enregistrer(paiement.getMembre(), "remboursement_paiement", "paiement#" + paiement.getId(), ORIGINE_WEBHOOK);
+                    audit.enregistrer(paiement.getMembre(), "remboursement", "paiement#" + paiement.getId(), ORIGINE_WEBHOOK);
                 });
     }
 
