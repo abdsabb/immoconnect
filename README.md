@@ -20,7 +20,7 @@ documentée ainsi qu'un volet Open Data.
 | Back-end | Spring Boot 4.1 (Java 21 LTS) — API REST `/api/v1` · Spring Security · Spring Data JPA · springdoc (Swagger) |
 | Base de données | MySQL 8.4 LTS — migrations Flyway (`backend/src/main/resources/db/migration`) |
 | Paiement | Stripe (PaymentIntents + webhooks signés) |
-| Conteneurisation | Docker Compose (dev) · images Docker + Nginx (prod) |
+| Conteneurisation | Docker Compose (dev et prod) · images Docker, Nginx et Caddy (HTTPS) en production |
 | Intégration continue | GitHub Actions à chaque push : tests backend (Testcontainers), build frontend, images Docker |
 
 ## Structure du dépôt
@@ -33,7 +33,10 @@ documentée ainsi qu'un volet Open Data.
 ├── api/openapi.yaml         Spécification OpenAPI 3.0 de l'API (livrable 15)
 ├── docs/uml/                Sources PlantUML des diagrammes d'analyse (livrable 07) et du schéma BDD
 ├── .github/workflows/ci.yml Intégration continue
-└── docker-compose.yml       Environnement de développement (MySQL 8.4 + Adminer)
+├── docker-compose.yml       Environnement de développement (MySQL 8.4 + Adminer + Mailpit)
+├── docker-compose.prod.yml  Production : Caddy (HTTPS), frontend, backend, MySQL, Mailpit
+├── deploiement/Caddyfile    Routage et certificat HTTPS de la production
+└── .env.example             Modèle du fichier .env de production
 ```
 
 ## Démarrer en développement
@@ -123,6 +126,30 @@ Les photos téléversées sont enregistrées dans `backend/stockage/` (variable 
 | GET | `/api/v1/open-data/biens` · `/open-data/statistiques` — données anonymisées, CC BY 4.0, 60 appels/min | clé API (`X-API-Key`) |
 
 Documentation interactive : `/swagger-ui.html` · erreurs au format problem+json (RFC 7807).
+
+## Déployer en production
+
+La production tourne sur un VPS Linux avec Docker. Le fichier `docker-compose.prod.yml` démarre cinq conteneurs ;
+seul Caddy est exposé à Internet (ports 80 et 443), il obtient et renouvelle le certificat HTTPS.
+
+| Conteneur | Rôle |
+|---|---|
+| `caddy` | Point d'entrée HTTPS : `/api`, `/storage` et Swagger vers le backend, le reste vers le frontend |
+| `frontend` | Application React servie par Nginx |
+| `backend` | API Spring Boot, profil `prod`, utilisateur non root |
+| `db` | MySQL 8.4, sans port publié ; schéma et données de test appliqués par Flyway |
+| `mailpit` | Boîte de réception de démonstration sur `/courriels/` : capture les e-mails, n'en envoie aucun |
+
+```bash
+git clone https://github.com/abdsabb/immoconnect.git && cd immoconnect
+cp .env.example .env && nano .env        # domaine, mots de passe, clé JWT, clés Stripe
+docker compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml ps
+```
+
+Mettre à jour : `git pull` puis la même commande `up -d --build`. Les données survivent dans les volumes Docker
+(`mysql-data`, `photos`). Le webhook Stripe se déclare dans le tableau de bord Stripe sur
+`https://<domaine>/api/v1/webhooks/stripe` ; son secret va dans `STRIPE_WEBHOOK_SECRET`.
 
 ## Branches, commits et releases
 
