@@ -17,6 +17,7 @@ function BarreEspace({ role }) {
   return (
     <nav aria-label={t('nav.profil')} className="bg-nuit border-t border-white/10">
       <div className="mx-auto max-w-6xl px-4 flex gap-1 overflow-x-auto">
+        {role === 'agent' && <NavLink to="/annonces" className={lien}>{t('nav.annonces')}</NavLink>}
         {role !== 'admin' && <NavLink to="/rendez-vous" className={lien}>{t(role === 'agent' ? 'nav.agenda' : 'nav.visites')}</NavLink>}
         {role === 'membre' && <NavLink to="/favoris" className={lien}>{t('nav.favoris')}</NavLink>}
         {role !== 'admin' && (

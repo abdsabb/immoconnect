@@ -11,7 +11,8 @@
     "deconnexion": "Se déconnecter",
     "favoris": "Favoris",
     "messages": "Messages",
-    "monProfil": "Mon profil"
+    "monProfil": "Mon profil",
+    "annonces": "Mes annonces"
   },
   "commun": {
     "chargement": "Chargement…",
@@ -194,11 +195,65 @@
     "retour": "Retour aux conversations",
     "brouillon": "Bonjour, je suis intéressé par « {{titre}} ». "
   },
+  "annonce": {
+    "mesAnnonces": "Mes annonces",
+    "nouvelle": "Nouvelle annonce",
+    "modifierTitre": "Modifier l'annonce",
+    "modifier": "Modifier",
+    "archiver": "Archiver",
+    "retour": "Retour à mes annonces",
+    "aucune": "Vous n'avez pas encore d'annonce.",
+    "enLigne": "Annonces en ligne",
+    "favoris": "Favoris",
+    "demandes": "Demandes en attente",
+    "visites": "Visites à venir",
+    "confirmerArchivage": "Archiver « {{titre}} » ? L'annonce quittera le site public et restera dans votre historique.",
+    "statut": {
+      "disponible": "Disponible",
+      "sous_option": "Sous option",
+      "vendu": "Vendu",
+      "loue": "Loué",
+      "archive": "Hors ligne"
+    },
+    "explicationCreation": "L'annonce est créée hors ligne. Ajoutez ensuite au moins une photo pour pouvoir la publier.",
+    "description": "Description du bien",
+    "titre": "Titre de l'annonce",
+    "categorie": "Catégorie",
+    "prix": "Prix (€)",
+    "superficie": "Superficie (m²)",
+    "codePostal": "Code postal",
+    "codePostalInvalide": "Code postal belge à 4 chiffres",
+    "ville": "Ville ou commune",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "minimum": "Valeur minimale : {{min}}",
+    "maximum": "Valeur maximale : {{max}}",
+    "explicationAdresse": "L'adresse exacte n'est jamais affichée au public : elle est communiquée au membre une fois sa visite confirmée.",
+    "explicationCarte": "Cliquez sur la carte à l'emplacement du bien pour remplir sa position.",
+    "publication": "Publication",
+    "explicationStatut": "Publier demande au moins une photo. Un bien ne peut être vendu, loué ou mis hors ligne tant que des visites sont prévues.",
+    "creer": "Créer l'annonce",
+    "enregistree": "Annonce enregistrée.",
+    "corriger": "Certains champs sont à corriger.",
+    "photos": "Photos",
+    "sansPhoto": "Cette annonce n'a pas encore de photo : elle ne peut pas être publiée.",
+    "couverture": "Couverture",
+    "choisirCouverture": "Mettre en couverture",
+    "supprimerPhoto": "Supprimer",
+    "confirmerSuppressionPhoto": "Supprimer cette photo ?",
+    "ajouterPhoto": "Ajouter une photo",
+    "legende": "Légende (facultative)",
+    "televerser": "Téléverser",
+    "photoConsigne": "JPEG ou PNG, 5 Mo au plus, 400 pixels de côté au moins. La photo est redimensionnée et ses métadonnées sont effacées.",
+    "photoFormat": "Seules les photos JPEG et PNG sont acceptées.",
+    "photoTropLourde": "Une photo pèse 5 Mo au plus."
+  },
   "erreur": {
     "creneau-indisponible": "Ce créneau vient d'être réservé. Choisissez-en un autre.",
     "bien-indisponible": "Ce bien n'est plus disponible.",
     "paiement-indisponible": "Le service de paiement est momentanément indisponible. Réessayez dans un instant.",
     "conflit-etat": "Cette action n'est plus possible pour ce rendez-vous.",
-    "interdit": "Vous n'avez pas le droit d'effectuer cette action."
+    "interdit": "Vous n'avez pas le droit d'effectuer cette action.",
+    "fichier-trop-volumineux": "Une photo pèse 5 Mo au plus."
   }
 }

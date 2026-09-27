@@ -11,7 +11,8 @@
     "deconnexion": "Log out",
     "favoris": "Favourites",
     "messages": "Messages",
-    "monProfil": "My profile"
+    "monProfil": "My profile",
+    "annonces": "My listings"
   },
   "commun": {
     "chargement": "Loading…",
@@ -194,11 +195,65 @@
     "retour": "Back to conversations",
     "brouillon": "Hello, I am interested in “{{titre}}”. "
   },
+  "annonce": {
+    "mesAnnonces": "My listings",
+    "nouvelle": "New listing",
+    "modifierTitre": "Edit listing",
+    "modifier": "Edit",
+    "archiver": "Archive",
+    "retour": "Back to my listings",
+    "aucune": "You have no listing yet.",
+    "enLigne": "Listings online",
+    "favoris": "Favourites",
+    "demandes": "Pending requests",
+    "visites": "Upcoming visits",
+    "confirmerArchivage": "Archive “{{titre}}”? The listing will leave the public site and stay in your history.",
+    "statut": {
+      "disponible": "Available",
+      "sous_option": "Under option",
+      "vendu": "Sold",
+      "loue": "Rented",
+      "archive": "Offline"
+    },
+    "explicationCreation": "The listing is created offline. Then add at least one photo to be able to publish it.",
+    "description": "Property description",
+    "titre": "Listing title",
+    "categorie": "Category",
+    "prix": "Price (€)",
+    "superficie": "Surface (m²)",
+    "codePostal": "Postcode",
+    "codePostalInvalide": "4-digit Belgian postcode",
+    "ville": "City or municipality",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "minimum": "Minimum value: {{min}}",
+    "maximum": "Maximum value: {{max}}",
+    "explicationAdresse": "The exact address is never shown publicly: the member receives it once the visit is confirmed.",
+    "explicationCarte": "Click on the map where the property is to fill in its position.",
+    "publication": "Publication",
+    "explicationStatut": "Publishing requires at least one photo. A property cannot be sold, rented or taken offline while visits are planned.",
+    "creer": "Create listing",
+    "enregistree": "Listing saved.",
+    "corriger": "Some fields need to be corrected.",
+    "photos": "Photos",
+    "sansPhoto": "This listing has no photo yet: it cannot be published.",
+    "couverture": "Cover",
+    "choisirCouverture": "Set as cover",
+    "supprimerPhoto": "Delete",
+    "confirmerSuppressionPhoto": "Delete this photo?",
+    "ajouterPhoto": "Add a photo",
+    "legende": "Caption (optional)",
+    "televerser": "Upload",
+    "photoConsigne": "JPEG or PNG, 5 MB at most, at least 400 pixels on the longest side. The photo is resized and its metadata is removed.",
+    "photoFormat": "Only JPEG and PNG photos are accepted.",
+    "photoTropLourde": "A photo weighs 5 MB at most."
+  },
   "erreur": {
     "creneau-indisponible": "This slot has just been booked. Please choose another one.",
     "bien-indisponible": "This property is no longer available.",
     "paiement-indisponible": "The payment service is temporarily unavailable. Please try again shortly.",
     "conflit-etat": "This action is no longer possible for this visit.",
-    "interdit": "You are not allowed to perform this action."
+    "interdit": "You are not allowed to perform this action.",
+    "fichier-trop-volumineux": "A photo weighs 5 MB at most."
   }
 }

@@ -11,8 +11,11 @@ import PriseRendezVous from './pages/PriseRendezVous'
 import MesRendezVous from './pages/MesRendezVous'
 import MesFavoris from './pages/MesFavoris'
 import Messagerie from './pages/Messagerie'
+import MesAnnonces from './pages/MesAnnonces'
+import AnnonceFormulaire from './pages/AnnonceFormulaire'
 
-// Arborescence issue de la charte (livrable 10) : pages publiques, connexion/inscription, espace membre.
+// Arborescence issue de la charte (livrable 10) : pages publiques, connexion/inscription,
+// espace membre, espace agent.
 export default function App() {
   return (
     <Routes>
@@ -29,6 +32,12 @@ export default function App() {
           <Route path="favoris" element={<MesFavoris />} />
           <Route path="messages" element={<Messagerie />} />
           <Route path="messages/:interlocuteurId" element={<Messagerie />} />
+        </Route>
+        {/* Back-office de l'agent. La clé distingue création et modification : le formulaire repart de zéro. */}
+        <Route element={<RouteProtegee roles={['agent']} />}>
+          <Route path="annonces" element={<MesAnnonces />} />
+          <Route path="annonces/nouvelle" element={<AnnonceFormulaire key="nouvelle" />} />
+          <Route path="annonces/:id" element={<AnnonceFormulaire key="existante" />} />
         </Route>
         <Route path="*" element={<Biens />} />
       </Route>

@@ -11,7 +11,8 @@
     "deconnexion": "Afmelden",
     "favoris": "Favorieten",
     "messages": "Berichten",
-    "monProfil": "Mijn profiel"
+    "monProfil": "Mijn profiel",
+    "annonces": "Mijn advertenties"
   },
   "commun": {
     "chargement": "Laden…",
@@ -194,11 +195,65 @@
     "retour": "Terug naar de gesprekken",
     "brouillon": "Dag, ik heb interesse in « {{titre}} ». "
   },
+  "annonce": {
+    "mesAnnonces": "Mijn advertenties",
+    "nouvelle": "Nieuwe advertentie",
+    "modifierTitre": "Advertentie wijzigen",
+    "modifier": "Wijzigen",
+    "archiver": "Archiveren",
+    "retour": "Terug naar mijn advertenties",
+    "aucune": "U hebt nog geen advertenties.",
+    "enLigne": "Advertenties online",
+    "favoris": "Favorieten",
+    "demandes": "Aanvragen in afwachting",
+    "visites": "Geplande bezoeken",
+    "confirmerArchivage": "« {{titre}} » archiveren? De advertentie verdwijnt van de publieke site en blijft in uw historiek.",
+    "statut": {
+      "disponible": "Beschikbaar",
+      "sous_option": "Onder optie",
+      "vendu": "Verkocht",
+      "loue": "Verhuurd",
+      "archive": "Offline"
+    },
+    "explicationCreation": "De advertentie wordt offline aangemaakt. Voeg daarna minstens één foto toe om ze te kunnen publiceren.",
+    "description": "Beschrijving van het pand",
+    "titre": "Titel van de advertentie",
+    "categorie": "Categorie",
+    "prix": "Prijs (€)",
+    "superficie": "Oppervlakte (m²)",
+    "codePostal": "Postcode",
+    "codePostalInvalide": "Belgische postcode van 4 cijfers",
+    "ville": "Stad of gemeente",
+    "latitude": "Breedtegraad",
+    "longitude": "Lengtegraad",
+    "minimum": "Minimumwaarde: {{min}}",
+    "maximum": "Maximumwaarde: {{max}}",
+    "explicationAdresse": "Het exacte adres wordt nooit publiek getoond: het lid krijgt het zodra zijn bezoek bevestigd is.",
+    "explicationCarte": "Klik op de kaart op de plaats van het pand om de positie in te vullen.",
+    "publication": "Publicatie",
+    "explicationStatut": "Publiceren vereist minstens één foto. Een pand kan niet verkocht, verhuurd of offline gezet worden zolang er bezoeken gepland zijn.",
+    "creer": "Advertentie aanmaken",
+    "enregistree": "Advertentie opgeslagen.",
+    "corriger": "Sommige velden moeten worden verbeterd.",
+    "photos": "Foto's",
+    "sansPhoto": "Deze advertentie heeft nog geen foto: ze kan niet worden gepubliceerd.",
+    "couverture": "Omslagfoto",
+    "choisirCouverture": "Als omslagfoto instellen",
+    "supprimerPhoto": "Verwijderen",
+    "confirmerSuppressionPhoto": "Deze foto verwijderen?",
+    "ajouterPhoto": "Een foto toevoegen",
+    "legende": "Bijschrift (optioneel)",
+    "televerser": "Uploaden",
+    "photoConsigne": "JPEG of PNG, hoogstens 5 MB, minstens 400 pixels breed of hoog. De foto wordt verkleind en de metadata worden gewist.",
+    "photoFormat": "Alleen JPEG- en PNG-foto's worden aanvaard.",
+    "photoTropLourde": "Een foto weegt hoogstens 5 MB."
+  },
   "erreur": {
     "creneau-indisponible": "Dit tijdslot is zopas gereserveerd. Kies een ander.",
     "bien-indisponible": "Dit pand is niet meer beschikbaar.",
     "paiement-indisponible": "De betaaldienst is tijdelijk niet beschikbaar. Probeer het zo opnieuw.",
     "conflit-etat": "Deze actie is niet meer mogelijk voor deze afspraak.",
-    "interdit": "U mag deze actie niet uitvoeren."
+    "interdit": "U mag deze actie niet uitvoeren.",
+    "fichier-trop-volumineux": "Een foto weegt hoogstens 5 MB."
   }
 }
