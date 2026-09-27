@@ -42,6 +42,10 @@ public class ConfigurationSecurite {
                 .requestMatchers(HttpMethod.GET, "/api/v1/biens/*/creneaux").hasRole("MEMBRE")
                 .requestMatchers(HttpMethod.POST, "/api/v1/rendez-vous").hasRole("MEMBRE")
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/rendez-vous/*/confirmer", "/api/v1/rendez-vous/*/honorer").hasRole("AGENT")
+                // Paiement : le webhook est public mais authentifié par la signature de Stripe.
+                .requestMatchers(HttpMethod.GET, "/api/v1/paiements/config").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/webhooks/stripe").permitAll()
+                .requestMatchers("/api/v1/paiements/**").hasRole("MEMBRE")
                 // Niveau d'accès « public » (livrable 15, §4) : consultation et authentification
                 .requestMatchers(HttpMethod.GET, "/api/v1/biens/**", "/api/v1/articles/**",
                         "/api/v1/traductions/**").permitAll()

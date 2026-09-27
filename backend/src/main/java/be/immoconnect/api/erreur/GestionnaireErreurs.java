@@ -1,6 +1,8 @@
 package be.immoconnect.api.erreur;
 
 import be.immoconnect.entite.RendezVous.TransitionInterditeException;
+import be.immoconnect.paiement.PasserellePaiement.PasserelleIndisponibleException;
+import be.immoconnect.paiement.PasserellePaiement.SignatureInvalideException;
 import be.immoconnect.service.BienIndisponibleException;
 import be.immoconnect.service.CreneauIndisponibleException;
 import be.immoconnect.service.DonneeInvalideException;
@@ -63,6 +65,18 @@ public class GestionnaireErreurs {
                 "Certains champs sont invalides", "validation");
         pd.setProperty("champs", Map.of(e.getChamp(), e.getMessage()));
         return pd;
+    }
+
+    /** Le prestataire de paiement ne répond pas : l'opération est abandonnée, rien n'a été écrit. */
+    @ExceptionHandler(PasserelleIndisponibleException.class)
+    ProblemDetail paiementIndisponible(PasserelleIndisponibleException e) {
+        return probleme(HttpStatus.BAD_GATEWAY, "Paiement indisponible", e.getMessage(), "paiement-indisponible");
+    }
+
+    /** Webhook sans signature valide : refusé, sans indiquer pourquoi (livrable 16). */
+    @ExceptionHandler(SignatureInvalideException.class)
+    ProblemDetail signatureInvalide(SignatureInvalideException e) {
+        return probleme(HttpStatus.BAD_REQUEST, "Requête invalide", e.getMessage(), "requete-invalide");
     }
 
     /** Paramètre d'URL du mauvais type (identifiant non numérique, date mal formée) : 400, sans détail technique. */

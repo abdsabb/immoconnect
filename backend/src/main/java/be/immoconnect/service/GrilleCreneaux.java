@@ -44,6 +44,10 @@ public class GrilleCreneaux {
         this.horloge = horloge;
     }
 
+    public BigDecimal prixPremium() {
+        return prixPremium;
+    }
+
     public boolean estPremium(LocalDateTime dateHeure) {
         return estWeekEnd(dateHeure.toLocalDate()) || !dateHeure.toLocalTime().isBefore(DEBUT_SOIREE);
     }
