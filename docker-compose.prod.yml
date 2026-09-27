@@ -1,0 +1,92 @@
+# ImmoConnect — production (VPS)
+# Démarrage : docker compose -f docker-compose.prod.yml up -d --build
+# Les secrets viennent du fichier .env placé à côté (modèle : .env.example), jamais versionné.
+# Seul Caddy est exposé à Internet (ports 80 et 443) ; la base et le backend restent sur le réseau Docker.
+name: immoconnect-prod
+
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?DB_ROOT_PASSWORD manque dans .env}
+      MYSQL_DATABASE: immoconnect
+      MYSQL_USER: immo
+      MYSQL_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD manque dans .env}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      retries: 20
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      DB_URL: jdbc:mysql://db:3306/immoconnect?serverTimezone=Europe/Brussels&characterEncoding=UTF-8
+      DB_USER: immo
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET manque dans .env}
+      SITE_URL: https://${DOMAINE}
+      STORAGE_DIR: /app/stockage
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:?STRIPE_SECRET_KEY manque dans .env}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:?STRIPE_PUBLISHABLE_KEY manque dans .env}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      MAIL_FROM: ${MAIL_FROM:-no-reply@immoconnect.be}
+      # Par défaut, les e-mails sont remis à Mailpit : voir le service ci-dessous
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_USER: ${SMTP_USER:-immoconnect}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-immoconnect}
+    volumes:
+      - photos:/app/stockage
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on: [backend]
+
+  # Boîte de réception de démonstration : capture les e-mails de l'application, n'en envoie aucun.
+  # Les comptes de test portent des adresses fictives ; un vrai serveur SMTP écrirait à des inconnus.
+  # Lecture des messages sur https://<domaine>/courriels/, protégée par mot de passe.
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    environment:
+      MP_WEBROOT: courriels
+      MP_UI_AUTH: ${COURRIELS_UTILISATEUR:-jury}:${COURRIELS_MOT_DE_PASSE:?COURRIELS_MOT_DE_PASSE manque dans .env}
+      MP_SMTP_AUTH_ACCEPT_ANY: "true"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "true"
+      MP_DATABASE: /data/mailpit.db
+      MP_MAX_MESSAGES: "500"
+    volumes:
+      - mailpit-data:/data
+
+  # Point d'entrée unique : certificat HTTPS obtenu et renouvelé automatiquement (Let's Encrypt)
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAINE: ${DOMAINE:?DOMAINE manque dans .env}
+    volumes:
+      - ./deploiement/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on: [frontend, backend, mailpit]
+
+volumes:
+  mysql-data:
+  photos:
+  mailpit-data:
+  caddy-data:
+  caddy-config:

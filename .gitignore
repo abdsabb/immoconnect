@@ -12,6 +12,7 @@ dist/
 # Environnement & secrets — NE JAMAIS VERSIONNER
 .env
 .env.*
+!.env.example
 *.pem
 
 # IDE
