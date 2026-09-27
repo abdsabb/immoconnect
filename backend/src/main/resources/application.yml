@@ -20,6 +20,10 @@ spring:
     locale-resolver: fixed
   jackson:
     time-zone: Europe/Brussels   # Jackson 3 (Spring Boot 4) sérialise déjà les dates en ISO-8601
+  servlet:
+    multipart:
+      max-file-size: 5MB         # une photo de bien ; au-delà, réponse 413
+      max-request-size: 6MB
 
 server:
   port: 8080
@@ -48,6 +52,8 @@ immoconnect:
     expediteur: ${MAIL_FROM:no-reply@immoconnect.be}
     url-site: ${SITE_URL:http://localhost:5173}   # base des liens placés dans les e-mails
     delai-entre-tentatives: 2s                    # un envoi échoué est retenté (cas d'erreur E2)
+  stockage:
+    dossier: ${STORAGE_DIR:./stockage}            # photos des biens ; un volume Docker en production
   stripe:                           # sans clé secrète, les paiements passent en mode simulation (dev et tests)
     cle-secrete: ${STRIPE_SECRET_KEY:}
     cle-publique: ${STRIPE_PUBLISHABLE_KEY:}

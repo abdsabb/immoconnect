@@ -140,6 +140,12 @@
 			<artifactId>stripe-java</artifactId>
 			<version>33.4.2</version>
 		</dependency>
+		<!-- Photos des biens : redimensionnement et ré-encodage à l'upload (livrables 13 et 16) -->
+		<dependency>
+			<groupId>net.coobird</groupId>
+			<artifactId>thumbnailator</artifactId>
+			<version>0.4.21</version>
+		</dependency>
 		<!-- Documentation OpenAPI / Swagger UI (livrable 15) -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
