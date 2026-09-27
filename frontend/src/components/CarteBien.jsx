@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { formatPrix } from '../services/biens'
+import BoutonFavori from './BoutonFavori'
 
 // Badges de statut : couleurs sémantiques de la charte, alignées sur l'énumération StatutBien
 const BADGES = {
@@ -30,13 +31,14 @@ export function Photo({ src, alt, className }) {
 export default function CarteBien({ bien }) {
   const { t } = useTranslation()
   return (
-    <article className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
+    <article className="relative bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
       <Link to={`/biens/${bien.id}`} className="block relative">
         <Photo src={bien.photoCouverture} alt={bien.titre} className="w-full h-48" />
         <span className={`absolute top-3 left-3 text-xs font-semibold px-2 py-1 rounded-full ${BADGES[bien.statut] ?? BADGES.archive}`}>
           {t(`statut.${bien.statut}`)}
         </span>
       </Link>
+      <BoutonFavori bien={bien} className="absolute top-3 right-3" />
       <div className="p-4 flex-1 flex flex-col gap-2">
         <p className="text-xs uppercase tracking-wide text-turquoise font-semibold">{bien.categorie} · {bien.ville}</p>
         <h2 className="font-titre font-bold text-nuit leading-snug">

@@ -1,6 +1,11 @@
 package be.immoconnect.api.erreur;
 
 import be.immoconnect.entite.RendezVous.TransitionInterditeException;
+import be.immoconnect.paiement.PasserellePaiement.PasserelleIndisponibleException;
+import be.immoconnect.paiement.PasserellePaiement.SignatureInvalideException;
+import be.immoconnect.service.BienIndisponibleException;
+import be.immoconnect.service.CreneauIndisponibleException;
+import be.immoconnect.service.DonneeInvalideException;
 import be.immoconnect.service.OperationInterditeException;
 import be.immoconnect.service.RessourceIntrouvableException;
 import java.net.URI;
@@ -14,6 +19,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 /**
  * Conversion des exceptions en réponses « problem+json » (RFC 7807), conformément au livrable 15 :
@@ -38,6 +44,45 @@ public class GestionnaireErreurs {
     @ExceptionHandler({TransitionInterditeException.class, IllegalStateException.class})
     ProblemDetail conflit(RuntimeException e) {
         return probleme(HttpStatus.CONFLICT, "Conflit d'état", e.getMessage(), "conflit-etat");
+    }
+
+    /** Scénario A2 : le créneau a été pris entre l'affichage de la grille et la réservation. */
+    @ExceptionHandler(CreneauIndisponibleException.class)
+    ProblemDetail creneauIndisponible(CreneauIndisponibleException e) {
+        return probleme(HttpStatus.CONFLICT, "Créneau indisponible", e.getMessage(), "creneau-indisponible");
+    }
+
+    /** Cas d'erreur E3 : le bien a été retiré de la vente. */
+    @ExceptionHandler(BienIndisponibleException.class)
+    ProblemDetail bienIndisponible(BienIndisponibleException e) {
+        return probleme(HttpStatus.CONFLICT, "Bien indisponible", e.getMessage(), "bien-indisponible");
+    }
+
+    /** Règle métier non respectée par une donnée : même forme qu'une validation de formulaire. */
+    @ExceptionHandler(DonneeInvalideException.class)
+    ProblemDetail donneeInvalide(DonneeInvalideException e) {
+        ProblemDetail pd = probleme(HttpStatus.UNPROCESSABLE_CONTENT, "Validation échouée",
+                "Certains champs sont invalides", "validation");
+        pd.setProperty("champs", Map.of(e.getChamp(), e.getMessage()));
+        return pd;
+    }
+
+    /** Le prestataire de paiement ne répond pas : l'opération est abandonnée, rien n'a été écrit. */
+    @ExceptionHandler(PasserelleIndisponibleException.class)
+    ProblemDetail paiementIndisponible(PasserelleIndisponibleException e) {
+        return probleme(HttpStatus.BAD_GATEWAY, "Paiement indisponible", e.getMessage(), "paiement-indisponible");
+    }
+
+    /** Webhook sans signature valide : refusé, sans indiquer pourquoi (livrable 16). */
+    @ExceptionHandler(SignatureInvalideException.class)
+    ProblemDetail signatureInvalide(SignatureInvalideException e) {
+        return probleme(HttpStatus.BAD_REQUEST, "Requête invalide", e.getMessage(), "requete-invalide");
+    }
+
+    /** Paramètre d'URL du mauvais type (identifiant non numérique, date mal formée) : 400, sans détail technique. */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    ProblemDetail parametreInvalide(MethodArgumentTypeMismatchException e) {
+        return probleme(HttpStatus.BAD_REQUEST, "Requête invalide", "Le paramètre « " + e.getName() + " » est invalide", "requete-invalide");
     }
 
     /** Identifiants invalides : réponse 401 générique, sans révéler si l'adresse existe (livrable 16 §2.2). */

@@ -190,17 +190,25 @@ paths:
     put:
       tags: [Favoris]
       summary: Ajouter le bien aux favoris (membre)
+      description: Idempotent. Un bien vendu, loué ou sous option n'accepte plus de favori (règle RA5).
       responses:
         '204': { description: Ajouté }
+        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
+        '409': { $ref: '#/components/responses/ErreurConflit' }
     delete:
       tags: [Favoris]
       summary: Retirer le bien des favoris (membre)
+      description: Idempotent.
       responses:
         '204': { description: Retiré }
   /membres/moi/favoris:
     get:
       tags: [Favoris]
       summary: Mes favoris (membre)
+      description: Du plus récemment ajouté au plus ancien. Le membre vient du jeton, jamais de l'URL.
+      parameters:
+        - { name: page, in: query, schema: { type: integer, default: 0 } }
+        - { name: taille, in: query, schema: { type: integer, default: 20, maximum: 100 } }
       responses:
         '200':
           description: Liste des favoris
@@ -211,45 +219,79 @@ paths:
     get:
       tags: [Messages]
       summary: Mes conversations (membre ou agent)
+      description: Une ligne par interlocuteur, la conversation la plus récemment active en premier.
       responses:
         '200':
-          description: Messages
+          description: Conversations
           content:
             application/json:
               schema:
                 type: array
-                items: { $ref: '#/components/schemas/Message' }
+                items: { $ref: '#/components/schemas/Conversation' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
     post:
       tags: [Messages]
-      summary: Envoyer un message à un agent (membre)
+      summary: Envoyer un message (membre ou agent)
+      description: >
+        Un membre écrit à l'agent de son choix. Un agent répond à un membre qui lui a déjà
+        écrit ; il ne peut pas engager la conversation (403). L'expéditeur vient du jeton.
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [agentId, contenu]
+              required: [destinataireId, contenu]
               properties:
-                agentId: { type: integer, example: 101 }
+                destinataireId: { type: integer, example: 101 }
                 contenu: { type: string, maxLength: 5000 }
       responses:
-        '201': { description: Message envoyé }
-  /messages/{id}/lu:
+        '201':
+          description: Message envoyé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Message' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+  /messages/conversations/{interlocuteurId}:
+    get:
+      tags: [Messages]
+      summary: Messages échangés avec un interlocuteur
+      description: >
+        Dans l'ordre chronologique ; liste vide si rien n'a encore été échangé. L'utilisateur
+        connecté est toujours l'une des deux parties : il ne peut pas lire la conversation d'un autre.
+      parameters:
+        - { name: interlocuteurId, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Messages de la conversation
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Message' }
+  /messages/conversations/{interlocuteurId}/lu:
     patch:
       tags: [Messages]
-      summary: Marquer un message comme lu (agent destinataire)
+      summary: Marquer comme lus les messages reçus d'un interlocuteur
       parameters:
-        - { name: id, in: path, required: true, schema: { type: integer } }
+        - { name: interlocuteurId, in: path, required: true, schema: { type: integer } }
       responses:
-        '204': { description: Marqué comme lu }
+        '204': { description: Messages marqués comme lus }
   /biens/{id}/creneaux:
     get:
       tags: [Rendez-vous]
       summary: Créneaux de visite disponibles pour un bien (membre)
+      description: >
+        Créneaux de la grille de l'agence encore libres dans l'agenda de l'agent du bien.
+        Standard (gratuit) : du lundi au vendredi en journée. Premium (payant) : en soirée
+        à partir de 18 h et le week-end. Période par défaut : 14 jours à partir d'aujourd'hui ;
+        31 jours au plus ; réservation jusqu'à 60 jours à l'avance.
       parameters:
         - { name: id, in: path, required: true, schema: { type: integer } }
-        - { name: du, in: query, schema: { type: string, format: date } }
-        - { name: au, in: query, schema: { type: string, format: date } }
+        - { name: du, in: query, description: Premier jour, schema: { type: string, format: date } }
+        - { name: au, in: query, description: Dernier jour inclus, schema: { type: string, format: date } }
       responses:
         '200':
           description: Créneaux standard et premium encore libres (règle RA14)
@@ -258,6 +300,10 @@ paths:
               schema:
                 type: array
                 items: { $ref: '#/components/schemas/Creneau' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
+        '409': { $ref: '#/components/responses/ErreurConflit' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
   /rendez-vous:
     get:
       tags: [Rendez-vous]
@@ -275,8 +321,12 @@ paths:
       summary: Demander un rendez-vous de visite (membre)
       description: >
         Créneau standard : le rendez-vous est créé au statut « demande » (cas A1).
-        Créneau premium : fournir le paymentIntentId confirmé ; le rendez-vous est
-        créé au statut « confirme ». Si le créneau vient d'être pris : erreur 409 (cas A2).
+        Créneau premium : fournir le paymentIntentId confirmé ; le paiement est vérifié
+        auprès de Stripe, puis le rendez-vous est créé au statut « confirme ».
+        Si le créneau vient d'être pris : erreur 409 (cas A2) ; s'il était déjà payé,
+        le paiement est remboursé. Le type et le prix du créneau sont déduits de la date
+        par le serveur. Renvoyer la même demande ne crée pas de doublon (idempotence
+        sur la référence du paiement).
       requestBody:
         required: true
         content:
@@ -323,10 +373,47 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/RendezVous' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+        '409': { $ref: '#/components/responses/ErreurConflit' }
+        '502': { $ref: '#/components/responses/ErreurPaiement' }
+  /rendez-vous/{id}/honorer:
+    patch:
+      tags: [Rendez-vous]
+      summary: Signaler qu'une visite a eu lieu (agent) — transition confirme → honore
+      description: Possible uniquement après la date de la visite (règle RA2).
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Visite honorée
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RendezVous' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+        '409': { $ref: '#/components/responses/ErreurConflit' }
+  /paiements/config:
+    get:
+      tags: [Paiements]
+      summary: Réglages de paiement du navigateur
+      security: []
+      responses:
+        '200':
+          description: Mode de paiement, clé publiable Stripe et prix du créneau premium
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mode: { type: string, enum: [stripe, simulation] }
+                  clePublique: { type: string, nullable: true, example: pk_test_51AbC }
+                  prixCreneauPremium: { type: number, example: 15.00 }
   /paiements/intent:
     post:
       tags: [Paiements]
       summary: Créer un PaymentIntent Stripe pour un créneau premium (membre)
+      description: >
+        Le montant est fixé par le serveur. Rien n'est écrit en base à ce stade : si le
+        paiement échoue, aucun rendez-vous n'existe (cas d'erreur E1).
       requestBody:
         required: true
         content:
@@ -337,6 +424,7 @@ paths:
               properties:
                 bienId: { type: integer }
                 dateHeure: { type: string, format: date-time }
+                motif: { type: string, maxLength: 255 }
       responses:
         '201':
           description: Secret client Stripe à utiliser côté front (Stripe Elements)
@@ -345,15 +433,49 @@ paths:
               schema:
                 type: object
                 properties:
+                  paymentIntentId: { type: string, example: pi_3AbCdEf123 }
                   clientSecret: { type: string, example: pi_3AbC_secret_XyZ }
                   montant: { type: number, example: 15.00 }
+                  devise: { type: string, example: eur }
+        '409': { $ref: '#/components/responses/ErreurConflit' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+        '502': { $ref: '#/components/responses/ErreurPaiement' }
+  /paiements/simulation/{id}/payer:
+    post:
+      tags: [Paiements]
+      summary: Régler une intention en mode simulation (développement et tests)
+      description: >
+        N'existe que lorsque le backend tourne sans clé Stripe ; renvoie 404 sinon.
+        Carte 4242 4242 4242 4242 acceptée, toute autre carte refusée.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [clientSecret, numeroCarte]
+              properties:
+                clientSecret: { type: string }
+                numeroCarte: { type: string, example: '4242 4242 4242 4242' }
+      responses:
+        '204': { description: Paiement accepté }
+        '402': { description: Carte refusée }
+        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
   /webhooks/stripe:
     post:
       tags: [Paiements]
       summary: Webhook Stripe (signature vérifiée) — statut des paiements
+      description: >
+        Événements traités : payment_intent.succeeded (crée le rendez-vous s'il n'existe pas
+        encore), payment_intent.payment_failed et charge.refunded. La signature de l'en-tête
+        Stripe-Signature est vérifiée sur le corps brut ; l'état du paiement est ensuite relu
+        auprès de Stripe.
       security: []
       responses:
-        '200': { description: Événement traité }
+        '200': { description: Événement traité ou ignoré }
+        '400': { description: Signature absente ou invalide }
   /articles:
     get:
       tags: [Blog]
@@ -485,6 +607,11 @@ components:
       content:
         application/problem+json:
           schema: { $ref: '#/components/schemas/Erreur' }
+    ErreurPaiement:
+      description: Le prestataire de paiement ne répond pas ; rien n'a été écrit
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Erreur' }
     ErreurQuota:
       description: Limite de requêtes atteinte (60/min par clé)
       content:
@@ -596,16 +723,26 @@ components:
       properties:
         id: { type: integer, example: 118 }
         bienId: { type: integer, example: 42 }
+        bienTitre: { type: string, example: Appartement 3 chambres — Ixelles }
+        ville: { type: string, example: Ixelles }
+        adresse:
+          type: string
+          nullable: true
+          example: Rue du Bailli 27, 1050 Ixelles
+          description: Communiquée au membre une fois la visite confirmée ; toujours visible de l'agent
         agent: { type: string, example: Sarah Dubois }
+        membre: { type: string, example: Lucas Peeters }
         dateHeure: { type: string, format: date-time }
         statut: { $ref: '#/components/schemas/StatutRendezVous' }
         motif: { type: string, nullable: true }
+        type: { type: string, enum: [standard, premium] }
         paiement:
           type: object
           nullable: true
           properties:
             montant: { type: number, example: 15.00 }
             statut: { type: string, enum: [initie, reussi, echoue, rembourse] }
+            payeLe: { type: string, format: date-time, nullable: true }
     Article:
       type: object
       properties:
@@ -622,7 +759,17 @@ components:
         destinataire: { type: string, example: Sarah Dubois }
         contenu: { type: string }
         envoyeLe: { type: string, format: date-time }
-        lu: { type: boolean }
+        lu: { type: boolean, description: Lu par son destinataire }
+        deMoi: { type: boolean, description: Vrai si l'utilisateur connecté en est l'auteur }
+    Conversation:
+      type: object
+      properties:
+        interlocuteurId: { type: integer, example: 101 }
+        interlocuteur: { type: string, example: Sarah Dubois }
+        dernierMessage: { type: string, description: Aperçu du dernier message échangé (120 caractères) }
+        dernierEnvoi: { type: string, format: date-time }
+        dernierDeMoi: { type: boolean }
+        nonLus: { type: integer, example: 2, description: Messages reçus et non encore lus }
     BienOpenData:
       type: object
       description: Version anonymisée pour l'Open Data (aucune donnée personnelle)

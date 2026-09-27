@@ -28,6 +28,14 @@ services:
       db:
         condition: service_healthy
 
+  # Boîte de réception de développement : capture les e-mails de l'application, n'en envoie aucun.
+  # SMTP sur le port 1025 (profil dev du backend), lecture des messages sur http://localhost:8025
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
   # --- À activer pendant le développement ---
   # backend:
   #   build: ./backend

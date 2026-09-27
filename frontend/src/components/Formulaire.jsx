@@ -21,9 +21,15 @@ export function BoutonPrincipal({ children, chargement, ...props }) {
   )
 }
 
-/** Transforme une réponse d'erreur problem+json de l'API en message et erreurs par champ. */
+/**
+ * Transforme une réponse d'erreur problem+json de l'API en message et erreurs par champ.
+ * Le « type » de l'erreur (dernier segment de son URI) identifie les cas que l'interface sait
+ * traduire ; à défaut, le détail renvoyé par l'API est affiché tel quel.
+ */
 export function erreursApi(error, t) {
   const pd = error?.response?.data
-  if (!pd) return { message: t('commun.erreurReseau'), champs: {} }
-  return { message: pd.detail ?? pd.title ?? t('commun.erreurReseau'), champs: pd.champs ?? {} }
+  if (!pd) return { message: t('commun.erreurReseau'), champs: {}, type: null }
+  const type = typeof pd.type === 'string' ? pd.type.split('/').pop() : null
+  const detail = pd.detail ?? pd.title ?? t('commun.erreurReseau')
+  return { message: type ? t(`erreur.${type}`, { defaultValue: detail }) : detail, champs: pd.champs ?? {}, type }
 }

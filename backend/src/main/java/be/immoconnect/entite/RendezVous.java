@@ -69,25 +69,30 @@ public class RendezVous {
         this.motif = motif;
     }
 
+    /*
+     * Les transitions reçoivent l'heure courante en paramètre : elle vient de l'horloge de
+     * l'application (fuseau de l'agence), pas de celle du serveur.
+     */
+
     /** Transition demande -> confirme (par l'agent, ou immédiate après paiement premium). */
-    public void confirmer() {
+    public void confirmer(LocalDateTime maintenant) {
         exigerTransition(statut == StatutRendezVous.demande, "confirmer");
-        exigerDateFuture("confirmer");
+        exigerDateFuture("confirmer", maintenant);
         this.statut = StatutRendezVous.confirme;
     }
 
     /** Transition demande/confirme -> annule ; un rendez-vous honoré ne s'annule jamais (RA1). */
-    public void annuler() {
+    public void annuler(LocalDateTime maintenant) {
         exigerTransition(statut == StatutRendezVous.demande || statut == StatutRendezVous.confirme, "annuler");
-        exigerDateFuture("annuler");
+        exigerDateFuture("annuler", maintenant);
         this.statut = StatutRendezVous.annule;
     }
 
     /** Transition confirme -> honore, uniquement une fois la date de la visite passée (RA2). */
-    public void honorer() {
+    public void honorer(LocalDateTime maintenant) {
         exigerTransition(statut == StatutRendezVous.confirme, "honorer");
-        if (dateHeure.isAfter(LocalDateTime.now())) {
-            throw new TransitionInterditeException("Impossible d'honorer un rendez-vous dont la date n'est pas passée");
+        if (dateHeure.isAfter(maintenant)) {
+            throw new TransitionInterditeException("Impossible d'honorer un rendez-vous dont la date n'est pas passée (RA2)");
         }
         this.statut = StatutRendezVous.honore;
     }
@@ -103,8 +108,8 @@ public class RendezVous {
         }
     }
 
-    private void exigerDateFuture(String operation) {
-        if (!dateHeure.isAfter(LocalDateTime.now())) {
+    private void exigerDateFuture(String operation, LocalDateTime maintenant) {
+        if (!dateHeure.isAfter(maintenant)) {
             throw new TransitionInterditeException("Impossible de " + operation + " un rendez-vous dont la date est passée (RA2)");
         }
     }

@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { api } from '../services/api'
 
 /**
@@ -14,6 +15,7 @@ export function AuthProvider({ children }) {
   const [jeton, setJeton] = useState(null)
   const [utilisateur, setUtilisateur] = useState(null)
   const jetonRef = useRef(null)
+  const queryClient = useQueryClient()
 
   // L'intercepteur lit le jeton courant sans se réabonner à chaque rendu
   useEffect(() => {
@@ -29,10 +31,14 @@ export function AuthProvider({ children }) {
   }, [])
 
   const appliquer = useCallback((reponse) => {
+    // Les réponses en cache appartiennent à la session précédente : elles ne doivent jamais
+    // s'afficher, même un instant, sous un autre compte (rendez-vous, paiements…)
+    queryClient.clear()
+    jetonRef.current = reponse.jeton
     setJeton(reponse.jeton)
     setUtilisateur(reponse.utilisateur)
     return reponse.utilisateur
-  }, [])
+  }, [queryClient])
 
   const connecter = useCallback(async (identifiants) => {
     const { data } = await api.post('/auth/login', identifiants)
@@ -45,10 +51,12 @@ export function AuthProvider({ children }) {
   }, [appliquer])
 
   const deconnecter = useCallback(() => {
-    // Sans état côté serveur : se déconnecter = oublier le jeton (livrable 16)
+    // Sans état côté serveur : se déconnecter = oublier le jeton (livrable 16) et les données chargées
+    queryClient.clear()
+    jetonRef.current = null
     setJeton(null)
     setUtilisateur(null)
-  }, [])
+  }, [queryClient])
 
   const mettreAJour = useCallback((u) => setUtilisateur(u), [])
 

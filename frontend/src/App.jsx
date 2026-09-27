@@ -7,6 +7,10 @@ import BienDetail from './pages/BienDetail'
 import Connexion from './pages/Connexion'
 import Inscription from './pages/Inscription'
 import Profil from './pages/Profil'
+import PriseRendezVous from './pages/PriseRendezVous'
+import MesRendezVous from './pages/MesRendezVous'
+import MesFavoris from './pages/MesFavoris'
+import Messagerie from './pages/Messagerie'
 
 // Arborescence issue de la charte (livrable 10) : pages publiques, connexion/inscription, espace membre.
 export default function App() {
@@ -20,6 +24,11 @@ export default function App() {
         <Route path="inscription" element={<Inscription />} />
         <Route element={<RouteProtegee />}>
           <Route path="profil" element={<Profil />} />
+          <Route path="biens/:id/rendez-vous" element={<PriseRendezVous />} />
+          <Route path="rendez-vous" element={<MesRendezVous />} />
+          <Route path="favoris" element={<MesFavoris />} />
+          <Route path="messages" element={<Messagerie />} />
+          <Route path="messages/:interlocuteurId" element={<Messagerie />} />
         </Route>
         <Route path="*" element={<Biens />} />
       </Route>

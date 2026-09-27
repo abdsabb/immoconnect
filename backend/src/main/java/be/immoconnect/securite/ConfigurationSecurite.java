@@ -37,6 +37,17 @@ public class ConfigurationSecurite {
                 // Documentation de l'API et supervision
                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                // Rendez-vous : réserver est le fait d'un membre, confirmer et honorer celui d'un agent.
+                // Déclaré avant la règle publique des biens, qui couvrirait sinon /biens/{id}/creneaux.
+                .requestMatchers(HttpMethod.GET, "/api/v1/biens/*/creneaux").hasRole("MEMBRE")
+                .requestMatchers(HttpMethod.POST, "/api/v1/rendez-vous").hasRole("MEMBRE")
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/rendez-vous/*/confirmer", "/api/v1/rendez-vous/*/honorer").hasRole("AGENT")
+                // Favoris : propres au membre connecté
+                .requestMatchers("/api/v1/biens/*/favori", "/api/v1/membres/moi/**").hasRole("MEMBRE")
+                // Paiement : le webhook est public mais authentifié par la signature de Stripe.
+                .requestMatchers(HttpMethod.GET, "/api/v1/paiements/config").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/webhooks/stripe").permitAll()
+                .requestMatchers("/api/v1/paiements/**").hasRole("MEMBRE")
                 // Niveau d'accès « public » (livrable 15, §4) : consultation et authentification
                 .requestMatchers(HttpMethod.GET, "/api/v1/biens/**", "/api/v1/articles/**",
                         "/api/v1/traductions/**").permitAll()

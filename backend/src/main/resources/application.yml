@@ -44,6 +44,14 @@ immoconnect:
   api-version: v1
   creneau-premium:
     prix: 15.00
+  courriel:
+    expediteur: ${MAIL_FROM:no-reply@immoconnect.be}
+    url-site: ${SITE_URL:http://localhost:5173}   # base des liens placés dans les e-mails
+    delai-entre-tentatives: 2s                    # un envoi échoué est retenté (cas d'erreur E2)
+  stripe:                           # sans clé secrète, les paiements passent en mode simulation (dev et tests)
+    cle-secrete: ${STRIPE_SECRET_KEY:}
+    cle-publique: ${STRIPE_PUBLISHABLE_KEY:}
+    secret-webhook: ${STRIPE_WEBHOOK_SECRET:}
   jwt:
     secret: ${JWT_SECRET}           # clé HS256 (>= 32 octets) — fournie par l'environnement
     duree-secondes: 3600            # jeton d'accès valable 1 h (livrable 16, §2.1)
