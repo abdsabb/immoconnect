@@ -1,0 +1,2 @@
+# Exécuté au tout début du démarrage, avant la création des composants et des connexions à la base
+org.springframework.context.ApplicationContextInitializer=be.immoconnect.config.FuseauHoraireAgence
