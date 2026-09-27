@@ -18,4 +18,5 @@ EXPOSE 8080
 ENV SPRING_PROFILES_ACTIVE=prod
 HEALTHCHECK --interval=30s --timeout=5s --retries=5 \
   CMD wget -qO- http://localhost:8080/actuator/health | grep -q '"UP"' || exit 1
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Un conteneur tourne en UTC : les dates de l'application sont celles de l'agence
+ENTRYPOINT ["java", "-Duser.timezone=Europe/Brussels", "-jar", "app.jar"]
