@@ -7,7 +7,6 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
-import com.stripe.param.PaymentIntentCreateParams.AutomaticPaymentMethods;
 import com.stripe.param.RefundCreateParams;
 import java.util.Map;
 import java.util.Optional;
@@ -21,6 +20,7 @@ public class PasserelleStripe implements PasserellePaiement {
 
     private static final Logger journal = LoggerFactory.getLogger(PasserelleStripe.class);
     private static final String DEVISE = "eur";
+    private static final String CARTE = "card";
 
     private final StripeClient stripe;
     private final ProprietesStripe proprietes;
@@ -51,11 +51,9 @@ public class PasserelleStripe implements PasserellePaiement {
                 .setDescription(description)
                 .setReceiptEmail(emailRecu)
                 .putAllMetadata(metadonnees)
-                // Paiement par carte sans quitter la page : pas de moyen de paiement à redirection.
-                .setAutomaticPaymentMethods(AutomaticPaymentMethods.builder()
-                        .setEnabled(true)
-                        .setAllowRedirects(AutomaticPaymentMethods.AllowRedirects.NEVER)
-                        .build())
+                // Carte bancaire uniquement : le formulaire ne dépend pas des moyens de paiement
+                // activés sur le compte Stripe, et le paiement se fait sans quitter la page.
+                .addPaymentMethodType(CARTE)
                 .build();
         try {
             return traduire(stripe.v1().paymentIntents().create(parametres));
