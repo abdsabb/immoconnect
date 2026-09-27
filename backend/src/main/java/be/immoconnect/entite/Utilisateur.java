@@ -62,6 +62,10 @@ public abstract class Utilisateur {
     @Column(name = "date_inscription", nullable = false)
     private LocalDate dateInscription;
 
+    /** Un compte désactivé par l'administrateur ne peut plus se connecter (cas A1) ; rien n'est supprimé. */
+    @Column(nullable = false)
+    private boolean actif = true;
+
     protected Utilisateur(String nom, String prenom, String email, String motDePasseHache, Langue langue) {
         this.nom = nom;
         this.prenom = prenom;
