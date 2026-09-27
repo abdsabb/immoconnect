@@ -13,6 +13,8 @@ FROM eclipse-temurin:21-jre-alpine
 RUN addgroup -S immo && adduser -S immo -G immo
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
+# Dossier des photos : le volume monté ici hérite de son propriétaire
+RUN mkdir /app/stockage && chown immo:immo /app/stockage
 USER immo
 EXPOSE 8080
 ENV SPRING_PROFILES_ACTIVE=prod

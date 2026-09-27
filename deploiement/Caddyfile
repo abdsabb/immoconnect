@@ -1,0 +1,28 @@
+# Caddy — point d'entrée HTTPS de la production.
+# Le nom de domaine vient de la variable DOMAINE du fichier .env ; le certificat est géré par Caddy.
+{$DOMAINE} {
+	encode gzip
+
+	# Le navigateur n'utilisera plus que HTTPS pour ce domaine (livrable 16, §4.2)
+	header Strict-Transport-Security "max-age=31536000"
+
+	# Boîte de réception de démonstration (Mailpit), protégée par mot de passe
+	handle /courriels* {
+		reverse_proxy mailpit:8025
+	}
+
+	# API REST, photos des biens et documentation Swagger → backend
+	@backend path /api/* /storage/* /swagger-ui* /v3/api-docs*
+	handle @backend {
+		# Une photo de bien pèse 5 Mo au plus (limite appliquée aussi par le backend)
+		request_body {
+			max_size 6MB
+		}
+		reverse_proxy backend:8080
+	}
+
+	# Tout le reste : l'application React servie par Nginx
+	handle {
+		reverse_proxy frontend:80
+	}
+}
