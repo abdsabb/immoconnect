@@ -68,7 +68,8 @@
   "pied": {
     "mentions": "Mentions légales",
     "confidentialite": "Confidentialité",
-    "osm": "© les contributeurs OpenStreetMap"
+    "osm": "© les contributeurs OpenStreetMap",
+    "credits": "Crédits photos"
   },
   "auth": {
     "connexionTitre": "Se connecter",
@@ -393,5 +394,25 @@
     "interdit": "Vous n'avez pas le droit d'effectuer cette action.",
     "fichier-trop-volumineux": "Une photo pèse 5 Mo au plus.",
     "quota-depasse": "Trop d'appels : réessayez dans une minute."
+  },
+  "credits": {
+    "titre": "Crédits photos",
+    "intro": "Les photos des annonces de démonstration viennent de Wikimedia Commons et sont publiées sous licence libre. Aucune ne représente un bien réellement mis en vente par ImmoConnect.",
+    "modifications": "Chaque photo a été recadrée et réduite ; elle reste sous la licence de l'original, indiquée à côté du nom de son auteur.",
+    "theme": {
+      "facade": "Façades",
+      "sejour": "Séjours",
+      "cuisine": "Cuisines",
+      "chambre": "Chambres",
+      "bains": "Salles de bains",
+      "jardin": "Jardins",
+      "terrasse": "Terrasses",
+      "hall": "Halls d'entrée",
+      "vue": "Vues",
+      "plan": "Plans",
+      "terrain": "Terrains",
+      "garage": "Garages",
+      "commerce": "Espaces commerciaux"
+    }
   }
 }
