@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
-import { chargerBien, formatPrix } from '../services/biens'
+import { chargerBien, cheminListe, formatPrixBien } from '../services/biens'
 import { Photo } from '../components/CarteBien'
 import CarteOSM from '../components/CarteOSM'
 import BoutonFavori from '../components/BoutonFavori'
@@ -32,7 +32,7 @@ export default function BienDetail() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-8">
       <nav aria-label="Fil d'Ariane" className="text-sm text-gray-500">
-        <Link to="/" className="hover:text-turquoise">{t('nav.accueil')}</Link> › <Link to="/biens" className="hover:text-turquoise">{t('nav.biens')}</Link> › <span className="text-nuit">{bien.titre}</span>
+        <Link to="/" className="hover:text-turquoise">{t('nav.accueil')}</Link> › <Link to={cheminListe(bien.typeOffre)} className="hover:text-turquoise">{t(`offre.${bien.typeOffre}`)}</Link> › <span className="text-nuit">{bien.titre}</span>
       </nav>
 
       <div className="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -54,7 +54,7 @@ export default function BienDetail() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-nuit">{bien.titre}</h1>
-              <p className="text-gray-600">{bien.categorie.nom} · {bien.codePostal} {bien.ville}</p>
+              <p className="text-gray-600">{t(`offre.${bien.typeOffre}`)} · {bien.categorie.nom} · {bien.codePostal} {bien.ville}</p>
             </div>
             <BoutonFavori bien={bien} className="shrink-0 border border-gray-200" />
           </div>
@@ -79,7 +79,7 @@ export default function BienDetail() {
         </div>
 
         <aside className="lg:sticky lg:top-6 self-start bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
-          <p className="font-titre text-3xl font-extrabold text-corail">{formatPrix(bien.prix)}</p>
+          <p className="font-titre text-3xl font-extrabold text-corail">{formatPrixBien(bien, t)}</p>
           {/* Routes protégées : un visiteur passe par la connexion puis revient à son action.
               Prendre rendez-vous et écrire à l'agent sont le fait d'un membre, pas d'un agent ni d'un administrateur. */}
           {peutAgir && (bien.statut === 'disponible' ? (

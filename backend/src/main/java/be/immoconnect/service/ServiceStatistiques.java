@@ -4,6 +4,7 @@ import be.immoconnect.api.admin.Statistiques;
 import be.immoconnect.entite.StatutBien;
 import be.immoconnect.entite.StatutPaiement;
 import be.immoconnect.entite.StatutRendezVous;
+import be.immoconnect.entite.TypeOffre;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -59,14 +60,16 @@ public class ServiceStatistiques {
                 .setParameter("maintenant", LocalDateTime.now(horloge))
                 .getSingleResult();
 
+        // Le prix moyen ne porte que sur les ventes : un loyer mensuel fausserait la moyenne
         List<Statistiques.Commune> communes = em.createQuery(
-                        "select b.ville, count(b), avg(b.prix) from Bien b where b.statut = :disponible "
-                                + "group by b.ville order by count(b) desc, b.ville", Object[].class)
+                        "select b.ville, count(b), avg(case when b.typeOffre = :vente then b.prix end) from Bien b "
+                                + "where b.statut = :disponible group by b.ville order by count(b) desc, b.ville", Object[].class)
                 .setParameter("disponible", StatutBien.disponible)
+                .setParameter("vente", TypeOffre.vente)
                 .setMaxResults(COMMUNES_AFFICHEES)
                 .getResultList().stream()
-                .map(l -> new Statistiques.Commune((String) l[0], (Long) l[1],
-                        BigDecimal.valueOf(((Number) l[2]).doubleValue()).setScale(0, RoundingMode.HALF_UP)))
+                .map(l -> new Statistiques.Commune((String) l[0], (Long) l[1], l[2] == null ? null
+                        : BigDecimal.valueOf(((Number) l[2]).doubleValue()).setScale(0, RoundingMode.HALF_UP)))
                 .toList();
 
         return new Statistiques(biens, comptes,

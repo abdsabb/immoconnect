@@ -23,23 +23,26 @@
   },
   "accueil": {
     "titre": "Find your next home in Brussels",
-    "sousTitre": "Flats, houses and commercial spaces hand-picked by our agents",
+    "sousTitre": "Flats, houses and commercial premises for sale and to rent",
     "rechercher": "Search a property",
     "recherche": {
       "villeExemple": "Ixelles, Uccle, Namur…",
       "categorie": "Property type",
-      "toutes": "All types"
+      "toutes": "All types",
+      "vente": "Buy",
+      "location": "Rent"
     },
     "chiffres": {
-      "biens": "properties online",
       "categories": "property types",
       "visites": "viewings, evenings and weekends included",
-      "langues": "a site in three languages"
+      "vente": "properties for sale",
+      "location": "properties to rent"
     },
     "recents": {
-      "titre": "Latest properties",
-      "sousTitre": "The most recent listings from our agents.",
-      "voirTout": "See all properties"
+      "vente": "Latest properties for sale",
+      "location": "Latest properties to rent",
+      "tout_vente": "All properties for sale",
+      "tout_location": "All properties to rent"
     },
     "categories": {
       "titre": "Browse by property type"
@@ -79,7 +82,7 @@
     }
   },
   "biens": {
-    "titre": "Our properties",
+    "titre": "All our properties",
     "filtres": "Search filters",
     "ville": "City or municipality",
     "prixMax": "Maximum budget (€)",
@@ -94,7 +97,11 @@
     "erreur": "Properties cannot be loaded right now.",
     "categorie": "Property type",
     "toutesCategories": "All types",
-    "tri": "Sort by"
+    "tri": "Sort by",
+    "titre_vente": "Properties for sale",
+    "titre_location": "Properties to rent",
+    "loyerMax": "Maximum rent (€ / month)",
+    "toutesOffres": "For sale and to rent"
   },
   "bien": {
     "chambres_one": "bedroom",
@@ -112,7 +119,8 @@
     "envoyerMessage": "Send a message",
     "agent": "Your agent",
     "introuvable": "This property does not exist or is no longer available.",
-    "retour": "Back to properties"
+    "retour": "Back to properties",
+    "loyerParMois": "{{prix}} / month"
   },
   "statut": {
     "disponible": "Available",
@@ -306,7 +314,9 @@
     "televerser": "Upload",
     "photoConsigne": "JPEG or PNG, 5 MB at most, at least 400 pixels on the longest side. The photo is resized and its metadata is removed.",
     "photoFormat": "Only JPEG and PNG photos are accepted.",
-    "photoTropLourde": "A photo weighs 5 MB at most."
+    "photoTropLourde": "A photo weighs 5 MB at most.",
+    "typeOffre": "Offer type",
+    "loyer": "Monthly rent (€)"
   },
   "blog": {
     "titre": "Blog",
@@ -471,5 +481,9 @@
       "garage": "Garages",
       "commerce": "Commercial spaces"
     }
+  },
+  "offre": {
+    "vente": "For sale",
+    "location": "To rent"
   }
 }

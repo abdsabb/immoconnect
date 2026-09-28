@@ -51,7 +51,12 @@ public class Bien {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    /** Prix demandé en euros, strictement positif (règle du domaine). */
+    /** À vendre ou à louer : donne son sens au prix. */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type_offre", nullable = false, columnDefinition = "ENUM('vente','location')")
+    private TypeOffre typeOffre = TypeOffre.vente;
+
+    /** Prix de vente, ou loyer mensuel d'une location — en euros, strictement positif (règle du domaine). */
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal prix;
 

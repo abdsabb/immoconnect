@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
 import { archiverAnnonce, chargerMesAnnonces } from '../services/annonces'
-import { formatPrix } from '../services/biens'
+import { formatPrixBien } from '../services/biens'
 import { Photo } from '../components/CarteBien'
 import { erreursApi } from '../components/Formulaire'
 
@@ -68,8 +68,8 @@ export default function MesAnnonces() {
                 <Photo src={a.photos[0]?.url} alt={a.titre} className="w-28 h-20 rounded-lg shrink-0" />
                 <div className="flex-1 min-w-52">
                   <p className="font-titre font-bold text-nuit">{a.titre}</p>
-                  <p className="text-sm text-gray-600">{a.categorie} · {a.adresse}, {a.codePostal} {a.ville}</p>
-                  <p className="font-titre font-extrabold text-corail">{formatPrix(a.prix)}</p>
+                  <p className="text-sm text-gray-600">{t(`offre.${a.typeOffre}`)} · {a.categorie} · {a.adresse}, {a.codePostal} {a.ville}</p>
+                  <p className="font-titre font-extrabold text-corail">{formatPrixBien(a, t)}</p>
                 </div>
                 <ul className="text-sm text-gray-700 min-w-40">
                   <li>{t('annonce.favoris')} : <strong>{a.indicateurs.favoris}</strong></li>

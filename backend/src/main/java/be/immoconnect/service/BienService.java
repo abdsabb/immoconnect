@@ -27,6 +27,7 @@ public class BienService {
     public Page<BienResume> rechercher(CritereRechercheBien criteres, Pageable pagination) {
         Specification<Bien> specification = Specification.allOf(
                 BienSpecifications.statut(criteres.statutEffectif()),
+                BienSpecifications.typeOffre(criteres.typeOffre()),
                 BienSpecifications.ville(criteres.ville()),
                 BienSpecifications.categorie(criteres.categorieId()),
                 BienSpecifications.prixMin(criteres.prixMin()),

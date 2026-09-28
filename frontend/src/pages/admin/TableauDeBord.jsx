@@ -41,7 +41,7 @@ export default function TableauDeBord() {
           <tbody>
             {data.communes.map((c) => (
               <tr key={c.ville} className={classeLigne}>
-                <td className="font-semibold text-nuit">{c.ville}</td><td>{c.biensDisponibles}</td><td>{formatEuros(c.prixMoyen, langue)}</td>
+                <td className="font-semibold text-nuit">{c.ville}</td><td>{c.biensDisponibles}</td><td>{c.prixMoyen == null ? '—' : formatEuros(c.prixMoyen, langue)}</td>
               </tr>
             ))}
           </tbody>

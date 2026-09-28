@@ -1,10 +1,12 @@
 package be.immoconnect.api.bien;
 
 import be.immoconnect.entite.StatutBien;
+import be.immoconnect.entite.TypeOffre;
 import java.math.BigDecimal;
 
 /** Critères de la recherche avancée (cas V2) : tous optionnels, combinables. */
 public record CritereRechercheBien(
+        TypeOffre typeOffre,
         String ville,
         Integer categorieId,
         BigDecimal prixMin,

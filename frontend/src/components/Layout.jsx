@@ -34,8 +34,9 @@ function BarreEspace({ role }) {
   )
 }
 
-// Gabarit commun à toutes les pages : en-tête (logo, navigation à 4 entrées,
-// sélecteur de langue) et pied de page — structure du site du livrable 10.
+// Gabarit commun à toutes les pages : en-tête (logo, navigation à 5 entrées,
+// sélecteur de langue) et pied de page — structure du site du livrable 10, où l'entrée
+// « Biens » s'est dédoublée en « À vendre » et « À louer ».
 export default function Layout() {
   const { t, i18n } = useTranslation()
   const { estConnecte, utilisateur, deconnecter } = useAuth()
@@ -49,7 +50,8 @@ export default function Layout() {
   const liens = (
     <>
       <NavLink to="/" end className={lien} onClick={fermer}>{contenu('nav.accueil', 'nav.accueil')}</NavLink>
-      <NavLink to="/biens" className={lien} onClick={fermer}>{contenu('nav.biens', 'nav.biens')}</NavLink>
+      <NavLink to="/a-vendre" className={lien} onClick={fermer}>{contenu('nav.vente', 'offre.vente')}</NavLink>
+      <NavLink to="/a-louer" className={lien} onClick={fermer}>{contenu('nav.location', 'offre.location')}</NavLink>
       <NavLink to="/blog" className={lien} onClick={fermer}>{contenu('nav.blog', 'nav.blog')}</NavLink>
       {estConnecte ? (
         <button type="button" onClick={() => { fermer(); deconnecter() }}

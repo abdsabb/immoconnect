@@ -6,14 +6,15 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
 import {
   ajouterPhoto, chargerAnnonce, chargerCategories, creerAnnonce, definirCouverture, modifierAnnonce,
-  STATUTS, supprimerPhoto, TAILLE_MAX_PHOTO, versRequete,
+  statutsPour, supprimerPhoto, TAILLE_MAX_PHOTO, versRequete,
 } from '../services/annonces'
+import { TYPES_OFFRE } from '../services/biens'
 import { BoutonPrincipal, Champ, classeInput, erreursApi } from '../components/Formulaire'
 import { Photo } from '../components/CarteBien'
 import CarteChoixPosition from '../components/CarteChoixPosition'
 
 const VIDE = {
-  categorieId: '', titre: '', description: '', prix: '', superficie: '', nbChambres: '',
+  typeOffre: 'vente', categorieId: '', titre: '', description: '', prix: '', superficie: '', nbChambres: '',
   adresse: '', ville: '', codePostal: '', latitude: '', longitude: '', statut: 'archive',
 }
 
@@ -102,6 +103,11 @@ export default function AnnonceFormulaire() {
               <input maxLength="150" {...champ('titre', requis)} />
             </Champ>
           </div>
+          <Champ label={t('annonce.typeOffre')} erreur={errors.typeOffre?.message}>
+            <select {...champ('typeOffre', requis)}>
+              {TYPES_OFFRE.map((type) => <option key={type} value={type}>{t(`offre.${type}`)}</option>)}
+            </select>
+          </Champ>
           <Champ label={t('annonce.categorie')} erreur={errors.categorieId?.message}>
             <select {...champ('categorieId', requis)}>
               <option value="">—</option>
@@ -113,7 +119,7 @@ export default function AnnonceFormulaire() {
           <textarea rows="6" maxLength="10000" {...champ('description', requis)} />
         </Champ>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          <Champ label={t('annonce.prix')} erreur={errors.prix?.message}>
+          <Champ label={t(watch('typeOffre') === 'location' ? 'annonce.loyer' : 'annonce.prix')} erreur={errors.prix?.message}>
             <input type="number" step="0.01" min="0.01" {...champ('prix', nombre(0.01))} />
           </Champ>
           <Champ label={t('annonce.superficie')} erreur={errors.superficie?.message}>
@@ -160,7 +166,7 @@ export default function AnnonceFormulaire() {
             <h2 className="pt-4 text-xl font-bold text-nuit">{t('annonce.publication')}</h2>
             <Champ label={t('bien.statutLabel')} erreur={errors.statut?.message}>
               <select {...champ('statut')}>
-                {STATUTS.map((s) => <option key={s} value={s}>{t(`annonce.statut.${s}`)}</option>)}
+                {statutsPour(watch('typeOffre')).map((s) => <option key={s} value={s}>{t(`annonce.statut.${s}`)}</option>)}
               </select>
             </Champ>
             <p className="text-sm text-gray-600">{t('annonce.explicationStatut')}</p>
