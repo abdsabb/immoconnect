@@ -15,6 +15,7 @@ import MesAnnonces from './pages/MesAnnonces'
 import AnnonceFormulaire from './pages/AnnonceFormulaire'
 import Blog from './pages/Blog'
 import Article from './pages/Article'
+import CreditsPhotos from './pages/CreditsPhotos'
 import Administration from './pages/admin/Administration'
 import TableauDeBord from './pages/admin/TableauDeBord'
 import Comptes from './pages/admin/Comptes'
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="biens/:id" element={<BienDetail />} />
         <Route path="blog" element={<Blog />} />
         <Route path="blog/:id" element={<Article />} />
+        <Route path="credits-photos" element={<CreditsPhotos />} />
         <Route path="connexion" element={<Connexion />} />
         <Route path="inscription" element={<Inscription />} />
         <Route element={<RouteProtegee />}>

@@ -68,7 +68,8 @@
   "pied": {
     "mentions": "Wettelijke vermeldingen",
     "confidentialite": "Privacy",
-    "osm": "© OpenStreetMap-bijdragers"
+    "osm": "© OpenStreetMap-bijdragers",
+    "credits": "Fotocredits"
   },
   "auth": {
     "connexionTitre": "Aanmelden",
@@ -393,5 +394,25 @@
     "interdit": "U mag deze actie niet uitvoeren.",
     "fichier-trop-volumineux": "Een foto weegt hoogstens 5 MB.",
     "quota-depasse": "Te veel oproepen: probeer het over een minuut opnieuw."
+  },
+  "credits": {
+    "titre": "Fotocredits",
+    "intro": "De foto's bij de demonstratieadvertenties komen van Wikimedia Commons en zijn gepubliceerd onder een vrije licentie. Geen enkele foto toont een pand dat ImmoConnect werkelijk te koop aanbiedt.",
+    "modifications": "Elke foto is bijgesneden en verkleind; ze blijft onder de licentie van het origineel, vermeld naast de naam van de auteur.",
+    "theme": {
+      "facade": "Gevels",
+      "sejour": "Woonkamers",
+      "cuisine": "Keukens",
+      "chambre": "Slaapkamers",
+      "bains": "Badkamers",
+      "jardin": "Tuinen",
+      "terrasse": "Terrassen",
+      "hall": "Inkomhallen",
+      "vue": "Uitzichten",
+      "plan": "Plattegronden",
+      "terrain": "Bouwgronden",
+      "garage": "Garages",
+      "commerce": "Handelsruimtes"
+    }
   }
 }

@@ -91,6 +91,7 @@ export default function Layout() {
           <span className="flex gap-4">
             <a href="/mentions-legales" className="hover:text-white">{contenu('footer.mentions', 'pied.mentions')}</a>
             <a href="/confidentialite" className="hover:text-white">{contenu('footer.rgpd', 'pied.confidentialite')}</a>
+            <NavLink to="/credits-photos" className="hover:text-white">{t('pied.credits')}</NavLink>
             <span>{t('pied.osm')}</span>
           </span>
         </div>

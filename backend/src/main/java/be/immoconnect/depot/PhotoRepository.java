@@ -12,6 +12,8 @@ public interface PhotoRepository extends JpaRepository<Photo, Integer> {
 
     long countByBienId(Integer bienId);
 
+    List<Photo> findByUrlStartingWith(String prefixe);
+
     /*
      * La position d'une photo est unique par bien (contrainte uq_photo_bien_ordre) : deux photos ne
      * peuvent pas échanger leur place en une seule écriture. La galerie est donc renumérotée en deux

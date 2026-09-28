@@ -2,3 +2,5 @@
 immoconnect:
   stockage:
     dossier: target/stockage-tests     # effacé par « mvn clean », jamais versionné
+  demonstration:
+    photos: false                      # inutile aux tests : 498 fichiers à copier à chaque démarrage

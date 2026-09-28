@@ -28,7 +28,9 @@ documentée ainsi qu'un volet Open Data.
 ```
 ├── backend/                 API Spring Boot (Maven) — Dockerfile multi-étapes
 │   └── src/main/resources/db/migration/   V1 = schéma (17 tables), V2 = données de test,
-│                                          V3 = expéditeur des messages, V4 = back-office administrateur
+│                                          V3 = expéditeur des messages, V4 = back-office administrateur,
+│                                          V5 = légendes des photos de test
+│   └── src/main/resources/photos-demo/    Photos des annonces de test (licences libres, voir CREDITS.md)
 ├── frontend/                SPA React (Vite) — Dockerfile + nginx.conf
 ├── api/openapi.yaml         Spécification OpenAPI 3.0 de l'API (livrable 15)
 ├── docs/uml/                Sources PlantUML des diagrammes d'analyse (livrable 07) et du schéma BDD
@@ -90,6 +92,17 @@ les catégories et les traductions ; le gestionnaire gère en plus les comptes, 
 et les clés API ; le super-administrateur agit aussi sur les comptes des administrateurs.
 
 Les photos téléversées sont enregistrées dans `backend/stockage/` (variable `STORAGE_DIR`), hors du dépôt.
+
+### Photos des annonces de test
+
+Les annonces de test référencent 498 photos. Au démarrage, le backend crée celles qui manquent dans le dossier
+de stockage, à partir de 112 photos de [Wikimedia Commons](https://commons.wikimedia.org) embarquées dans
+l'application ; la photo est choisie d'après la légende (façade, séjour, cuisine…). Un fichier déjà présent
+n'est jamais remplacé, et une photo téléversée par un agent n'est pas concernée. `DEMO_PHOTOS=false` désactive
+cette étape.
+
+Auteurs et licences : [CREDITS.md](backend/src/main/resources/photos-demo/CREDITS.md), repris sur le site à la
+page `/credits-photos`.
 
 ### API disponible
 

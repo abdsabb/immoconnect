@@ -68,7 +68,8 @@
   "pied": {
     "mentions": "Legal notice",
     "confidentialite": "Privacy",
-    "osm": "© OpenStreetMap contributors"
+    "osm": "© OpenStreetMap contributors",
+    "credits": "Photo credits"
   },
   "auth": {
     "connexionTitre": "Log in",
@@ -393,5 +394,25 @@
     "interdit": "You are not allowed to perform this action.",
     "fichier-trop-volumineux": "A photo weighs 5 MB at most.",
     "quota-depasse": "Too many calls: try again in a minute."
+  },
+  "credits": {
+    "titre": "Photo credits",
+    "intro": "The photos of the demonstration listings come from Wikimedia Commons and are published under a free licence. None of them shows a property actually offered for sale by ImmoConnect.",
+    "modifications": "Each photo has been cropped and resized; it remains under the licence of the original, shown next to its author.",
+    "theme": {
+      "facade": "Façades",
+      "sejour": "Living rooms",
+      "cuisine": "Kitchens",
+      "chambre": "Bedrooms",
+      "bains": "Bathrooms",
+      "jardin": "Gardens",
+      "terrasse": "Terraces",
+      "hall": "Entrance halls",
+      "vue": "Views",
+      "plan": "Floor plans",
+      "terrain": "Building plots",
+      "garage": "Garages",
+      "commerce": "Commercial spaces"
+    }
   }
 }
