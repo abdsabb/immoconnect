@@ -13,7 +13,8 @@
     "messages": "Messages",
     "monProfil": "Mon profil",
     "annonces": "Mes annonces",
-    "administration": "Administration"
+    "administration": "Administration",
+    "menu": "Menu"
   },
   "commun": {
     "chargement": "Chargement…",
@@ -23,7 +24,59 @@
   "accueil": {
     "titre": "Trouvez votre prochain chez-vous à Bruxelles",
     "sousTitre": "Appartements, maisons et commerces sélectionnés par nos agents",
-    "rechercher": "Rechercher un bien"
+    "rechercher": "Rechercher un bien",
+    "recherche": {
+      "villeExemple": "Ixelles, Uccle, Namur…",
+      "categorie": "Type de bien",
+      "toutes": "Tous les types"
+    },
+    "chiffres": {
+      "biens": "biens en ligne",
+      "categories": "types de biens",
+      "visites": "visites, soirée et week-end compris",
+      "langues": "un site en trois langues"
+    },
+    "recents": {
+      "titre": "Derniers biens mis en ligne",
+      "sousTitre": "Les annonces les plus récentes de nos agents.",
+      "voirTout": "Voir tous les biens"
+    },
+    "categories": {
+      "titre": "Parcourir par type de bien"
+    },
+    "visite": {
+      "titre": "Réservez votre visite en ligne",
+      "intro": "Plus besoin d'attendre un rappel de l'agence : vous voyez les créneaux libres de l'agent et vous réservez le vôtre.",
+      "choisir": {
+        "titre": "Choisissez un bien",
+        "texte": "Photos, description, carte du quartier : tout est sur la fiche du bien."
+      },
+      "reserver": {
+        "titre": "Réservez un créneau",
+        "texte": "Les créneaux libres s'affichent sur 60 jours. Un créneau déjà pris n'est plus proposé."
+      },
+      "visiter": {
+        "titre": "Visitez",
+        "texte": "Vous recevez un e-mail, et l'adresse exacte du bien dès que la visite est confirmée."
+      },
+      "standard": {
+        "titre": "En journée, du lundi au vendredi : gratuit",
+        "texte": "Vous envoyez votre demande, l'agent la confirme."
+      },
+      "premium": {
+        "titre": "En soirée et le week-end : {{prix}}",
+        "texte": "Paiement sécurisé par carte, visite confirmée aussitôt. Remboursé si la visite est annulée."
+      },
+      "bouton": "Trouver un bien à visiter"
+    },
+    "blog": {
+      "titre": "Conseils et actualité",
+      "voirTout": "Tous les articles"
+    },
+    "compte": {
+      "titre": "Créez votre compte, c’est gratuit",
+      "texte": "Gardez vos favoris, écrivez aux agents et suivez vos visites."
+    }
   },
   "biens": {
     "titre": "Nos biens",
@@ -38,7 +91,10 @@
     "resultats_one": "{{count}} bien trouvé",
     "resultats_other": "{{count}} biens trouvés",
     "vide": "Aucun bien ne correspond à votre recherche.",
-    "erreur": "Impossible de charger les biens pour le moment."
+    "erreur": "Impossible de charger les biens pour le moment.",
+    "categorie": "Type de bien",
+    "toutesCategories": "Tous les types",
+    "tri": "Trier par"
   },
   "bien": {
     "chambres_one": "chambre",

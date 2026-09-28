@@ -27,8 +27,9 @@ export function Photo({ src, alt, className }) {
   return <img src={src} alt={alt} className={`${className} object-cover`} loading="lazy" onError={() => setErreur(true)} />
 }
 
-// Carte d'un bien dans la liste (gabarit « rubrique », maquette Figure 14)
-export default function CarteBien({ bien }) {
+// Carte d'un bien dans la liste (gabarit « rubrique », maquette Figure 14).
+// Le niveau du titre suit la page : h2 dans la liste, h3 sous un titre de section de l'accueil.
+export default function CarteBien({ bien, niveau: Titre = 'h2' }) {
   const { t } = useTranslation()
   return (
     <article className="relative bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
@@ -41,9 +42,9 @@ export default function CarteBien({ bien }) {
       <BoutonFavori bien={bien} className="absolute top-3 right-3" />
       <div className="p-4 flex-1 flex flex-col gap-2">
         <p className="text-xs uppercase tracking-wide text-turquoise font-semibold">{bien.categorie} · {bien.ville}</p>
-        <h2 className="font-titre font-bold text-nuit leading-snug">
+        <Titre className="font-titre font-bold text-nuit leading-snug">
           <Link to={`/biens/${bien.id}`} className="hover:text-turquoise">{bien.titre}</Link>
-        </h2>
+        </Titre>
         <p className="text-sm text-gray-600">
           {bien.superficie} m² · {bien.nbChambres} {t('bien.chambres', { count: bien.nbChambres })}
         </p>

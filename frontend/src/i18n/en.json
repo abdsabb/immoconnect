@@ -13,7 +13,8 @@
     "messages": "Messages",
     "monProfil": "My profile",
     "annonces": "My listings",
-    "administration": "Administration"
+    "administration": "Administration",
+    "menu": "Menu"
   },
   "commun": {
     "chargement": "Loading…",
@@ -23,7 +24,59 @@
   "accueil": {
     "titre": "Find your next home in Brussels",
     "sousTitre": "Flats, houses and commercial spaces hand-picked by our agents",
-    "rechercher": "Search a property"
+    "rechercher": "Search a property",
+    "recherche": {
+      "villeExemple": "Ixelles, Uccle, Namur…",
+      "categorie": "Property type",
+      "toutes": "All types"
+    },
+    "chiffres": {
+      "biens": "properties online",
+      "categories": "property types",
+      "visites": "viewings, evenings and weekends included",
+      "langues": "a site in three languages"
+    },
+    "recents": {
+      "titre": "Latest properties",
+      "sousTitre": "The most recent listings from our agents.",
+      "voirTout": "See all properties"
+    },
+    "categories": {
+      "titre": "Browse by property type"
+    },
+    "visite": {
+      "titre": "Book your viewing online",
+      "intro": "No more waiting for the agency to call back: you see the agent's free slots and book yours.",
+      "choisir": {
+        "titre": "Choose a property",
+        "texte": "Photos, description, map of the area: everything is on the property page."
+      },
+      "reserver": {
+        "titre": "Book a slot",
+        "texte": "Free slots are shown for the next 60 days. A slot already taken is no longer offered."
+      },
+      "visiter": {
+        "titre": "Visit",
+        "texte": "You receive an e-mail, and the exact address of the property once the viewing is confirmed."
+      },
+      "standard": {
+        "titre": "Daytime, Monday to Friday: free",
+        "texte": "You send your request, the agent confirms it."
+      },
+      "premium": {
+        "titre": "Evenings and weekends: {{prix}}",
+        "texte": "Secure card payment, viewing confirmed at once. Refunded if the viewing is cancelled."
+      },
+      "bouton": "Find a property to visit"
+    },
+    "blog": {
+      "titre": "Advice and news",
+      "voirTout": "All articles"
+    },
+    "compte": {
+      "titre": "Create your account, it’s free",
+      "texte": "Keep your favourites, write to the agents and follow your viewings."
+    }
   },
   "biens": {
     "titre": "Our properties",
@@ -38,7 +91,10 @@
     "resultats_one": "{{count}} property found",
     "resultats_other": "{{count}} properties found",
     "vide": "No property matches your search.",
-    "erreur": "Properties cannot be loaded right now."
+    "erreur": "Properties cannot be loaded right now.",
+    "categorie": "Property type",
+    "toutesCategories": "All types",
+    "tri": "Sort by"
   },
   "bien": {
     "chambres_one": "bedroom",
