@@ -13,7 +13,8 @@
     "messages": "Berichten",
     "monProfil": "Mijn profiel",
     "annonces": "Mijn advertenties",
-    "administration": "Beheer"
+    "administration": "Beheer",
+    "menu": "Menu"
   },
   "commun": {
     "chargement": "Laden…",
@@ -23,7 +24,59 @@
   "accueil": {
     "titre": "Vind uw volgende thuis in Brussel",
     "sousTitre": "Appartementen, huizen en handelspanden geselecteerd door onze makelaars",
-    "rechercher": "Een pand zoeken"
+    "rechercher": "Een pand zoeken",
+    "recherche": {
+      "villeExemple": "Elsene, Ukkel, Namen…",
+      "categorie": "Type pand",
+      "toutes": "Alle types"
+    },
+    "chiffres": {
+      "biens": "panden online",
+      "categories": "types panden",
+      "visites": "bezoeken, ook ’s avonds en in het weekend",
+      "langues": "een site in drie talen"
+    },
+    "recents": {
+      "titre": "Recentste panden",
+      "sousTitre": "De nieuwste advertenties van onze makelaars.",
+      "voirTout": "Alle panden bekijken"
+    },
+    "categories": {
+      "titre": "Zoeken per type pand"
+    },
+    "visite": {
+      "titre": "Boek uw bezoek online",
+      "intro": "U hoeft niet meer te wachten tot het kantoor terugbelt: u ziet de vrije tijdstippen van de makelaar en boekt het uwe.",
+      "choisir": {
+        "titre": "Kies een pand",
+        "texte": "Foto's, beschrijving, kaart van de buurt: alles staat op de fiche van het pand."
+      },
+      "reserver": {
+        "titre": "Boek een tijdstip",
+        "texte": "De vrije tijdstippen worden 60 dagen vooruit getoond. Een bezet tijdstip wordt niet meer aangeboden."
+      },
+      "visiter": {
+        "titre": "Bezoek",
+        "texte": "U ontvangt een e-mail, en het exacte adres van het pand zodra het bezoek bevestigd is."
+      },
+      "standard": {
+        "titre": "Overdag, van maandag tot vrijdag: gratis",
+        "texte": "U stuurt uw aanvraag, de makelaar bevestigt ze."
+      },
+      "premium": {
+        "titre": "’s Avonds en in het weekend: {{prix}}",
+        "texte": "Beveiligde betaling met kaart, bezoek meteen bevestigd. Terugbetaald als het bezoek geannuleerd wordt."
+      },
+      "bouton": "Een pand vinden om te bezoeken"
+    },
+    "blog": {
+      "titre": "Advies en nieuws",
+      "voirTout": "Alle artikels"
+    },
+    "compte": {
+      "titre": "Maak uw account aan, het is gratis",
+      "texte": "Bewaar uw favorieten, schrijf naar de makelaars en volg uw bezoeken."
+    }
   },
   "biens": {
     "titre": "Onze panden",
@@ -38,7 +91,10 @@
     "resultats_one": "{{count}} pand gevonden",
     "resultats_other": "{{count}} panden gevonden",
     "vide": "Geen enkel pand komt overeen met uw zoekopdracht.",
-    "erreur": "De panden kunnen momenteel niet worden geladen."
+    "erreur": "De panden kunnen momenteel niet worden geladen.",
+    "categorie": "Type pand",
+    "toutesCategories": "Alle types",
+    "tri": "Sorteren op"
   },
   "bien": {
     "chambres_one": "slaapkamer",
