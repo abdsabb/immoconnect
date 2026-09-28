@@ -43,6 +43,23 @@ class BienControleurTest {
     }
 
     @Test
+    void laCommuneSeChercheAussiParSonCodePostal() throws Exception {
+        mvc.perform(get("/api/v1/biens").param("ville", "1050"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.contenu", Matchers.not(Matchers.empty())))
+                .andExpect(jsonPath("$.contenu[*].codePostal", Matchers.everyItem(Matchers.is("1050"))));
+    }
+
+    @Test
+    void unBienHorsLigneNeSeListePas() throws Exception {
+        mvc.perform(get("/api/v1/biens").param("statut", "archive"))
+                .andExpect(status().isBadRequest());
+        mvc.perform(get("/api/v1/biens").param("statut", "vendu"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.contenu[*].statut", Matchers.everyItem(Matchers.is("vendu"))));
+    }
+
+    @Test
     void leFiltreParTypeDOffreSepareLesVentesDesLocations() throws Exception {
         mvc.perform(get("/api/v1/biens").param("typeOffre", "location").param("taille", "100"))
                 .andExpect(status().isOk())

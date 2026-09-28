@@ -86,7 +86,7 @@
     "filtres": "Zoekfilters",
     "ville": "Stad of gemeente",
     "prixMax": "Maximumbudget (€)",
-    "chambresMin": "Minimum slaapkamers",
+    "chambresMin": "Minimum aantal slaapkamers",
     "triRecent": "Meest recent",
     "triPrixAsc": "Prijs oplopend",
     "triPrixDesc": "Prijs aflopend",
@@ -101,7 +101,28 @@
     "titre_vente": "Panden te koop",
     "titre_location": "Panden te huur",
     "loyerMax": "Maximale huur (€ / maand)",
-    "toutesOffres": "Te koop en te huur"
+    "toutesOffres": "Te koop en te huur",
+    "filtresTitre": "Filters",
+    "villeOuCode": "Gemeente of postcode",
+    "budget": "Budget (€)",
+    "loyer": "Huur (€ / maand)",
+    "min": "min",
+    "max": "max",
+    "prixMin": "Minimumbudget (€)",
+    "superficieMin": "Minimale oppervlakte (m²)",
+    "appliquer": "Filters toepassen",
+    "reinitialiser": "Filters wissen",
+    "carte": "Kaart — OpenStreetMap",
+    "nombre_one": "{{count}} resultaat",
+    "nombre_other": "{{count}} resultaten",
+    "pagePrecedente": "Vorige pagina",
+    "pageSuivante": "Volgende pagina",
+    "reassurance": {
+      "visites": "Bezoeken 7 dagen op 7",
+      "gratuit": "Tijdstippen overdag gratis",
+      "paiement": "Beveiligde betaling via Stripe",
+      "adresse": "Adres meegedeeld zodra het bezoek bevestigd is"
+    }
   },
   "bien": {
     "chambres_one": "slaapkamer",

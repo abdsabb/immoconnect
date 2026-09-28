@@ -101,7 +101,28 @@
     "titre_vente": "Biens à vendre",
     "titre_location": "Biens à louer",
     "loyerMax": "Loyer maximum (€ / mois)",
-    "toutesOffres": "À vendre et à louer"
+    "toutesOffres": "À vendre et à louer",
+    "filtresTitre": "Filtres",
+    "villeOuCode": "Commune ou code postal",
+    "budget": "Budget (€)",
+    "loyer": "Loyer (€ / mois)",
+    "min": "min",
+    "max": "max",
+    "prixMin": "Budget minimum (€)",
+    "superficieMin": "Superficie minimum (m²)",
+    "appliquer": "Appliquer les filtres",
+    "reinitialiser": "Effacer les filtres",
+    "carte": "Carte — OpenStreetMap",
+    "nombre_one": "{{count}} résultat",
+    "nombre_other": "{{count}} résultats",
+    "pagePrecedente": "Page précédente",
+    "pageSuivante": "Page suivante",
+    "reassurance": {
+      "visites": "Visites 7 jours sur 7",
+      "gratuit": "Créneaux en journée gratuits",
+      "paiement": "Paiement sécurisé par Stripe",
+      "adresse": "Adresse communiquée dès la visite confirmée"
+    }
   },
   "bien": {
     "chambres_one": "chambre",

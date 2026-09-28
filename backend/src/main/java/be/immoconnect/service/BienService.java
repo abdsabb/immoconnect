@@ -25,6 +25,10 @@ public class BienService {
     }
 
     public Page<BienResume> rechercher(CritereRechercheBien criteres, Pageable pagination) {
+        // RA5 : un bien hors ligne n'est pas public, la recherche ne doit pas permettre de le lister
+        if (criteres.statut() == StatutBien.archive) {
+            throw new IllegalArgumentException("Statut de recherche inconnu : archive");
+        }
         Specification<Bien> specification = Specification.allOf(
                 BienSpecifications.statut(criteres.statutEffectif()),
                 BienSpecifications.typeOffre(criteres.typeOffre()),

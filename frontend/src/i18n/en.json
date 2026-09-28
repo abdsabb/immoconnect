@@ -101,7 +101,28 @@
     "titre_vente": "Properties for sale",
     "titre_location": "Properties to rent",
     "loyerMax": "Maximum rent (€ / month)",
-    "toutesOffres": "For sale and to rent"
+    "toutesOffres": "For sale and to rent",
+    "filtresTitre": "Filters",
+    "villeOuCode": "Town or postcode",
+    "budget": "Budget (€)",
+    "loyer": "Rent (€ / month)",
+    "min": "min",
+    "max": "max",
+    "prixMin": "Minimum budget (€)",
+    "superficieMin": "Minimum surface area (m²)",
+    "appliquer": "Apply filters",
+    "reinitialiser": "Clear filters",
+    "carte": "Map — OpenStreetMap",
+    "nombre_one": "{{count}} result",
+    "nombre_other": "{{count}} results",
+    "pagePrecedente": "Previous page",
+    "pageSuivante": "Next page",
+    "reassurance": {
+      "visites": "Viewings 7 days a week",
+      "gratuit": "Daytime slots are free",
+      "paiement": "Secure payment by Stripe",
+      "adresse": "Address given once the viewing is confirmed"
+    }
   },
   "bien": {
     "chambres_one": "bedroom",
