@@ -20,9 +20,15 @@ public final class BienSpecifications {
         return (racine, requete, cb) -> typeOffre == null ? null : cb.equal(racine.get("typeOffre"), typeOffre);
     }
 
+    /** Début du nom de la commune, ou début de son code postal : « ixel » comme « 1050 ». */
     public static Specification<Bien> ville(String ville) {
-        return (racine, requete, cb) -> (ville == null || ville.isBlank()) ? null
-                : cb.like(cb.lower(racine.get("ville")), ville.trim().toLowerCase() + "%");
+        return (racine, requete, cb) -> {
+            if (ville == null || ville.isBlank()) {
+                return null;
+            }
+            String debut = ville.trim().toLowerCase() + "%";
+            return cb.or(cb.like(cb.lower(racine.get("ville")), debut), cb.like(racine.get("codePostal"), debut));
+        };
     }
 
     public static Specification<Bien> categorie(Integer categorieId) {
