@@ -4,6 +4,7 @@ import be.immoconnect.depot.BienRepository;
 import be.immoconnect.depot.BienSpecifications;
 import be.immoconnect.entite.Bien;
 import be.immoconnect.entite.StatutBien;
+import be.immoconnect.entite.TypeOffre;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -28,11 +29,15 @@ public class ServiceOpenData {
     private static final int DECIMALES_POSITION = 3;
     private static final String SEPARATEUR = ";";
 
-    public record BienOuvert(String categorie, String ville, String codePostal, BigDecimal prix, BigDecimal superficie,
-                             Integer nbChambres, BigDecimal latitude, BigDecimal longitude, LocalDate publieLe) {
+    /** Pour une location, le prix est le loyer mensuel. */
+    public record BienOuvert(TypeOffre typeOffre, String categorie, String ville, String codePostal, BigDecimal prix,
+                             BigDecimal superficie, Integer nbChambres, BigDecimal latitude, BigDecimal longitude,
+                             LocalDate publieLe) {
     }
 
-    public record StatistiqueMarche(String commune, String categorie, long nbAnnonces, BigDecimal prixMoyen, BigDecimal prixMedianM2) {
+    /** Ventes et locations ne se mélangent pas : la moyenne d'un prix et d'un loyer n'aurait aucun sens. */
+    public record StatistiqueMarche(String commune, String categorie, TypeOffre typeOffre, long nbAnnonces,
+                                    BigDecimal prixMoyen, BigDecimal prixMedianM2) {
     }
 
     private final BienRepository biens;
@@ -42,16 +47,17 @@ public class ServiceOpenData {
     }
 
     public List<BienOuvert> biens() {
-        return disponibles().stream().map(b -> new BienOuvert(b.getCategorie().getNom(), b.getVille(), b.getCodePostal(),
-                b.getPrix(), b.getSuperficie(), b.getNbChambres(),
+        return disponibles().stream().map(b -> new BienOuvert(b.getTypeOffre(), b.getCategorie().getNom(), b.getVille(),
+                b.getCodePostal(), b.getPrix(), b.getSuperficie(), b.getNbChambres(),
                 b.getLatitude().setScale(DECIMALES_POSITION, RoundingMode.HALF_UP),
                 b.getLongitude().setScale(DECIMALES_POSITION, RoundingMode.HALF_UP), b.getPublieLe())).toList();
     }
 
     public String biensCsv() {
-        StringBuilder csv = new StringBuilder("categorie;ville;code_postal;prix;superficie;nb_chambres;latitude;longitude;publie_le\r\n");
+        StringBuilder csv = new StringBuilder(
+                "type_offre;categorie;ville;code_postal;prix;superficie;nb_chambres;latitude;longitude;publie_le\r\n");
         for (BienOuvert b : biens()) {
-            csv.append(String.join(SEPARATEUR, texte(b.categorie()), texte(b.ville()), texte(b.codePostal()),
+            csv.append(String.join(SEPARATEUR, b.typeOffre().name(), texte(b.categorie()), texte(b.ville()), texte(b.codePostal()),
                     b.prix().toPlainString(), b.superficie().toPlainString(), String.valueOf(b.nbChambres()),
                     b.latitude().toPlainString(), b.longitude().toPlainString(), b.publieLe().toString())).append("\r\n");
         }
@@ -61,14 +67,16 @@ public class ServiceOpenData {
     public List<StatistiqueMarche> statistiques() {
         Map<String, List<Bien>> groupes = new TreeMap<>();
         for (Bien bien : disponibles()) {
-            groupes.computeIfAbsent(bien.getVille() + "\u0000" + bien.getCategorie().getNom(), cle -> new ArrayList<>()).add(bien);
+            String cle = bien.getVille() + "\u0000" + bien.getCategorie().getNom() + "\u0000" + bien.getTypeOffre();
+            groupes.computeIfAbsent(cle, c -> new ArrayList<>()).add(bien);
         }
         return groupes.values().stream().map(groupe -> {
             BigDecimal total = groupe.stream().map(Bien::getPrix).reduce(BigDecimal.ZERO, BigDecimal::add);
             List<BigDecimal> prixAuM2 = groupe.stream()
                     .map(b -> b.getPrix().divide(b.getSuperficie(), 2, RoundingMode.HALF_UP))
                     .sorted(Comparator.naturalOrder()).toList();
-            return new StatistiqueMarche(groupe.getFirst().getVille(), groupe.getFirst().getCategorie().getNom(), groupe.size(),
+            return new StatistiqueMarche(groupe.getFirst().getVille(), groupe.getFirst().getCategorie().getNom(),
+                    groupe.getFirst().getTypeOffre(), groupe.size(),
                     total.divide(BigDecimal.valueOf(groupe.size()), 0, RoundingMode.HALF_UP), mediane(prixAuM2));
         }).toList();
     }

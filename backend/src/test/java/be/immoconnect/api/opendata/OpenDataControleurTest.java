@@ -99,6 +99,7 @@ class OpenDataControleurTest {
                 .andExpect(jsonPath("$", Matchers.hasSize(Matchers.greaterThan(50))))
                 .andExpect(jsonPath("$[0].ville").isNotEmpty())
                 .andExpect(jsonPath("$[0].prix").isNumber())
+                .andExpect(jsonPath("$[*].typeOffre", Matchers.hasItems("vente", "location")))
                 .andExpect(jsonPath("$[0].adresse").doesNotExist())
                 .andExpect(jsonPath("$[0].agent").doesNotExist())
                 .andExpect(jsonPath("$[0].id").doesNotExist())
@@ -119,11 +120,15 @@ class OpenDataControleurTest {
                 .andExpect(content().contentTypeCompatibleWith("text/csv"))
                 .andReturn().getResponse().getContentAsString();
         assertThat(csv.lines().findFirst().orElseThrow())
-                .isEqualTo("categorie;ville;code_postal;prix;superficie;nb_chambres;latitude;longitude;publie_le");
+                .isEqualTo("type_offre;categorie;ville;code_postal;prix;superficie;nb_chambres;latitude;longitude;publie_le");
         assertThat(csv.lines().count()).isGreaterThan(50);
+        assertThat(csv.lines().skip(1)).allMatch(ligne -> ligne.startsWith("vente;") || ligne.startsWith("location;"));
 
+        // Un prix de vente et un loyer ne se mélangent pas dans une même moyenne
         mvc.perform(get("/api/v1/open-data/statistiques").header("X-API-Key", cle))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.typeOffre == 'location')].prixMoyen", Matchers.everyItem(Matchers.lessThanOrEqualTo(3500))))
+                .andExpect(jsonPath("$[?(@.typeOffre == 'vente')].prixMoyen", Matchers.everyItem(Matchers.greaterThan(10000))))
                 .andExpect(jsonPath("$[0].commune").isNotEmpty())
                 .andExpect(jsonPath("$[0].categorie").isNotEmpty())
                 .andExpect(jsonPath("$[0].nbAnnonces", Matchers.greaterThan(0)))

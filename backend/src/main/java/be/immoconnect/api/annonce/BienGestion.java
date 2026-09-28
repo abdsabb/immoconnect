@@ -2,6 +2,7 @@ package be.immoconnect.api.annonce;
 
 import be.immoconnect.entite.Bien;
 import be.immoconnect.entite.StatutBien;
+import be.immoconnect.entite.TypeOffre;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -14,6 +15,7 @@ public record BienGestion(
         Integer id,
         String titre,
         String description,
+        TypeOffre typeOffre,
         BigDecimal prix,
         BigDecimal superficie,
         Integer nbChambres,
@@ -39,7 +41,8 @@ public record BienGestion(
     }
 
     public static BienGestion depuis(Bien bien, Indicateurs indicateurs) {
-        return new BienGestion(bien.getId(), bien.getTitre(), bien.getDescription(), bien.getPrix(), bien.getSuperficie(),
+        return new BienGestion(bien.getId(), bien.getTitre(), bien.getDescription(), bien.getTypeOffre(), bien.getPrix(),
+                bien.getSuperficie(),
                 bien.getNbChambres(), bien.getAdresse(), bien.getVille(), bien.getCodePostal(), bien.getLatitude(),
                 bien.getLongitude(), bien.getStatut(), bien.getPublieLe(), bien.getCategorie().getId(),
                 bien.getCategorie().getNom(),

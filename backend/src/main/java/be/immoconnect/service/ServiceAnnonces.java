@@ -14,6 +14,7 @@ import be.immoconnect.entite.Bien;
 import be.immoconnect.entite.Photo;
 import be.immoconnect.entite.StatutBien;
 import be.immoconnect.entite.StatutRendezVous;
+import be.immoconnect.entite.TypeOffre;
 import be.immoconnect.stockage.ImagesBiens;
 import be.immoconnect.stockage.StockagePhotos;
 import java.time.Clock;
@@ -95,6 +96,7 @@ public class ServiceAnnonces {
         if (requete.statut() != null && requete.statut() != bien.getStatut()) {
             changerStatut(bien, requete.statut());
         }
+        verifierOffre(bien);
         audit.enregistrer(bien.getAgent(), "modification_bien", "bien#" + bienId, ip);
         return vue(bien);
     }
@@ -177,6 +179,15 @@ public class ServiceAnnonces {
         bien.setStatut(nouveau);
     }
 
+    /** Le statut final suit le type d'offre : ni vente « louée », ni location « vendue ». */
+    private static void verifierOffre(Bien bien) {
+        if (!bien.getTypeOffre().accepte(bien.getStatut())) {
+            throw new RegleAnnonceException(bien.getTypeOffre() == TypeOffre.vente
+                    ? "Un bien à vendre ne peut pas être marqué « loué »"
+                    : "Un bien à louer ne peut pas être marqué « vendu »");
+        }
+    }
+
     private static boolean estEnLigne(StatutBien statut) {
         return statut == StatutBien.disponible || statut == StatutBien.sous_option;
     }
@@ -186,6 +197,9 @@ public class ServiceAnnonces {
                 .orElseThrow(() -> new DonneeInvalideException("categorieId", "catégorie inconnue")));
         bien.setTitre(requete.titre().trim());
         bien.setDescription(requete.description().trim());
+        if (requete.typeOffre() != null) {
+            bien.setTypeOffre(requete.typeOffre());
+        }
         bien.setPrix(requete.prix());
         bien.setSuperficie(requete.superficie());
         bien.setNbChambres(requete.nbChambres());

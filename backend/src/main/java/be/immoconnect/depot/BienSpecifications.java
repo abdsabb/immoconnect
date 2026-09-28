@@ -2,6 +2,7 @@ package be.immoconnect.depot;
 
 import be.immoconnect.entite.Bien;
 import be.immoconnect.entite.StatutBien;
+import be.immoconnect.entite.TypeOffre;
 import java.math.BigDecimal;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -13,6 +14,10 @@ public final class BienSpecifications {
 
     public static Specification<Bien> statut(StatutBien statut) {
         return (racine, requete, cb) -> statut == null ? null : cb.equal(racine.get("statut"), statut);
+    }
+
+    public static Specification<Bien> typeOffre(TypeOffre typeOffre) {
+        return (racine, requete, cb) -> typeOffre == null ? null : cb.equal(racine.get("typeOffre"), typeOffre);
     }
 
     public static Specification<Bien> ville(String ville) {

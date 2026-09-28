@@ -2,6 +2,7 @@ package be.immoconnect.api.bien;
 
 import be.immoconnect.api.PageReponse;
 import be.immoconnect.entite.StatutBien;
+import be.immoconnect.entite.TypeOffre;
 import be.immoconnect.service.BienService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,9 +34,11 @@ public class BienControleur {
 
     @GetMapping
     @Operation(summary = "Recherche multicritères paginée",
-            description = "Filtre par ville, catégorie, fourchette de prix, chambres et superficie. "
+            description = "Filtre par type d'offre (vente ou location), ville, catégorie, fourchette de prix, chambres "
+                    + "et superficie. Pour une location, le prix est le loyer mensuel. "
                     + "Pagination : page (défaut 0), taille (défaut 20, max 100), tri (ex. prix,asc).")
     public PageReponse<BienResume> rechercher(
+            @RequestParam(required = false) TypeOffre typeOffre,
             @RequestParam(required = false) String ville,
             @RequestParam(required = false) Integer categorieId,
             @RequestParam(required = false) BigDecimal prixMin,
@@ -47,7 +50,7 @@ public class BienControleur {
             @RequestParam(defaultValue = "20") int taille,
             @Parameter(description = "champ,sens — ex. prix,asc ou publieLe,desc")
             @RequestParam(defaultValue = "publieLe,desc") String tri) {
-        var criteres = new CritereRechercheBien(ville, categorieId, prixMin, prixMax, chambresMin, superficieMin, statut);
+        var criteres = new CritereRechercheBien(typeOffre, ville, categorieId, prixMin, prixMax, chambresMin, superficieMin, statut);
         var pagination = PageRequest.of(Math.max(page, 0), Math.clamp(taille, 1, TAILLE_MAX), tri(tri));
         return PageReponse.depuis(service.rechercher(criteres, pagination));
     }

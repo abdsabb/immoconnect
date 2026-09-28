@@ -1,6 +1,7 @@
 package be.immoconnect.api.annonce;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -188,6 +189,43 @@ class AnnonceControleurTest {
         mvc.perform(get("/api/v1/agents/moi/biens/" + id).header("Authorization", "Bearer " + agent))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.statut").value("archive"));
+    }
+
+    @Test
+    void uneLocationNeSeVendPasEtUneVenteNeSeLouePas() throws Exception {
+        String agent = connecter(AGENT);
+
+        // Sans type d'offre, l'annonce est une vente
+        int vente = corps(creer(agent).andExpect(status().isCreated())
+                .andExpect(jsonPath("$.typeOffre").value("vente"))).get("id").asInt();
+        modifier(agent, vente, "loue").andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value("Un bien à vendre ne peut pas être marqué « loué »"));
+        modifier(agent, vente, "vendu").andExpect(status().isOk());
+
+        int location = corps(mvc.perform(post("/api/v1/biens").header("Authorization", "Bearer " + agent)
+                        .contentType(MediaType.APPLICATION_JSON).content(ANNONCE.formatted(", \"typeOffre\": \"location\", \"prix\": 1150")))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.typeOffre").value("location"))
+                .andExpect(jsonPath("$.prix").value(1150))).get("id").asInt();
+        modifier(agent, location, "vendu").andExpect(status().isConflict());
+        // Une modification qui ne dit rien du type d'offre le conserve
+        modifier(agent, location, "loue").andExpect(status().isOk())
+                .andExpect(jsonPath("$.typeOffre").value("location"))
+                .andExpect(jsonPath("$.statut").value("loue"));
+
+        // Une vente déjà « vendue » ne devient pas une location
+        mvc.perform(put("/api/v1/biens/" + vente).header("Authorization", "Bearer " + agent)
+                        .contentType(MediaType.APPLICATION_JSON).content(ANNONCE.formatted(", \"typeOffre\": \"location\"")))
+                .andExpect(status().isConflict());
+        assertThat(jdbc.queryForObject("select type_offre from bien where id = ?", String.class, vente)).isEqualTo("vente");
+    }
+
+    @Test
+    void laBaseRefuseElleAussiUneLocationVendue() {
+        Integer location = jdbc.queryForObject("select min(id) from bien where type_offre = 'location'", Integer.class);
+
+        assertThatThrownBy(() -> jdbc.update("update bien set statut = 'vendu' where id = ?", location))
+                .hasMessageContaining("chk_bien_offre_statut");
     }
 
     @Test

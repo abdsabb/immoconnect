@@ -43,10 +43,34 @@ class BienControleurTest {
     }
 
     @Test
+    void leFiltreParTypeDOffreSepareLesVentesDesLocations() throws Exception {
+        mvc.perform(get("/api/v1/biens").param("typeOffre", "location").param("taille", "100"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.contenu", Matchers.hasSize(Matchers.greaterThanOrEqualTo(10))))
+                .andExpect(jsonPath("$.contenu[*].typeOffre", Matchers.everyItem(Matchers.is("location"))))
+                // Le prix d'une location est un loyer mensuel
+                .andExpect(jsonPath("$.contenu[*].prix", Matchers.everyItem(Matchers.lessThanOrEqualTo(3500.0))))
+                .andExpect(jsonPath("$.contenu[*].titre", Matchers.everyItem(Matchers.not(Matchers.containsString("(location)")))));
+
+        mvc.perform(get("/api/v1/biens").param("typeOffre", "vente").param("taille", "100"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.contenu", Matchers.hasSize(Matchers.greaterThanOrEqualTo(10))))
+                .andExpect(jsonPath("$.contenu[*].typeOffre", Matchers.everyItem(Matchers.is("vente"))))
+                .andExpect(jsonPath("$.contenu[*].prix", Matchers.everyItem(Matchers.greaterThan(10000.0))));
+    }
+
+    @Test
+    void unTypeDOffreInconnuEstRefuseAvecUn400() throws Exception {
+        mvc.perform(get("/api/v1/biens").param("typeOffre", "echange"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void leDetailExposePhotosEtAgentMaisPasLAdresseExacte() throws Exception {
         mvc.perform(get("/api/v1/biens/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.typeOffre").value("vente"))
                 .andExpect(jsonPath("$.photos", Matchers.not(Matchers.empty())))
                 .andExpect(jsonPath("$.agent.telephonePro").isNotEmpty())
                 .andExpect(jsonPath("$.adresse").doesNotExist());

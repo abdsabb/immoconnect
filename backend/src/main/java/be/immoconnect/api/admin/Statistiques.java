@@ -18,7 +18,10 @@ public record Statistiques(
         long messages,
         List<Commune> communes) {
 
-    /** Biens disponibles et prix moyen par commune, les communes les plus fournies en premier. */
+    /**
+     * Biens disponibles par commune, les communes les plus fournies en premier. Le prix moyen est celui
+     * des biens à vendre ; il est absent d'une commune qui ne propose que des locations.
+     */
     public record Commune(String ville, long biensDisponibles, BigDecimal prixMoyen) {
     }
 }

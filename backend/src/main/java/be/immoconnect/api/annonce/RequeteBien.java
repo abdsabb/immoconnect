@@ -1,6 +1,7 @@
 package be.immoconnect.api.annonce;
 
 import be.immoconnect.entite.StatutBien;
+import be.immoconnect.entite.TypeOffre;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
@@ -15,7 +16,8 @@ import java.math.BigDecimal;
 /**
  * Formulaire d'une annonce (cas AG1 et AG2) — règles de validation et du domaine du dictionnaire de
  * données, miroir des contraintes CHECK de la table bien. L'agent responsable n'est pas transmis :
- * c'est l'agent connecté.
+ * c'est l'agent connecté. Sans type d'offre, une nouvelle annonce est une vente et une annonce
+ * modifiée garde le sien.
  */
 public record RequeteBien(
         @NotNull(message = "la catégorie est obligatoire") Integer categorieId,
@@ -44,5 +46,6 @@ public record RequeteBien(
         @NotNull(message = "la longitude est obligatoire")
         @DecimalMin(value = "-180", message = "longitude entre -180 et 180")
         @DecimalMax(value = "180", message = "longitude entre -180 et 180") BigDecimal longitude,
-        StatutBien statut) {
+        StatutBien statut,
+        TypeOffre typeOffre) {
 }
