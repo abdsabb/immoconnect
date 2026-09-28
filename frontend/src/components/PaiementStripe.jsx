@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { loadStripe } from '@stripe/stripe-js'
+// Variante « pure » : l'import ordinaire ajoute le script de Stripe à toutes les pages du site.
+// Ici, il n'est demandé à Stripe qu'au moment d'afficher un paiement (politique de confidentialité).
+import { loadStripe } from '@stripe/stripe-js/pure'
 import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
 import { useTranslation } from 'react-i18next'
 import { BoutonPrincipal } from './Formulaire'
