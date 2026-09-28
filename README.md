@@ -29,7 +29,7 @@ documentée ainsi qu'un volet Open Data.
 ├── backend/                 API Spring Boot (Maven) — Dockerfile multi-étapes
 │   └── src/main/resources/db/migration/   V1 = schéma (17 tables), V2 = données de test,
 │                                          V3 = expéditeur des messages, V4 = back-office administrateur,
-│                                          V5 = légendes des photos de test
+│                                          V5 = légendes des photos de test, V6 = biens à vendre ou à louer
 │   └── src/main/resources/photos-demo/    Photos des annonces de test (licences libres, voir CREDITS.md)
 ├── frontend/                SPA React (Vite) — Dockerfile + nginx.conf
 ├── api/openapi.yaml         Spécification OpenAPI 3.0 de l'API (livrable 15)
@@ -93,6 +93,13 @@ et les clés API ; le super-administrateur agit aussi sur les comptes des admini
 
 Les photos téléversées sont enregistrées dans `backend/stockage/` (variable `STORAGE_DIR`), hors du dépôt.
 
+### Biens à vendre et biens à louer
+
+Chaque annonce porte un type d'offre, `vente` ou `location`, qui donne son sens au prix : prix de vente, ou loyer
+mensuel. Le site a une page par type (`/a-vendre`, `/a-louer`) et l'API filtre par `typeOffre`. Deux règles sont
+appliquées par le service et par une contrainte de la base : un bien à vendre ne devient pas « loué », un bien à
+louer ne devient pas « vendu ». Les statistiques ne mélangent jamais un prix de vente et un loyer.
+
 ### Photos des annonces de test
 
 Les annonces de test référencent 498 photos. Au démarrage, le backend crée celles qui manquent dans le dossier
@@ -108,7 +115,7 @@ page `/credits-photos`.
 
 | Méthode | Endpoint | Accès |
 |---|---|---|
-| GET | `/api/v1/biens` — recherche multicritères paginée (ville, catégorie, prix, chambres, superficie, tri) | public |
+| GET | `/api/v1/biens` — recherche multicritères paginée (type d'offre, ville, catégorie, prix, chambres, superficie, tri) | public |
 | GET | `/api/v1/biens/{id}` — détail, photos, agent (adresse exacte masquée) | public |
 | GET | `/api/v1/traductions/{fr\|nl\|en}` — dictionnaire d'interface | public |
 | POST | `/api/v1/auth/register` · `/api/v1/auth/login` — inscription, jeton JWT | public |

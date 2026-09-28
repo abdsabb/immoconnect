@@ -85,10 +85,11 @@ paths:
       summary: Rechercher les biens (multicritères, paginé)
       security: []
       parameters:
+        - { name: typeOffre, in: query, schema: { $ref: '#/components/schemas/TypeOffre' }, description: Sans ce critère, ventes et locations sont renvoyées ensemble }
         - { name: ville, in: query, schema: { type: string }, example: Ixelles }
         - { name: categorieId, in: query, schema: { type: integer } }
         - { name: prixMin, in: query, schema: { type: number } }
-        - { name: prixMax, in: query, schema: { type: number }, example: 350000 }
+        - { name: prixMax, in: query, schema: { type: number }, example: 350000, description: Prix de vente ou loyer mensuel maximum }
         - { name: chambresMin, in: query, schema: { type: integer } }
         - { name: superficieMin, in: query, schema: { type: number } }
         - { name: statut, in: query, schema: { $ref: '#/components/schemas/StatutBien' } }
@@ -943,8 +944,8 @@ paths:
       summary: Jeu de données ouvert des annonces publiées (CC BY 4.0)
       description: >
         Données anonymisées (aucune donnée personnelle) des biens au statut
-        « disponible » : catégorie, commune, code postal, prix, superficie,
-        chambres, position arrondie à trois décimales (une centaine de mètres). Accès par clé API
+        « disponible » : type d'offre, catégorie, commune, code postal, prix, superficie,
+        chambres, position arrondie à trois décimales (une centaine de mètres). Pour une location, le prix est le loyer mensuel. Accès par clé API
         gratuite (en-tête X-API-Key), limité à 60 appels par minute et par clé.
         Format JSON par défaut ; CSV avec l'en-tête « Accept: text/csv ».
       security:
@@ -965,7 +966,9 @@ paths:
     get:
       tags: [Open Data]
       summary: Statistiques agrégées du marché (CC BY 4.0)
-      description: Prix moyen et médian au m² par commune et par catégorie, calculés sur les annonces publiées.
+      description: >
+        Prix moyen et médian au m² par commune, par catégorie et par type d'offre, calculés sur les annonces
+        publiées. Ventes et locations sont séparées : pour une location, les montants sont des loyers mensuels.
       security:
         - apiKeyAuth: []
       responses:
@@ -980,6 +983,7 @@ paths:
                   properties:
                     commune: { type: string, example: Ixelles }
                     categorie: { type: string, example: Appartement }
+                    typeOffre: { $ref: '#/components/schemas/TypeOffre' }
                     nbAnnonces: { type: integer, example: 14 }
                     prixMoyen: { type: number, example: 342500 }
                     prixMedianM2: { type: number, example: 3620 }
@@ -1035,6 +1039,11 @@ components:
     StatutBien:
       type: string
       enum: [disponible, sous_option, vendu, loue, archive]
+      description: « vendu » ne concerne qu'une vente, « loue » qu'une location
+    TypeOffre:
+      type: string
+      enum: [vente, location]
+      description: Nature de l'offre ; elle donne son sens au prix
     StatutRendezVous:
       type: string
       enum: [demande, confirme, annule, honore]
@@ -1083,7 +1092,8 @@ components:
         titre: { type: string, example: Appartement 3 chambres — Ixelles }
         description: { type: string }
         categorie: { type: string, example: Appartement }
-        prix: { type: number, example: 285000 }
+        typeOffre: { $ref: '#/components/schemas/TypeOffre' }
+        prix: { type: number, example: 285000, description: Prix de vente, ou loyer mensuel d'une location }
         superficie: { type: number, example: 95 }
         nbChambres: { type: integer, example: 3 }
         adresse: { type: string, example: Rue du Bailli 27 }
@@ -1106,9 +1116,12 @@ components:
       required: [categorieId, titre, description, prix, superficie, nbChambres, adresse, ville, codePostal, latitude, longitude]
       properties:
         categorieId: { type: integer }
+        typeOffre:
+          allOf: [{ $ref: '#/components/schemas/TypeOffre' }]
+          description: Facultatif — une nouvelle annonce est une vente, une annonce modifiée garde le sien
         titre: { type: string, maxLength: 150 }
         description: { type: string }
-        prix: { type: number, minimum: 0, exclusiveMinimum: true }
+        prix: { type: number, minimum: 0, exclusiveMinimum: true, description: Prix de vente, ou loyer mensuel d'une location }
         superficie: { type: number, minimum: 0, exclusiveMinimum: true }
         nbChambres: { type: integer, minimum: 0, maximum: 20 }
         adresse: { type: string }
@@ -1203,7 +1216,8 @@ components:
         id: { type: integer, example: 42 }
         titre: { type: string }
         description: { type: string }
-        prix: { type: number, example: 285000 }
+        typeOffre: { $ref: '#/components/schemas/TypeOffre' }
+        prix: { type: number, example: 285000, description: Prix de vente, ou loyer mensuel d'une location }
         superficie: { type: number, example: 95 }
         nbChambres: { type: integer, example: 3 }
         adresse: { type: string, example: Rue du Bailli 27 }
@@ -1305,7 +1319,7 @@ components:
             properties:
               ville: { type: string, example: Jette }
               biensDisponibles: { type: integer, example: 6 }
-              prixMoyen: { type: number, example: 384167 }
+              prixMoyen: { type: number, nullable: true, example: 384167, description: Prix moyen des biens à vendre ; absent si la commune ne propose que des locations }
     Message:
       type: object
       properties:
@@ -1329,10 +1343,11 @@ components:
       type: object
       description: Version anonymisée pour l'Open Data (aucune donnée personnelle)
       properties:
+        typeOffre: { $ref: '#/components/schemas/TypeOffre' }
         categorie: { type: string, example: Appartement }
         ville: { type: string, example: Ixelles }
         codePostal: { type: string, example: '1050' }
-        prix: { type: number, example: 285000 }
+        prix: { type: number, example: 285000, description: Prix de vente, ou loyer mensuel d'une location }
         superficie: { type: number, example: 95 }
         nbChambres: { type: integer, example: 3 }
         latitude: { type: number, example: 50.8275 }
