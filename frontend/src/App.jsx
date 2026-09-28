@@ -16,6 +16,7 @@ import AnnonceFormulaire from './pages/AnnonceFormulaire'
 import Blog from './pages/Blog'
 import Article from './pages/Article'
 import CreditsPhotos from './pages/CreditsPhotos'
+import PageLegale from './pages/PageLegale'
 import Administration from './pages/admin/Administration'
 import TableauDeBord from './pages/admin/TableauDeBord'
 import Comptes from './pages/admin/Comptes'
@@ -38,6 +39,8 @@ export default function App() {
         <Route path="blog" element={<Blog />} />
         <Route path="blog/:id" element={<Article />} />
         <Route path="credits-photos" element={<CreditsPhotos />} />
+        <Route path="mentions-legales" element={<PageLegale key="mentions" page="mentions" />} />
+        <Route path="confidentialite" element={<PageLegale key="confidentialite" page="confidentialite" />} />
         <Route path="connexion" element={<Connexion />} />
         <Route path="inscription" element={<Inscription />} />
         <Route element={<RouteProtegee />}>

@@ -106,8 +106,9 @@ export default function Layout() {
         <div className="mx-auto max-w-6xl px-4 py-6 flex flex-wrap justify-between gap-2">
           <span>© {new Date().getFullYear()} ImmoConnect — Bruxelles</span>
           <span className="flex gap-4">
-            <a href="/mentions-legales" className="hover:text-white">{contenu('footer.mentions', 'pied.mentions')}</a>
-            <a href="/confidentialite" className="hover:text-white">{contenu('footer.rgpd', 'pied.confidentialite')}</a>
+            {/* Liens internes : un lien ordinaire rechargerait la page et fermerait la session, gardée en mémoire */}
+            <NavLink to="/mentions-legales" className="hover:text-white">{contenu('footer.mentions', 'pied.mentions')}</NavLink>
+            <NavLink to="/confidentialite" className="hover:text-white">{contenu('footer.rgpd', 'pied.confidentialite')}</NavLink>
             <NavLink to="/credits-photos" className="hover:text-white">{t('pied.credits')}</NavLink>
             <span>{t('pied.osm')}</span>
           </span>

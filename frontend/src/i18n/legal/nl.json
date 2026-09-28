@@ -1,0 +1,191 @@
+{
+  "miseAJour": "Laatst bijgewerkt: 28 september 2026",
+  "sommaire": "Inhoud",
+  "demo": {
+    "titre": "Demonstratiesite",
+    "texte": "ImmoConnect is een academisch project: de geïntegreerde proef van de bachelor informatica van Abdulrahman Sabbagh (ICC Brussel, 2025-2026). Het kantoor, de makelaars en de advertenties zijn fictief. Geen enkel pand staat werkelijk te koop, en de betalingen verlopen in testmodus: er wordt geen bedrag afgehouden."
+  },
+  "mentions": {
+    "titre": "Wettelijke vermeldingen",
+    "sections": [
+      {
+        "titre": "Uitgever van de site",
+        "paragraphes": [
+          "Deze site is ontworpen, ontwikkeld en gepubliceerd door Abdulrahman Sabbagh, student aan ICC Brussel, in het kader van zijn geïntegreerde proef.",
+          "Voor elke vraag over de site of de inhoud ervan is de repository van het project het contactpunt."
+        ],
+        "liens": [{ "texte": "Repository van het project op GitHub", "url": "https://github.com/abdsabb/immoconnect" }]
+      },
+      {
+        "titre": "Het voorgestelde kantoor",
+        "paragraphes": [
+          "ImmoConnect bestaat niet als onderneming: het heeft geen ondernemingsnummer, geen btw-nummer en geen beroepserkenning.",
+          "Een echt kantoor zou hier vermelden, zoals boek XII van het Wetboek van economisch recht vereist:"
+        ],
+        "liste": [
+          "zijn maatschappelijke benaming, rechtsvorm en zetel;",
+          "zijn ondernemingsnummer (KBO) en btw-nummer;",
+          "het erkenningsnummer van elke makelaar bij het Beroepsinstituut van Vastgoedmakelaars (BIV);",
+          "de toezichthoudende autoriteit: BIV, Luxemburgstraat 16B, 1000 Brussel;",
+          "de toepasselijke plichtenleer en zijn verzekering beroepsaansprakelijkheid."
+        ]
+      },
+      {
+        "titre": "Hosting",
+        "paragraphes": [
+          "De site wordt gehost op een server gehuurd bij Contabo GmbH, Aschauer Straße 32a, 81549 München, Duitsland. De server staat in de Europese Unie."
+        ]
+      },
+      {
+        "titre": "Advertenties",
+        "paragraphes": [
+          "De advertenties zijn testgegevens. De prijzen, oppervlaktes, adressen en beschrijvingen zijn aangemaakt voor de demonstratie en stemmen met geen enkel echt pand overeen.",
+          "De foto's zijn illustraties: geen enkele toont het pand dat de advertentie beschrijft."
+        ],
+        "liens": [{ "texte": "Fotocredits", "chemin": "/credits-photos" }]
+      },
+      {
+        "titre": "Betalende bezoeken",
+        "paragraphes": [
+          "Een bezoek overdag, van maandag tot vrijdag, is gratis. Een bezoek 's avonds of in het weekend kost 15 €, alle taksen inbegrepen. De prijs wordt getoond vóór de betaling.",
+          "De betaling gebeurt met een kaart, via Stripe. De site ontvangt en bewaart geen enkel kaartnummer.",
+          "Wordt het bezoek vóór het geplande uur geannuleerd, door het lid of door de makelaar, dan wordt het betaalde bedrag volledig terugbetaald.",
+          "Op deze demonstratiesite werkt Stripe in testmodus: gebruik de kaart 4242 4242 4242 4242, een datum in de toekomst en drie willekeurige cijfers. Een echte kaart zou geweigerd worden."
+        ]
+      },
+      {
+        "titre": "Intellectuele eigendom",
+        "paragraphes": [
+          "De teksten, de huisstijl en de code van de site zijn het werk van hun auteur. De broncode is te raadplegen op GitHub."
+        ],
+        "liste": [
+          "Foto's: Wikimedia Commons, onder Creative Commons-licenties; auteurs en licenties op de pagina met de credits.",
+          "Kaarten: © OpenStreetMap-bijdragers, onder ODbL-licentie.",
+          "Lettertypes Montserrat en Open Sans: SIL Open Font License.",
+          "Open data van de API: licentie Creative Commons Naamsvermelding 4.0 (CC BY 4.0)."
+        ]
+      },
+      {
+        "titre": "Inhoud van gebruikers",
+        "paragraphes": [
+          "De berichten tussen een lid en een makelaar verbinden alleen hun auteur. De site oefent geen algemeen toezicht op deze berichten uit.",
+          "Gebruik het contactpunt hierboven om onwettige inhoud te melden. Gemelde inhoud wordt onderzocht en, als ze onwettig is, verwijderd."
+        ]
+      },
+      {
+        "titre": "Toepasselijk recht",
+        "paragraphes": [
+          "Op de site is het Belgisch recht van toepassing."
+        ]
+      }
+    ]
+  },
+  "confidentialite": {
+    "titre": "Privacybeleid",
+    "sections": [
+      {
+        "titre": "Lees dit voor u zich inschrijft",
+        "paragraphes": [
+          "Deze site dient voor een demonstratie voor een jury. U kunt zich inschrijven, maar we raden u aan er geen echte gegevens in te voeren."
+        ],
+        "liste": [
+          "De e-mails van de site worden niet naar uw adres gestuurd: ze komen toe in een demonstratiemailbox die de jury kan raadplegen.",
+          "De testaccounts van het project zijn openbaar: andere personen kunnen ermee inloggen.",
+          "De databank kan op elk moment opnieuw ingesteld worden."
+        ]
+      },
+      {
+        "titre": "Verwerkingsverantwoordelijke",
+        "paragraphes": [
+          "De verwerkingsverantwoordelijke is de uitgever van de site, Abdulrahman Sabbagh. Het contactpunt staat in de wettelijke vermeldingen."
+        ],
+        "liens": [{ "texte": "Wettelijke vermeldingen", "chemin": "/mentions-legales" }]
+      },
+      {
+        "titre": "Verwerkte gegevens",
+        "paragraphes": [
+          "De site verwerkt alleen de gegevens die nodig zijn voor zijn werking. Hij bevat geen reclame en geen publieksmeting, en verkoopt geen gegevens."
+        ],
+        "tableau": {
+          "colonnes": ["Verwerking", "Gegevens", "Rechtsgrond", "Bewaring"],
+          "lignes": [
+            ["Account", "Naam, voornaam, e-mailadres, telefoon (facultatief), taal, wachtwoord in de vorm van een hash", "Uitvoering van de overeenkomst", "Tot de verwijdering van het account"],
+            ["Favorieten", "Bewaarde panden", "Uitvoering van de overeenkomst", "Gewist bij de verwijdering van het account"],
+            ["Berichten", "Tekst van de berichten met een makelaar", "Uitvoering van de overeenkomst", "Tekst gewist bij de verwijdering van het account"],
+            ["Afspraken", "Pand, datum, uur, reden van het bezoek", "Uitvoering van de overeenkomst", "Bewaard zonder identiteit na de verwijdering van het account"],
+            ["Betalingen", "Bedrag, datum, referentie van de betaling bij Stripe; geen kaartgegevens", "Uitvoering van de overeenkomst en boekhoudkundige verplichting", "Bewaard zonder identiteit na de verwijdering van het account"],
+            ["Beveiligingslogboek", "Uitgevoerde actie, datum, IP-adres, betrokken account", "Gerechtvaardigd belang: beveiliging van de dienst", "Bewaard na de verwijdering van het account, met het IP-adres, gekoppeld aan een anoniem geworden account"]
+          ]
+        }
+      },
+      {
+        "titre": "Bewaartermijnen",
+        "paragraphes": [
+          "Deze demonstratiesite verwijdert oude gegevens nog niet automatisch: het beveiligingslogboek en de betalingen blijven in de databank zolang de demonstratiedatabank bestaat.",
+          "Voor een echt kantoor zijn de voorziene termijnen 12 maanden voor het beveiligingslogboek en 7 jaar voor de boekhoudkundige stukken."
+        ]
+      },
+      {
+        "titre": "Vastgoedmakelaars",
+        "paragraphes": [
+          "De naam en het professionele telefoonnummer van een makelaar worden bij zijn advertenties getoond. Op deze site zijn de makelaars fictief."
+        ]
+      },
+      {
+        "titre": "Ontvangers",
+        "paragraphes": [
+          "Uw gegevens zijn toegankelijk voor de makelaar van het pand dat u bezoekt of met wie u berichten uitwisselt, en voor de beheerders van de site. Ze worden ook verwerkt door de volgende dienstverleners:"
+        ],
+        "liste": [
+          "Contabo GmbH (Duitsland): hosting van de server en de databank.",
+          "Stripe Payments Europe Ltd (Ierland): betaling met kaart. Stripe kan gegevens doorgeven aan de Verenigde Staten, binnen het Data Privacy Framework en met modelcontractbepalingen.",
+          "OpenStreetMap Foundation (Verenigd Koninkrijk): de kaartachtergronden worden van haar servers geladen, die uw IP-adres ontvangen wanneer een kaart getoond wordt."
+        ]
+      },
+      {
+        "titre": "Cookies en lokale opslag",
+        "paragraphes": [
+          "De site plaatst geen enkele cookie. Hij toont dus geen toestemmingsbanner."
+        ],
+        "liste": [
+          "Taal: uw keuze (Frans, Nederlands of Engels) wordt bewaard in de lokale opslag van uw browser, onder de naam 'i18nextLng'. Ze verlaat uw toestel niet.",
+          "Aanmelding: uw sessie wordt in het geheugen bewaard zolang de pagina open blijft. De pagina herladen meldt u af.",
+          "Betaling: alleen op de betaalpagina plaatst Stripe zijn eigen cookies om fraude te bestrijden. Ze zijn nodig voor de betaling."
+        ]
+      },
+      {
+        "titre": "Beveiliging",
+        "liste": [
+          "De uitwisselingen met de site zijn versleuteld (HTTPS).",
+          "De wachtwoorden worden bewaard in de vorm van een hash (bcrypt): niemand kan ze lezen, ook een beheerder niet.",
+          "Elk account heeft alleen toegang tot zijn eigen gegevens; de rechten hangen af van de rol.",
+          "De aanmeldingen en de gevoelige acties worden in een logboek genoteerd."
+        ]
+      },
+      {
+        "titre": "Uw rechten",
+        "paragraphes": [
+          "De algemene verordening gegevensbescherming (AVG) geeft u de volgende rechten:"
+        ],
+        "liste": [
+          "Inzage en verbetering: raadpleeg en wijzig uw gegevens in 'Mijn profiel'.",
+          "Wissing: de knop 'Mijn account verwijderen' in uw profiel wist uw favorieten en de tekst van uw berichten, en vervangt uw naam, uw e-mailadres en uw telefoonnummer door anonieme waarden. De bewerking is onmiddellijk en onomkeerbaar.",
+          "Overdraagbaarheid, bezwaar en beperking: richt uw verzoek aan het contactpunt; u krijgt binnen 30 dagen een antwoord."
+        ]
+      },
+      {
+        "titre": "Klacht",
+        "paragraphes": [
+          "U kunt een klacht indienen bij de Gegevensbeschermingsautoriteit, Drukpersstraat 35, 1000 Brussel."
+        ],
+        "liens": [{ "texte": "gegevensbeschermingsautoriteit.be", "url": "https://www.gegevensbeschermingsautoriteit.be" }]
+      },
+      {
+        "titre": "Open data",
+        "paragraphes": [
+          "De site publiceert gegevens over zijn advertenties via een programmeerinterface. Deze gegevens bevatten geen informatie over de leden: geen naam, geen e-mailadres, geen afspraken."
+        ]
+      }
+    ]
+  }
+}

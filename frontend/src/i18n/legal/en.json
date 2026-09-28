@@ -1,0 +1,191 @@
+{
+  "miseAJour": "Last updated: 28 September 2026",
+  "sommaire": "Contents",
+  "demo": {
+    "titre": "Demonstration site",
+    "texte": "ImmoConnect is an academic project: the final integrated project of the bachelor's degree in computer science of Abdulrahman Sabbagh (ICC Brussels, 2025-2026). The agency, its agents and its listings are fictitious. No property is actually for sale, and payments run in test mode: no amount is charged."
+  },
+  "mentions": {
+    "titre": "Legal notice",
+    "sections": [
+      {
+        "titre": "Publisher of the site",
+        "paragraphes": [
+          "This site is designed, developed and published by Abdulrahman Sabbagh, a student at ICC Brussels, as part of his final integrated project.",
+          "For any question about the site or its content, the point of contact is the project repository."
+        ],
+        "liens": [{ "texte": "Project repository on GitHub", "url": "https://github.com/abdsabb/immoconnect" }]
+      },
+      {
+        "titre": "The agency shown",
+        "paragraphes": [
+          "ImmoConnect does not exist as a company: it has no company number, no VAT number and no professional licence.",
+          "A real agency would state here, as required by Book XII of the Belgian Code of Economic Law:"
+        ],
+        "liste": [
+          "its company name, legal form and registered office;",
+          "its company number (CBE) and VAT number;",
+          "the licence number of each agent with the Professional Institute of Real Estate Agents (IPI-BIV);",
+          "the supervisory authority: IPI, rue du Luxembourg 16B, 1000 Brussels;",
+          "the applicable code of ethics and its professional liability insurance."
+        ]
+      },
+      {
+        "titre": "Hosting",
+        "paragraphes": [
+          "The site is hosted on a server rented from Contabo GmbH, Aschauer Straße 32a, 81549 Munich, Germany. The server is located in the European Union."
+        ]
+      },
+      {
+        "titre": "Listings",
+        "paragraphes": [
+          "The listings are test data. Prices, surface areas, addresses and descriptions were generated for the demonstration and do not match any real property.",
+          "The photos are illustrations: none of them shows the property described by the listing."
+        ],
+        "liens": [{ "texte": "Photo credits", "chemin": "/credits-photos" }]
+      },
+      {
+        "titre": "Paid viewings",
+        "paragraphes": [
+          "A daytime viewing, Monday to Friday, is free. A viewing in the evening or at the weekend costs €15, all taxes included. The price is shown before payment.",
+          "Payment is made by card, through Stripe. The site neither receives nor stores any card number.",
+          "If the viewing is cancelled before its scheduled time, by the member or by the agent, the amount paid is refunded in full.",
+          "On this demonstration site, Stripe runs in test mode: use the card 4242 4242 4242 4242, a future date and any three digits. A real card would be declined."
+        ]
+      },
+      {
+        "titre": "Intellectual property",
+        "paragraphes": [
+          "The texts, the visual identity and the code of the site are the work of their author. The source code can be read on GitHub."
+        ],
+        "liste": [
+          "Photos: Wikimedia Commons, under Creative Commons licences; authors and licences on the credits page.",
+          "Maps: © OpenStreetMap contributors, under the ODbL licence.",
+          "Montserrat and Open Sans fonts: SIL Open Font License.",
+          "Open data from the API: Creative Commons Attribution 4.0 licence (CC BY 4.0)."
+        ]
+      },
+      {
+        "titre": "User content",
+        "paragraphes": [
+          "Messages exchanged between a member and an agent are the sole responsibility of their author. The site does not carry out general monitoring of these messages.",
+          "To report unlawful content, use the point of contact given above. Reported content is reviewed and, if unlawful, removed."
+        ]
+      },
+      {
+        "titre": "Applicable law",
+        "paragraphes": [
+          "The site is governed by Belgian law."
+        ]
+      }
+    ]
+  },
+  "confidentialite": {
+    "titre": "Privacy policy",
+    "sections": [
+      {
+        "titre": "Read this before you sign up",
+        "paragraphes": [
+          "This site is used for a demonstration in front of a jury. You may sign up, but we advise you not to enter real data."
+        ],
+        "liste": [
+          "E-mails from the site are not sent to your address: they arrive in a demonstration mailbox that the jury can read.",
+          "The test accounts of the project are public: other people can log in to them.",
+          "The database may be reset at any time."
+        ]
+      },
+      {
+        "titre": "Data controller",
+        "paragraphes": [
+          "The data controller is the publisher of the site, Abdulrahman Sabbagh. The point of contact is given in the legal notice."
+        ],
+        "liens": [{ "texte": "Legal notice", "chemin": "/mentions-legales" }]
+      },
+      {
+        "titre": "Data processed",
+        "paragraphes": [
+          "The site only processes the data it needs to work. It contains no advertising and no audience measurement, and sells no data."
+        ],
+        "tableau": {
+          "colonnes": ["Processing", "Data", "Legal basis", "Retention"],
+          "lignes": [
+            ["Account", "Last name, first name, e-mail address, phone (optional), language, password stored as a hash", "Performance of the contract", "Until the account is deleted"],
+            ["Favourites", "Saved properties", "Performance of the contract", "Erased when the account is deleted"],
+            ["Messages", "Text of the messages exchanged with an agent", "Performance of the contract", "Text erased when the account is deleted"],
+            ["Viewings", "Property, date, time, reason for the viewing", "Performance of the contract", "Kept without identity after the account is deleted"],
+            ["Payments", "Amount, date, Stripe payment reference; no card data", "Performance of the contract and accounting obligation", "Kept without identity after the account is deleted"],
+            ["Security log", "Action performed, date, IP address, account concerned", "Legitimate interest: security of the service", "Kept after the account is deleted, IP address included, linked to an account that has become anonymous"]
+          ]
+        }
+      },
+      {
+        "titre": "Retention periods",
+        "paragraphes": [
+          "This demonstration site does not yet delete old data automatically: the security log and the payments stay in the database for as long as the demonstration database exists.",
+          "For a real agency, the planned periods are 12 months for the security log and 7 years for accounting records."
+        ]
+      },
+      {
+        "titre": "Estate agents",
+        "paragraphes": [
+          "The name and professional phone number of an agent are shown on their listings. On this site, the agents are fictitious."
+        ]
+      },
+      {
+        "titre": "Recipients",
+        "paragraphes": [
+          "Your data can be accessed by the agent in charge of the property you visit or with whom you exchange messages, and by the administrators of the site. It is also processed by the following providers:"
+        ],
+        "liste": [
+          "Contabo GmbH (Germany): hosting of the server and the database.",
+          "Stripe Payments Europe Ltd (Ireland): card payment. Stripe may transfer data to the United States, under the Data Privacy Framework and standard contractual clauses.",
+          "OpenStreetMap Foundation (United Kingdom): map tiles are loaded from its servers, which receive your IP address when a map is displayed."
+        ]
+      },
+      {
+        "titre": "Cookies and local storage",
+        "paragraphes": [
+          "The site sets no cookie. It therefore shows no consent banner."
+        ],
+        "liste": [
+          "Language: your choice (French, Dutch or English) is saved in the local storage of your browser, under the name 'i18nextLng'. It does not leave your device.",
+          "Login: your session is kept in memory for as long as the page stays open. Reloading the page logs you out.",
+          "Payment: on the payment page only, Stripe sets its own cookies to fight fraud. They are necessary for the payment."
+        ]
+      },
+      {
+        "titre": "Security",
+        "liste": [
+          "Exchanges with the site are encrypted (HTTPS).",
+          "Passwords are stored as a hash (bcrypt): nobody can read them, not even an administrator.",
+          "Each account can only access its own data; rights depend on the role.",
+          "Logins and sensitive actions are recorded in a log."
+        ]
+      },
+      {
+        "titre": "Your rights",
+        "paragraphes": [
+          "The General Data Protection Regulation (GDPR) gives you the following rights:"
+        ],
+        "liste": [
+          "Access and rectification: view and change your data in 'My profile'.",
+          "Erasure: the 'Delete my account' button in your profile erases your favourites and the text of your messages, and replaces your name, e-mail address and phone number with anonymous values. The operation is immediate and irreversible.",
+          "Portability, objection and restriction: send your request to the point of contact; you will receive an answer within 30 days."
+        ]
+      },
+      {
+        "titre": "Complaint",
+        "paragraphes": [
+          "You can lodge a complaint with the Belgian Data Protection Authority, rue de la Presse 35, 1000 Brussels."
+        ],
+        "liens": [{ "texte": "dataprotectionauthority.be", "url": "https://www.dataprotectionauthority.be" }]
+      },
+      {
+        "titre": "Open data",
+        "paragraphes": [
+          "The site publishes data about its listings through a programming interface. This data contains no information about members: no name, no e-mail address, no viewings."
+        ]
+      }
+    ]
+  }
+}
