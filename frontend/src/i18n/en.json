@@ -142,7 +142,8 @@
     "emailInvalide": "Invalid e-mail address",
     "motDePasseCourt": "At least 8 characters",
     "pasDeCompte": "No account yet?",
-    "dejaCompte": "Already registered?"
+    "dejaCompte": "Already registered?",
+    "donnees": "Your data is only used to run your account. The details are on the page"
   },
   "profil": {
     "titre": "Hello {{prenom}}",

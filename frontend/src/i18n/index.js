@@ -4,19 +4,27 @@ import LanguageDetector from 'i18next-browser-languagedetector'
 import fr from './fr.json'
 import nl from './nl.json'
 import en from './en.json'
+import legalFr from './legal/fr.json'
+import legalNl from './legal/nl.json'
+import legalEn from './legal/en.json'
 
-// Multilinguisme FR/NL/EN (contrainte TFE). Deux sources de textes :
+// Multilinguisme FR/NL/EN (contrainte TFE). Trois sources de textes :
 // - « translation » : l'interface, livrée avec l'application (fichiers JSON ci-dessus) ;
+// - « legal » : mentions légales et politique de confidentialité, des textes longs tenus à part ;
 // - « contenu » : les textes du site gérés par l'administrateur (cas A6), servis par l'API
 //   GET /traductions/{code}. Ils priment sur l'interface et changent sans nouvelle livraison.
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    resources: { fr: { translation: fr }, nl: { translation: nl }, en: { translation: en } },
+    resources: {
+      fr: { translation: fr, legal: legalFr },
+      nl: { translation: nl, legal: legalNl },
+      en: { translation: en, legal: legalEn },
+    },
     fallbackLng: 'fr',
     supportedLngs: ['fr', 'nl', 'en'],
-    ns: ['translation', 'contenu'],
+    ns: ['translation', 'contenu', 'legal'],
     defaultNS: 'translation',
     interpolation: { escapeValue: false },
     detection: { order: ['localStorage', 'navigator'], caches: ['localStorage'] },

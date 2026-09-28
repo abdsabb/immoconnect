@@ -57,6 +57,10 @@ export default function Inscription() {
             <option value="fr">Français</option><option value="nl">Nederlands</option><option value="en">English</option>
           </select>
         </Champ>
+        <p className="text-sm text-gray-600">
+          {t('auth.donnees')}{' '}
+          <Link to="/confidentialite" className="text-turquoise font-semibold underline">{t('pied.confidentialite')}</Link>.
+        </p>
         {erreurApi && <p role="alert" className="text-erreur text-sm">{erreurApi}</p>}
         <BoutonPrincipal chargement={isSubmitting}>{t('nav.inscription')}</BoutonPrincipal>
       </form>

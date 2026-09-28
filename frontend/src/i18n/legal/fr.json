@@ -1,0 +1,191 @@
+{
+  "miseAJour": "Dernière mise à jour : 28 septembre 2026",
+  "sommaire": "Sommaire",
+  "demo": {
+    "titre": "Site de démonstration",
+    "texte": "ImmoConnect est un projet académique : l'épreuve intégrée du bachelier en informatique d'Abdulrahman Sabbagh (ICC Bruxelles, 2025-2026). L'agence, ses agents et ses annonces sont fictifs. Aucun bien n'est réellement à vendre, et les paiements se font en mode test : aucune somme n'est débitée."
+  },
+  "mentions": {
+    "titre": "Mentions légales",
+    "sections": [
+      {
+        "titre": "Éditeur du site",
+        "paragraphes": [
+          "Ce site est conçu, développé et publié par Abdulrahman Sabbagh, étudiant à l'ICC Bruxelles, dans le cadre de son épreuve intégrée.",
+          "Pour toute question sur le site ou son contenu, le point de contact est le dépôt du projet."
+        ],
+        "liens": [{ "texte": "Dépôt du projet sur GitHub", "url": "https://github.com/abdsabb/immoconnect" }]
+      },
+      {
+        "titre": "L'agence présentée",
+        "paragraphes": [
+          "ImmoConnect n'existe pas en tant qu'entreprise : elle n'a ni numéro d'entreprise, ni numéro de TVA, ni agréation professionnelle.",
+          "Une agence réelle indiquerait ici, comme l'exige le livre XII du Code de droit économique :"
+        ],
+        "liste": [
+          "sa dénomination sociale, sa forme juridique et son siège ;",
+          "son numéro d'entreprise (BCE) et son numéro de TVA ;",
+          "le numéro d'agréation de chaque agent auprès de l'Institut professionnel des agents immobiliers (IPI) ;",
+          "l'autorité de contrôle : IPI, rue du Luxembourg 16B, 1000 Bruxelles ;",
+          "le code de déontologie applicable et son assurance de responsabilité civile professionnelle."
+        ]
+      },
+      {
+        "titre": "Hébergement",
+        "paragraphes": [
+          "Le site est hébergé sur un serveur loué à Contabo GmbH, Aschauer Straße 32a, 81549 Munich, Allemagne. Le serveur se trouve dans l'Union européenne."
+        ]
+      },
+      {
+        "titre": "Annonces",
+        "paragraphes": [
+          "Les annonces sont des données de test. Les prix, les superficies, les adresses et les descriptions ont été générés pour la démonstration et ne correspondent à aucun bien réel.",
+          "Les photos sont des illustrations : aucune ne montre le bien décrit par l'annonce."
+        ],
+        "liens": [{ "texte": "Crédits photos", "chemin": "/credits-photos" }]
+      },
+      {
+        "titre": "Visites payantes",
+        "paragraphes": [
+          "Une visite en journée, du lundi au vendredi, est gratuite. Une visite en soirée ou le week-end coûte 15 €, toutes taxes comprises. Le prix est affiché avant le paiement.",
+          "Le paiement se fait par carte, par l'intermédiaire de Stripe. Le site ne reçoit et ne conserve aucun numéro de carte.",
+          "Si la visite est annulée avant l'heure prévue, par le membre ou par l'agent, le montant payé est remboursé en totalité.",
+          "Sur ce site de démonstration, Stripe fonctionne en mode test : utilisez la carte 4242 4242 4242 4242, une date future et trois chiffres quelconques. Une vraie carte serait refusée."
+        ]
+      },
+      {
+        "titre": "Propriété intellectuelle",
+        "paragraphes": [
+          "Les textes, la charte graphique et le code du site sont l'œuvre de leur auteur. Le code source est consultable sur GitHub."
+        ],
+        "liste": [
+          "Photos : Wikimedia Commons, sous licences Creative Commons ; auteurs et licences sur la page des crédits.",
+          "Cartes : © les contributeurs OpenStreetMap, sous licence ODbL.",
+          "Polices Montserrat et Open Sans : licence SIL Open Font License.",
+          "Données ouvertes de l'API : licence Creative Commons Attribution 4.0 (CC BY 4.0)."
+        ]
+      },
+      {
+        "titre": "Contenus des utilisateurs",
+        "paragraphes": [
+          "Les messages échangés entre un membre et un agent n'engagent que leur auteur. Le site n'exerce pas de surveillance générale de ces messages.",
+          "Pour signaler un contenu illicite, utilisez le point de contact indiqué plus haut. Un contenu signalé est examiné et, s'il est illicite, retiré."
+        ]
+      },
+      {
+        "titre": "Droit applicable",
+        "paragraphes": [
+          "Le site est soumis au droit belge."
+        ]
+      }
+    ]
+  },
+  "confidentialite": {
+    "titre": "Politique de confidentialité",
+    "sections": [
+      {
+        "titre": "À lire avant de vous inscrire",
+        "paragraphes": [
+          "Ce site sert à une démonstration devant un jury. Vous pouvez vous y inscrire, mais nous vous conseillons de ne pas y saisir de données réelles."
+        ],
+        "liste": [
+          "Les e-mails du site ne sont pas envoyés à votre adresse : ils arrivent dans une boîte de démonstration que le jury peut consulter.",
+          "Les comptes de test du projet sont publics : d'autres personnes peuvent s'y connecter.",
+          "La base de données peut être remise à zéro à tout moment."
+        ]
+      },
+      {
+        "titre": "Responsable du traitement",
+        "paragraphes": [
+          "Le responsable du traitement est l'éditeur du site, Abdulrahman Sabbagh. Le point de contact est indiqué dans les mentions légales."
+        ],
+        "liens": [{ "texte": "Mentions légales", "chemin": "/mentions-legales" }]
+      },
+      {
+        "titre": "Données traitées",
+        "paragraphes": [
+          "Le site ne traite que les données nécessaires à son fonctionnement. Il ne contient ni publicité ni mesure d'audience, et ne vend aucune donnée."
+        ],
+        "tableau": {
+          "colonnes": ["Traitement", "Données", "Base légale", "Conservation"],
+          "lignes": [
+            ["Compte", "Nom, prénom, adresse e-mail, téléphone (facultatif), langue, mot de passe sous forme d'empreinte", "Exécution du contrat", "Jusqu'à la suppression du compte"],
+            ["Favoris", "Biens enregistrés", "Exécution du contrat", "Effacés à la suppression du compte"],
+            ["Messages", "Texte des messages échangés avec un agent", "Exécution du contrat", "Texte effacé à la suppression du compte"],
+            ["Rendez-vous", "Bien, date, heure, motif de la visite", "Exécution du contrat", "Conservés sans identité après la suppression du compte"],
+            ["Paiements", "Montant, date, référence du paiement chez Stripe ; aucune donnée de carte", "Exécution du contrat et obligation comptable", "Conservés sans identité après la suppression du compte"],
+            ["Journal de sécurité", "Action effectuée, date, adresse IP, compte concerné", "Intérêt légitime : sécurité du service", "Conservé après la suppression du compte, adresse IP comprise, rattaché à un compte devenu anonyme"]
+          ]
+        }
+      },
+      {
+        "titre": "Durées de conservation",
+        "paragraphes": [
+          "Ce site de démonstration ne supprime pas encore automatiquement les données anciennes : le journal de sécurité et les paiements restent en base tant que la base de démonstration existe.",
+          "Pour une agence réelle, les durées prévues sont de 12 mois pour le journal de sécurité et de 7 ans pour les pièces comptables."
+        ]
+      },
+      {
+        "titre": "Agents immobiliers",
+        "paragraphes": [
+          "Le nom et le téléphone professionnel d'un agent sont affichés sur ses annonces. Sur ce site, les agents sont fictifs."
+        ]
+      },
+      {
+        "titre": "Destinataires",
+        "paragraphes": [
+          "Vos données sont accessibles à l'agent chargé du bien que vous visitez ou avec qui vous échangez, et aux administrateurs du site. Elles sont aussi traitées par les prestataires suivants :"
+        ],
+        "liste": [
+          "Contabo GmbH (Allemagne) : hébergement du serveur et de la base de données.",
+          "Stripe Payments Europe Ltd (Irlande) : paiement par carte. Stripe peut transférer des données aux États-Unis, dans le cadre du Data Privacy Framework et de clauses contractuelles types.",
+          "OpenStreetMap Foundation (Royaume-Uni) : les fonds de carte sont chargés depuis ses serveurs, qui reçoivent votre adresse IP quand une carte s'affiche."
+        ]
+      },
+      {
+        "titre": "Cookies et stockage local",
+        "paragraphes": [
+          "Le site ne dépose aucun cookie. Il n'affiche donc pas de bandeau de consentement."
+        ],
+        "liste": [
+          "Langue : votre choix (français, néerlandais ou anglais) est enregistré dans le stockage local de votre navigateur, sous le nom « i18nextLng ». Il ne quitte pas votre appareil.",
+          "Connexion : votre session est gardée en mémoire, le temps que la page reste ouverte. Recharger la page vous déconnecte.",
+          "Paiement : sur la page de paiement uniquement, Stripe dépose ses propres cookies pour lutter contre la fraude. Ils sont nécessaires au paiement."
+        ]
+      },
+      {
+        "titre": "Sécurité",
+        "liste": [
+          "Les échanges avec le site sont chiffrés (HTTPS).",
+          "Les mots de passe sont enregistrés sous forme d'empreinte (bcrypt) : personne ne peut les lire, pas même un administrateur.",
+          "Chaque compte n'accède qu'à ses propres données ; les droits dépendent du rôle.",
+          "Les connexions et les actions sensibles sont inscrites dans un journal."
+        ]
+      },
+      {
+        "titre": "Vos droits",
+        "paragraphes": [
+          "Le règlement général sur la protection des données (RGPD) vous donne les droits suivants :"
+        ],
+        "liste": [
+          "Accès et rectification : consultez et modifiez vos données dans « Mon profil ».",
+          "Effacement : le bouton « Supprimer mon compte » de votre profil efface vos favoris et le texte de vos messages, et remplace votre nom, votre adresse e-mail et votre téléphone par des valeurs anonymes. L'opération est immédiate et irréversible.",
+          "Portabilité, opposition et limitation : adressez votre demande au point de contact ; une réponse vous est donnée dans les 30 jours."
+        ]
+      },
+      {
+        "titre": "Réclamation",
+        "paragraphes": [
+          "Vous pouvez introduire une réclamation auprès de l'Autorité de protection des données, rue de la Presse 35, 1000 Bruxelles."
+        ],
+        "liens": [{ "texte": "autoriteprotectiondonnees.be", "url": "https://www.autoriteprotectiondonnees.be" }]
+      },
+      {
+        "titre": "Données ouvertes",
+        "paragraphes": [
+          "Le site publie des données sur ses annonces par une interface de programmation. Ces données ne contiennent aucune information sur les membres : ni nom, ni adresse e-mail, ni rendez-vous."
+        ]
+      }
+    ]
+  }
+}

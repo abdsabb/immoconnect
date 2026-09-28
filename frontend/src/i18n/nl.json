@@ -142,7 +142,8 @@
     "emailInvalide": "Ongeldig e-mailadres",
     "motDePasseCourt": "Minstens 8 tekens",
     "pasDeCompte": "Nog geen account?",
-    "dejaCompte": "Al geregistreerd?"
+    "dejaCompte": "Al geregistreerd?",
+    "donnees": "Uw gegevens dienen alleen om uw account te laten werken. De details staan op de pagina"
   },
   "profil": {
     "titre": "Hallo {{prenom}}",

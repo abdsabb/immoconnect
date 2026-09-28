@@ -142,7 +142,8 @@
     "emailInvalide": "Adresse e-mail invalide",
     "motDePasseCourt": "Au moins 8 caractères",
     "pasDeCompte": "Pas encore de compte ?",
-    "dejaCompte": "Déjà inscrit ?"
+    "dejaCompte": "Déjà inscrit ?",
+    "donnees": "Vos données servent uniquement à faire fonctionner votre compte. Le détail est sur la page"
   },
   "profil": {
     "titre": "Bonjour {{prenom}}",
