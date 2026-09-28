@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
@@ -40,28 +41,35 @@ export default function Layout() {
   const { estConnecte, utilisateur, deconnecter } = useAuth()
   // Textes du site gérés par l'administrateur (cas A6) ; à défaut, le texte livré avec l'interface
   const contenu = (cle, repli) => t(`contenu:${cle}`, { defaultValue: t(repli) })
+  // Sur téléphone, la navigation se replie derrière un bouton ; un lien choisi la referme
+  const [menuOuvert, setMenuOuvert] = useState(false)
+  const fermer = () => setMenuOuvert(false)
   const lien = ({ isActive }) =>
     `px-3 py-2 rounded-md font-titre font-semibold ${isActive ? 'text-corail' : 'text-white hover:text-turquoise'}`
+  const liens = (
+    <>
+      <NavLink to="/" end className={lien} onClick={fermer}>{contenu('nav.accueil', 'nav.accueil')}</NavLink>
+      <NavLink to="/biens" className={lien} onClick={fermer}>{contenu('nav.biens', 'nav.biens')}</NavLink>
+      <NavLink to="/blog" className={lien} onClick={fermer}>{contenu('nav.blog', 'nav.blog')}</NavLink>
+      {estConnecte ? (
+        <button type="button" onClick={() => { fermer(); deconnecter() }}
+          className="px-3 py-2 rounded-md text-left font-titre font-semibold text-white/80 hover:text-turquoise">
+          {t('nav.deconnexion')} ({utilisateur?.prenom})
+        </button>
+      ) : (
+        <NavLink to="/connexion" className={lien} onClick={fermer}>{contenu('nav.connexion', 'nav.connexion')}</NavLink>
+      )}
+    </>
+  )
 
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-nuit text-white">
         <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between gap-4">
-          <NavLink to="/" className="font-titre text-2xl font-extrabold tracking-tight">
+          <NavLink to="/" onClick={fermer} className="font-titre text-2xl font-extrabold tracking-tight">
             Immo<span className="text-corail">Connect</span>
           </NavLink>
-          <nav aria-label="Navigation principale" className="hidden md:flex items-center gap-1">
-            <NavLink to="/" end className={lien}>{contenu('nav.accueil', 'nav.accueil')}</NavLink>
-            <NavLink to="/biens" className={lien}>{contenu('nav.biens', 'nav.biens')}</NavLink>
-            <NavLink to="/blog" className={lien}>{contenu('nav.blog', 'nav.blog')}</NavLink>
-            {estConnecte ? (
-              <button type="button" onClick={deconnecter} className="px-3 py-2 rounded-md font-titre font-semibold text-white/80 hover:text-turquoise">
-                {t('nav.deconnexion')} ({utilisateur?.prenom})
-              </button>
-            ) : (
-              <NavLink to="/connexion" className={lien}>{contenu('nav.connexion', 'nav.connexion')}</NavLink>
-            )}
-          </nav>
+          <nav aria-label="Navigation principale" className="hidden md:flex items-center gap-1">{liens}</nav>
           <div className="flex items-center gap-1" role="group" aria-label="Langue">
             {LANGUES.map((l) => (
               <button
@@ -76,8 +84,17 @@ export default function Layout() {
                 {l}
               </button>
             ))}
+            <button type="button" onClick={() => setMenuOuvert(!menuOuvert)} aria-expanded={menuOuvert} aria-controls="menu-mobile"
+              aria-label={t('nav.menu')} className="ml-1 rounded p-2 text-white hover:text-turquoise md:hidden">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                {menuOuvert ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
+              </svg>
+            </button>
           </div>
         </div>
+        {menuOuvert && (
+          <nav id="menu-mobile" aria-label="Navigation principale" className="flex flex-col border-t border-white/10 px-4 py-2 md:hidden">{liens}</nav>
+        )}
         {estConnecte && <BarreEspace role={utilisateur?.role} />}
       </header>
 
