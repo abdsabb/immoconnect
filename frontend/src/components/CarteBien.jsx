@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
-import { formatPrix } from '../services/biens'
+import { cheminListe, formatPrixBien } from '../services/biens'
 import BoutonFavori from './BoutonFavori'
 
 // Badges de statut : couleurs sémantiques de la charte, alignées sur l'énumération StatutBien
@@ -41,14 +41,17 @@ export default function CarteBien({ bien, niveau: Titre = 'h2' }) {
       </Link>
       <BoutonFavori bien={bien} className="absolute top-3 right-3" />
       <div className="p-4 flex-1 flex flex-col gap-2">
-        <p className="text-xs uppercase tracking-wide text-turquoise font-semibold">{bien.categorie} · {bien.ville}</p>
+        <p className="text-xs uppercase tracking-wide text-turquoise font-semibold">
+          {bien.typeOffre && <Link to={cheminListe(bien.typeOffre)} className="text-nuit hover:text-turquoise">{t(`offre.${bien.typeOffre}`)}</Link>}
+          {bien.typeOffre && ' · '}{bien.categorie} · {bien.ville}
+        </p>
         <Titre className="font-titre font-bold text-nuit leading-snug">
           <Link to={`/biens/${bien.id}`} className="hover:text-turquoise">{bien.titre}</Link>
         </Titre>
         <p className="text-sm text-gray-600">
           {bien.superficie} m² · {bien.nbChambres} {t('bien.chambres', { count: bien.nbChambres })}
         </p>
-        <p className="mt-auto font-titre text-xl font-extrabold text-corail">{formatPrix(bien.prix)}</p>
+        <p className="mt-auto font-titre text-xl font-extrabold text-corail">{formatPrixBien(bien, t)}</p>
       </div>
     </article>
   )

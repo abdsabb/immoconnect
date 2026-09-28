@@ -23,23 +23,26 @@
   },
   "accueil": {
     "titre": "Trouvez votre prochain chez-vous à Bruxelles",
-    "sousTitre": "Appartements, maisons et commerces sélectionnés par nos agents",
+    "sousTitre": "Appartements, maisons et commerces à vendre et à louer",
     "rechercher": "Rechercher un bien",
     "recherche": {
       "villeExemple": "Ixelles, Uccle, Namur…",
       "categorie": "Type de bien",
-      "toutes": "Tous les types"
+      "toutes": "Tous les types",
+      "vente": "Acheter",
+      "location": "Louer"
     },
     "chiffres": {
-      "biens": "biens en ligne",
       "categories": "types de biens",
       "visites": "visites, soirée et week-end compris",
-      "langues": "un site en trois langues"
+      "vente": "biens à vendre",
+      "location": "biens à louer"
     },
     "recents": {
-      "titre": "Derniers biens mis en ligne",
-      "sousTitre": "Les annonces les plus récentes de nos agents.",
-      "voirTout": "Voir tous les biens"
+      "vente": "Derniers biens à vendre",
+      "location": "Derniers biens à louer",
+      "tout_vente": "Tous les biens à vendre",
+      "tout_location": "Tous les biens à louer"
     },
     "categories": {
       "titre": "Parcourir par type de bien"
@@ -79,7 +82,7 @@
     }
   },
   "biens": {
-    "titre": "Nos biens",
+    "titre": "Tous nos biens",
     "filtres": "Filtres de recherche",
     "ville": "Ville ou commune",
     "prixMax": "Budget maximum (€)",
@@ -94,7 +97,11 @@
     "erreur": "Impossible de charger les biens pour le moment.",
     "categorie": "Type de bien",
     "toutesCategories": "Tous les types",
-    "tri": "Trier par"
+    "tri": "Trier par",
+    "titre_vente": "Biens à vendre",
+    "titre_location": "Biens à louer",
+    "loyerMax": "Loyer maximum (€ / mois)",
+    "toutesOffres": "À vendre et à louer"
   },
   "bien": {
     "chambres_one": "chambre",
@@ -112,7 +119,8 @@
     "envoyerMessage": "Envoyer un message",
     "agent": "Votre agent",
     "introuvable": "Ce bien n'existe pas ou n'est plus disponible.",
-    "retour": "Retour aux biens"
+    "retour": "Retour aux biens",
+    "loyerParMois": "{{prix}} / mois"
   },
   "statut": {
     "disponible": "Disponible",
@@ -306,7 +314,9 @@
     "televerser": "Téléverser",
     "photoConsigne": "JPEG ou PNG, 5 Mo au plus, 400 pixels de côté au moins. La photo est redimensionnée et ses métadonnées sont effacées.",
     "photoFormat": "Seules les photos JPEG et PNG sont acceptées.",
-    "photoTropLourde": "Une photo pèse 5 Mo au plus."
+    "photoTropLourde": "Une photo pèse 5 Mo au plus.",
+    "typeOffre": "Type d'offre",
+    "loyer": "Loyer mensuel (€)"
   },
   "blog": {
     "titre": "Blog",
@@ -471,5 +481,9 @@
       "garage": "Garages",
       "commerce": "Espaces commerciaux"
     }
+  },
+  "offre": {
+    "vente": "À vendre",
+    "location": "À louer"
   }
 }

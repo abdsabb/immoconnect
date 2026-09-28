@@ -34,6 +34,8 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Accueil />} />
+        <Route path="a-vendre" element={<Biens typeOffre="vente" />} />
+        <Route path="a-louer" element={<Biens typeOffre="location" />} />
         <Route path="biens" element={<Biens />} />
         <Route path="biens/:id" element={<BienDetail />} />
         <Route path="blog" element={<Blog />} />

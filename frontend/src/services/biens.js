@@ -17,3 +17,11 @@ export async function chargerBien(id) {
 
 export const formatPrix = (prix) =>
   new Intl.NumberFormat('fr-BE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(prix)
+
+// Le prix d'une location est un loyer : il s'affiche « par mois »
+export const formatPrixBien = (bien, t) =>
+  bien.typeOffre === 'location' ? t('bien.loyerParMois', { prix: formatPrix(bien.prix) }) : formatPrix(bien.prix)
+
+// Chaque type d'offre a sa page de résultats
+export const TYPES_OFFRE = ['vente', 'location']
+export const cheminListe = (typeOffre) => ({ vente: '/a-vendre', location: '/a-louer' })[typeOffre] ?? '/biens'

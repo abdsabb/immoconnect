@@ -1,7 +1,8 @@
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import { rechercherBiens } from '../services/biens'
+import { cheminListe, rechercherBiens, TYPES_OFFRE } from '../services/biens'
 import { chargerCategories } from '../services/annonces'
 import { chargerConfigPaiement, formatMontant } from '../services/rendezVous'
 import { chargerArticles, formatDate } from '../services/admin'
@@ -28,8 +29,8 @@ function Section({ titre, sousTitre, lien, fond = '', children }) {
   )
 }
 
-// Page d'accueil (gabarit « accueil », livrable 10, § 8.1) : moteur de recherche à trois critères dans
-// le héro, biens récents, bandeau de la prise de rendez-vous en ligne, blog en bas de page.
+// Page d'accueil (gabarit « accueil », livrable 10, § 8.1) : moteur de recherche dans le héro (acheter ou
+// louer, puis trois critères), biens récents, bandeau de la prise de rendez-vous en ligne, blog en bas de page.
 // Le titre et le sous-titre sont des textes du site : l'administrateur les modifie depuis le back-office (cas A6).
 export default function Accueil() {
   const { t, i18n } = useTranslation()
@@ -37,15 +38,18 @@ export default function Accueil() {
   const { estConnecte } = useAuth()
   const langue = i18n.resolvedLanguage
 
-  const recents = useQuery({ queryKey: ['biens', 'accueil'], queryFn: () => rechercherBiens({ taille: 6, tri: 'publieLe,desc' }) })
+  const [offreCherchee, setOffreCherchee] = useState('vente')
+  const ventes = useQuery({ queryKey: ['biens', 'accueil', 'vente'], queryFn: () => rechercherBiens({ typeOffre: 'vente', taille: 3 }) })
+  const locations = useQuery({ queryKey: ['biens', 'accueil', 'location'], queryFn: () => rechercherBiens({ typeOffre: 'location', taille: 3 }) })
+  const recents = { vente: ventes, location: locations }
   const categories = useQuery({ queryKey: ['categories'], queryFn: chargerCategories, staleTime: Infinity })
   const paiement = useQuery({ queryKey: ['paiement-config'], queryFn: chargerConfigPaiement, staleTime: Infinity })
   const articles = useQuery({ queryKey: ['articles', 'accueil'], queryFn: () => chargerArticles({ taille: 3 }) })
 
   const rechercher = (e) => {
     e.preventDefault()
-    const criteres = [...new FormData(e.currentTarget)].filter(([, valeur]) => valeur !== '')
-    naviguer(`/biens?${new URLSearchParams(criteres)}`)
+    const criteres = [...new FormData(e.currentTarget)].filter(([nom, valeur]) => valeur !== '' && nom !== 'typeOffre')
+    naviguer(`${cheminListe(offreCherchee)}?${new URLSearchParams(criteres)}`)
   }
   const lienSection = 'text-turquoise font-semibold underline underline-offset-4 hover:text-nuit'
   const champ = 'w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-nuit'
@@ -61,6 +65,17 @@ export default function Accueil() {
 
           <form onSubmit={rechercher} role="search" aria-label={t('accueil.rechercher')}
             className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-3 rounded-xl bg-white p-4 shadow-lg">
+            <fieldset className="md:col-span-4 flex gap-2">
+              <legend className="sr-only">{t('annonce.typeOffre')}</legend>
+              {TYPES_OFFRE.map((type) => (
+                <label key={type} className={`cursor-pointer rounded-full px-4 py-1.5 text-sm font-semibold border ${
+                  offreCherchee === type ? 'bg-nuit text-white border-nuit' : 'border-gray-300 text-nuit hover:bg-perle'}`}>
+                  <input type="radio" name="typeOffre" value={type} checked={offreCherchee === type}
+                    onChange={() => setOffreCherchee(type)} className="sr-only" />
+                  {t(`accueil.recherche.${type}`)}
+                </label>
+              ))}
+            </fieldset>
             <label className="text-sm font-semibold text-nuit">
               {t('biens.ville')}
               <input name="ville" placeholder={t('accueil.recherche.villeExemple')} className={`mt-1 font-normal ${champ}`} />
@@ -73,8 +88,9 @@ export default function Accueil() {
               </select>
             </label>
             <label className="text-sm font-semibold text-nuit">
-              {t('biens.prixMax')}
-              <input name="prixMax" type="number" min="0" step="10000" placeholder="350000" className={`mt-1 font-normal ${champ}`} />
+              {t(offreCherchee === 'location' ? 'biens.loyerMax' : 'biens.prixMax')}
+              <input name="prixMax" type="number" min="0" step={offreCherchee === 'location' ? 50 : 10000}
+                placeholder={offreCherchee === 'location' ? '1200' : '350000'} className={`mt-1 font-normal ${champ}`} />
             </label>
             <button type="submit" className="self-end rounded-lg bg-corail px-4 py-2.5 font-titre font-bold text-white hover:bg-corail/90">
               {t('accueil.rechercher')}
@@ -86,10 +102,10 @@ export default function Accueil() {
       <section className="bg-perle">
         <dl className="mx-auto grid max-w-6xl grid-cols-2 gap-6 px-4 py-8 md:grid-cols-4">
           {[
-            [recents.data?.totalElements ?? '—', t('accueil.chiffres.biens')],
+            [ventes.data?.totalElements ?? '—', t('accueil.chiffres.vente')],
+            [locations.data?.totalElements ?? '—', t('accueil.chiffres.location')],
             [categories.data?.length ?? '—', t('accueil.chiffres.categories')],
             ['7 / 7', t('accueil.chiffres.visites')],
-            ['FR · NL · EN', t('accueil.chiffres.langues')],
           ].map(([valeur, libelle]) => (
             <div key={libelle} className="flex flex-col-reverse text-center">
               <dt className="text-sm text-gray-600">{libelle}</dt>
@@ -99,17 +115,19 @@ export default function Accueil() {
         </dl>
       </section>
 
-      <Section titre={t('accueil.recents.titre')} sousTitre={t('accueil.recents.sousTitre')}
-        lien={<Link to="/biens" className={lienSection}>{t('accueil.recents.voirTout')}</Link>}>
-        {recents.isPending && <p className="mt-6 text-gray-500">{t('commun.chargement')}</p>}
-        {recents.isError && <p role="alert" className="mt-6 text-erreur">{t('biens.erreur')}</p>}
-        <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {recents.data?.contenu.map((bien) => <CarteBien key={bien.id} bien={bien} niveau="h3" />)}
-        </div>
-      </Section>
+      {TYPES_OFFRE.map((type, i) => (
+        <Section key={type} titre={t(`accueil.recents.${type}`)} fond={i % 2 ? 'bg-perle' : ''}
+          lien={<Link to={cheminListe(type)} className={lienSection}>{t(`accueil.recents.tout_${type}`)}</Link>}>
+          {recents[type].isPending && <p className="mt-6 text-gray-500">{t('commun.chargement')}</p>}
+          {recents[type].isError && <p role="alert" className="mt-6 text-erreur">{t('biens.erreur')}</p>}
+          <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {recents[type].data?.contenu.map((bien) => <CarteBien key={bien.id} bien={bien} niveau="h3" />)}
+          </div>
+        </Section>
+      ))}
 
       {categories.data?.length > 0 && (
-        <Section titre={t('accueil.categories.titre')} fond="bg-perle">
+        <Section titre={t('accueil.categories.titre')}>
           <ul className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-5">
             {categories.data.map((c) => (
               <li key={c.id}>

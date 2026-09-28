@@ -1,7 +1,7 @@
 import { useSearchParams } from 'react-router'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import { rechercherBiens } from '../services/biens'
+import { rechercherBiens, TYPES_OFFRE } from '../services/biens'
 import { chargerCategories } from '../services/annonces'
 import CarteBien from '../components/CarteBien'
 
@@ -10,20 +10,23 @@ const TRI_PAR_DEFAUT = 'publieLe,desc'
 const TRIS = [TRI_PAR_DEFAUT, 'prix,asc', 'prix,desc', 'superficie,desc']
 
 // Liste des biens (gabarit « rubrique ») : filtres du cas V2, résultats en cartes, pagination.
+// Trois adresses pour une même page : /a-vendre et /a-louer fixent le type d'offre, /biens montre tout.
 // Les critères vivent dans l'adresse de la page : la recherche de l'accueil arrive ici toute faite,
 // un résultat se partage par son lien et le bouton « précédent » du navigateur revient à la recherche d'avant.
-export default function Biens() {
+export default function Biens({ typeOffre: typeImpose }) {
   const { t } = useTranslation()
   const [adresse, setAdresse] = useSearchParams()
 
+  const typeChoisi = TYPES_OFFRE.includes(adresse.get('typeOffre')) ? adresse.get('typeOffre') : ''
+  const typeOffre = typeImpose ?? typeChoisi
   const criteres = Object.fromEntries(CRITERES.map((nom) => [nom, adresse.get(nom) ?? '']))
   const tri = TRIS.includes(adresse.get('tri')) ? adresse.get('tri') : TRI_PAR_DEFAUT
   const page = Math.max(0, Number.parseInt(adresse.get('page') ?? '0', 10) || 0)
 
   const categories = useQuery({ queryKey: ['categories'], queryFn: chargerCategories, staleTime: Infinity })
   const { data, isPending, isError } = useQuery({
-    queryKey: ['biens', criteres, tri, page],
-    queryFn: () => rechercherBiens({ ...criteres, tri, page, taille: 12 }),
+    queryKey: ['biens', typeOffre, criteres, tri, page],
+    queryFn: () => rechercherBiens({ ...criteres, typeOffre, tri, page, taille: 12 }),
     placeholderData: keepPreviousData,
   })
 
@@ -40,14 +43,21 @@ export default function Biens() {
     window.scrollTo({ top: 0 })
   }
   const champ = 'rounded-lg border border-gray-300 px-3 py-2'
+  const budget = t(typeOffre === 'location' ? 'biens.loyerMax' : 'biens.prixMax')
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-3xl font-bold text-nuit">{t('biens.titre')}</h1>
+      <h1 className="text-3xl font-bold text-nuit">{t(typeImpose ? `biens.titre_${typeImpose}` : 'biens.titre')}</h1>
 
       {/* La clé recrée le formulaire quand l'adresse change : ses champs repartent des critères en cours */}
-      <form key={adresse.toString()} onSubmit={soumettre} aria-label={t('biens.filtres')}
+      <form key={`${typeImpose}?${adresse}`} onSubmit={soumettre} aria-label={t('biens.filtres')}
         className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 bg-perle p-4 rounded-xl">
+        {!typeImpose && (
+          <select name="typeOffre" defaultValue={typeChoisi} aria-label={t('annonce.typeOffre')} className={`${champ} bg-white`}>
+            <option value="">{t('biens.toutesOffres')}</option>
+            {TYPES_OFFRE.map((type) => <option key={type} value={type}>{t(`offre.${type}`)}</option>)}
+          </select>
+        )}
         <input name="ville" defaultValue={criteres.ville} placeholder={t('biens.ville')} aria-label={t('biens.ville')} className={champ} />
         <select name="categorieId" defaultValue={criteres.categorieId} aria-label={t('biens.categorie')} className={`${champ} bg-white`}>
           <option value="">{t('biens.toutesCategories')}</option>
@@ -55,7 +65,8 @@ export default function Biens() {
           {!categories.data && criteres.categorieId && <option value={criteres.categorieId}>…</option>}
           {categories.data?.map((c) => <option key={c.id} value={c.id}>{c.nom}</option>)}
         </select>
-        <input name="prixMax" defaultValue={criteres.prixMax} type="number" min="0" step="1000" placeholder={t('biens.prixMax')} aria-label={t('biens.prixMax')} className={champ} />
+        <input name="prixMax" defaultValue={criteres.prixMax} type="number" min="0" step={typeOffre === 'location' ? 50 : 1000}
+          placeholder={budget} aria-label={budget} className={champ} />
         <input name="chambresMin" defaultValue={criteres.chambresMin} type="number" min="0" max="20" placeholder={t('biens.chambresMin')} aria-label={t('biens.chambresMin')} className={champ} />
         <select name="tri" defaultValue={tri} aria-label={t('biens.tri')} className={`${champ} bg-white`}>
           <option value="publieLe,desc">{t('biens.triRecent')}</option>
@@ -63,7 +74,7 @@ export default function Biens() {
           <option value="prix,desc">{t('biens.triPrixDesc')}</option>
           <option value="superficie,desc">{t('biens.triSurface')}</option>
         </select>
-        <button type="submit" className="bg-corail hover:bg-corail/90 text-white font-titre font-bold rounded-lg px-4 py-2">
+        <button type="submit" className={`bg-corail hover:bg-corail/90 text-white font-titre font-bold rounded-lg px-4 py-2 ${typeImpose ? '' : 'sm:col-span-2 lg:col-span-1'}`}>
           {t('accueil.rechercher')}
         </button>
       </form>

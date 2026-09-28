@@ -53,6 +53,7 @@ export async function definirCouverture(id, photoId) {
 export function versRequete(valeurs) {
   return {
     categorieId: Number(valeurs.categorieId),
+    typeOffre: valeurs.typeOffre,
     titre: valeurs.titre,
     description: valeurs.description,
     prix: Number(valeurs.prix),
@@ -69,4 +70,6 @@ export function versRequete(valeurs) {
 
 // Statuts qu'un agent peut donner à une annonce ; « archive » s'affiche « hors ligne » dans le back-office
 export const STATUTS = ['disponible', 'sous_option', 'vendu', 'loue', 'archive']
+// Un bien à vendre ne finit pas « loué », un bien à louer ne finit pas « vendu »
+export const statutsPour = (typeOffre) => STATUTS.filter((s) => s !== (typeOffre === 'location' ? 'vendu' : 'loue'))
 export const TAILLE_MAX_PHOTO = 5 * 1024 * 1024

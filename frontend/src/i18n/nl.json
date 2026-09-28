@@ -23,23 +23,26 @@
   },
   "accueil": {
     "titre": "Vind uw volgende thuis in Brussel",
-    "sousTitre": "Appartementen, huizen en handelspanden geselecteerd door onze makelaars",
+    "sousTitre": "Appartementen, huizen en handelspanden te koop en te huur",
     "rechercher": "Een pand zoeken",
     "recherche": {
       "villeExemple": "Elsene, Ukkel, Namen…",
       "categorie": "Type pand",
-      "toutes": "Alle types"
+      "toutes": "Alle types",
+      "vente": "Kopen",
+      "location": "Huren"
     },
     "chiffres": {
-      "biens": "panden online",
       "categories": "types panden",
       "visites": "bezoeken, ook ’s avonds en in het weekend",
-      "langues": "een site in drie talen"
+      "vente": "panden te koop",
+      "location": "panden te huur"
     },
     "recents": {
-      "titre": "Recentste panden",
-      "sousTitre": "De nieuwste advertenties van onze makelaars.",
-      "voirTout": "Alle panden bekijken"
+      "vente": "Recentste panden te koop",
+      "location": "Recentste panden te huur",
+      "tout_vente": "Alle panden te koop",
+      "tout_location": "Alle panden te huur"
     },
     "categories": {
       "titre": "Zoeken per type pand"
@@ -79,7 +82,7 @@
     }
   },
   "biens": {
-    "titre": "Onze panden",
+    "titre": "Al onze panden",
     "filtres": "Zoekfilters",
     "ville": "Stad of gemeente",
     "prixMax": "Maximumbudget (€)",
@@ -94,7 +97,11 @@
     "erreur": "De panden kunnen momenteel niet worden geladen.",
     "categorie": "Type pand",
     "toutesCategories": "Alle types",
-    "tri": "Sorteren op"
+    "tri": "Sorteren op",
+    "titre_vente": "Panden te koop",
+    "titre_location": "Panden te huur",
+    "loyerMax": "Maximale huur (€ / maand)",
+    "toutesOffres": "Te koop en te huur"
   },
   "bien": {
     "chambres_one": "slaapkamer",
@@ -112,7 +119,8 @@
     "envoyerMessage": "Bericht sturen",
     "agent": "Uw makelaar",
     "introuvable": "Dit pand bestaat niet of is niet meer beschikbaar.",
-    "retour": "Terug naar de panden"
+    "retour": "Terug naar de panden",
+    "loyerParMois": "{{prix}} / maand"
   },
   "statut": {
     "disponible": "Beschikbaar",
@@ -306,7 +314,9 @@
     "televerser": "Uploaden",
     "photoConsigne": "JPEG of PNG, hoogstens 5 MB, minstens 400 pixels breed of hoog. De foto wordt verkleind en de metadata worden gewist.",
     "photoFormat": "Alleen JPEG- en PNG-foto's worden aanvaard.",
-    "photoTropLourde": "Een foto weegt hoogstens 5 MB."
+    "photoTropLourde": "Een foto weegt hoogstens 5 MB.",
+    "typeOffre": "Type aanbod",
+    "loyer": "Maandelijkse huur (€)"
   },
   "blog": {
     "titre": "Blog",
@@ -471,5 +481,9 @@
       "garage": "Garages",
       "commerce": "Handelsruimtes"
     }
+  },
+  "offre": {
+    "vente": "Te koop",
+    "location": "Te huur"
   }
 }
