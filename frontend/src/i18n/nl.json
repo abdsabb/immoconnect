@@ -19,7 +19,8 @@
   "commun": {
     "chargement": "Laden…",
     "erreurReseau": "De server reageert niet, probeer het zo opnieuw.",
-    "page": "Pagina {{page}} van {{total}}"
+    "page": "Pagina {{page}} van {{total}}",
+    "fluxRss": "RSS-feed"
   },
   "accueil": {
     "titre": "Vind uw volgende thuis in Brussel",
@@ -122,7 +123,8 @@
       "gratuit": "Tijdstippen overdag gratis",
       "paiement": "Beveiligde betaling via Stripe",
       "adresse": "Adres meegedeeld zodra het bezoek bevestigd is"
-    }
+    },
+    "flux": "RSS-feed — {{titre}}"
   },
   "bien": {
     "chambres_one": "slaapkamer",
@@ -346,7 +348,8 @@
     "toutes": "Alle",
     "vide": "Nog geen artikels in deze categorie.",
     "introuvable": "Dit artikel bestaat niet of is niet meer gepubliceerd.",
-    "retour": "Terug naar de blog"
+    "retour": "Terug naar de blog",
+    "flux": "RSS-feed van de blog"
   },
   "admin": {
     "titre": "Beheer",
