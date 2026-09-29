@@ -100,6 +100,13 @@ mensuel. Le site a une page par type (`/a-vendre`, `/a-louer`) et l'API filtre p
 appliquées par le service et par une contrainte de la base : un bien à vendre ne devient pas « loué », un bien à
 louer ne devient pas « vendu ». Les statistiques ne mélangent jamais un prix de vente et un loyer.
 
+### Flux RSS
+
+Deux flux RSS 2.0 publics annoncent les nouveautés du site : les 20 derniers articles du blog et les 20 dernières
+annonces disponibles, à vendre, à louer ou les deux. Un flux ne montre que ce qu'un visiteur voit déjà : ni brouillon,
+ni bien retiré, ni adresse exacte, ni nom d'agent. Le document est produit par l'écrivain XML du JDK, qui échappe
+les textes. Les pages du site déclarent les flux dans leur en-tête, et les affichent par un lien « Flux RSS ».
+
 ### Photos des annonces de test
 
 Les annonces de test référencent 498 photos. Au démarrage, le backend crée celles qui manquent dans le dossier
@@ -143,6 +150,7 @@ page `/credits-photos`.
 | GET | `/api/v1/admin/journal` · `/admin/statistiques` — journal d'audit filtrable, statistiques | JWT admin, niveau 2 |
 | GET / POST / PATCH | `/api/v1/admin/cles-api` · `/cles-api/{id}/revoquer` — clés API (RA12) | JWT admin, niveau 2 |
 | POST / PUT / DELETE | `/api/v1/admin/categories` · `/admin/articles` · `/admin/traductions/{cle}` | JWT admin, niveau 1 |
+| GET | `/api/v1/flux/articles` · `/flux/biens?typeOffre=` — flux RSS 2.0 des derniers articles et des dernières annonces | public |
 | GET | `/api/v1/open-data/biens` · `/open-data/statistiques` — données anonymisées, CC BY 4.0, 60 appels/min | clé API (`X-API-Key`) |
 
 Documentation interactive : `/swagger-ui.html` · erreurs au format problem+json (RFC 7807).
