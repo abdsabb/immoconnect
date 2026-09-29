@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ImmoConnect — Agence immobilière à Bruxelles</title>
+    <!-- Flux RSS : ces liens permettent à un navigateur ou à un lecteur de flux de les trouver seul -->
+    <link rel="alternate" type="application/rss+xml" title="ImmoConnect — le blog" href="/api/v1/flux/articles" />
+    <link rel="alternate" type="application/rss+xml" title="ImmoConnect — biens à vendre" href="/api/v1/flux/biens?typeOffre=vente" />
+    <link rel="alternate" type="application/rss+xml" title="ImmoConnect — biens à louer" href="/api/v1/flux/biens?typeOffre=location" />
   </head>
   <body>
     <div id="root"></div>

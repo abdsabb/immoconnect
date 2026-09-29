@@ -19,7 +19,8 @@
   "commun": {
     "chargement": "Loading…",
     "erreurReseau": "The server is not responding, please try again shortly.",
-    "page": "Page {{page}} of {{total}}"
+    "page": "Page {{page}} of {{total}}",
+    "fluxRss": "RSS feed"
   },
   "accueil": {
     "titre": "Find your next home in Brussels",
@@ -122,7 +123,8 @@
       "gratuit": "Daytime slots are free",
       "paiement": "Secure payment by Stripe",
       "adresse": "Address given once the viewing is confirmed"
-    }
+    },
+    "flux": "RSS feed — {{titre}}"
   },
   "bien": {
     "chambres_one": "bedroom",
@@ -346,7 +348,8 @@
     "toutes": "All",
     "vide": "No article in this category yet.",
     "introuvable": "This article does not exist or is no longer published.",
-    "retour": "Back to the blog"
+    "retour": "Back to the blog",
+    "flux": "RSS feed of the blog"
   },
   "admin": {
     "titre": "Administration",

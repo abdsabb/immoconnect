@@ -19,7 +19,8 @@
   "commun": {
     "chargement": "Chargement…",
     "erreurReseau": "Le serveur ne répond pas, réessayez dans un instant.",
-    "page": "Page {{page}} sur {{total}}"
+    "page": "Page {{page}} sur {{total}}",
+    "fluxRss": "Flux RSS"
   },
   "accueil": {
     "titre": "Trouvez votre prochain chez-vous à Bruxelles",
@@ -122,7 +123,8 @@
       "gratuit": "Créneaux en journée gratuits",
       "paiement": "Paiement sécurisé par Stripe",
       "adresse": "Adresse communiquée dès la visite confirmée"
-    }
+    },
+    "flux": "Flux RSS — {{titre}}"
   },
   "bien": {
     "chambres_one": "chambre",
@@ -346,7 +348,8 @@
     "toutes": "Toutes",
     "vide": "Aucun article dans cette catégorie pour le moment.",
     "introuvable": "Cet article n'existe pas ou n'est plus publié.",
-    "retour": "Retour au blog"
+    "retour": "Retour au blog",
+    "flux": "Flux RSS du blog"
   },
   "admin": {
     "titre": "Administration",

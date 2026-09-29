@@ -27,6 +27,8 @@ tags:
   - name: Paiements
   - name: Blog
   - name: Traductions
+  - name: Flux RSS
+    description: Derniers articles et dernières annonces, pour les lecteurs de flux. Publics, sans clé.
   - name: Open Data
   - name: Administration
     description: >
@@ -938,6 +940,36 @@ paths:
                 type: object
                 additionalProperties: { type: string }
               example: { nav.accueil: Accueil, rdv.bouton: Prendre rendez-vous }
+  /flux/articles:
+    get:
+      tags: [Flux RSS]
+      summary: Flux RSS du blog
+      description: Les 20 derniers articles publiés, du plus récent au plus ancien (RA4). Public, sans clé.
+      security: []
+      responses:
+        '200':
+          description: Flux RSS 2.0
+          content:
+            application/rss+xml:
+              schema: { type: string }
+  /flux/biens:
+    get:
+      tags: [Flux RSS]
+      summary: Flux RSS des annonces
+      description: >
+        Les 20 dernières annonces disponibles. Chaque élément porte le type d'offre, la catégorie, la commune,
+        la superficie, les chambres, le prix et la photo de couverture. Ni adresse exacte ni nom d'agent.
+        Public, sans clé.
+      security: []
+      parameters:
+        - { name: typeOffre, in: query, schema: { $ref: '#/components/schemas/TypeOffre' }, description: Sans ce critère, ventes et locations ensemble }
+      responses:
+        '200':
+          description: Flux RSS 2.0
+          content:
+            application/rss+xml:
+              schema: { type: string }
+        '400': { description: Type d'offre inconnu }
   /open-data/biens:
     get:
       tags: [Open Data]
