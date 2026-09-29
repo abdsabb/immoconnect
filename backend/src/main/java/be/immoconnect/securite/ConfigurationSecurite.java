@@ -64,7 +64,7 @@ public class ConfigurationSecurite {
                 .requestMatchers(HttpMethod.GET, FiltreCleApi.CHEMIN + "**").permitAll()
                 // Niveau d'accès « public » (livrable 15, §4) : consultation et authentification
                 .requestMatchers(HttpMethod.GET, "/api/v1/biens/**", "/api/v1/articles/**",
-                        "/api/v1/traductions/**", "/api/v1/categories", "/storage/**").permitAll()
+                        "/api/v1/traductions/**", "/api/v1/categories", "/api/v1/flux/**", "/storage/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login").permitAll()
                 // Tout le reste exige un jeton valide
                 .anyRequest().authenticated())
