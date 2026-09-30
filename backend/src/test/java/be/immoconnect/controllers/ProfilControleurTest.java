@@ -61,15 +61,15 @@ class ProfilControleurTest {
 
         mvc.perform(put("/api/v1/auth/me/mot-de-passe").header("Authorization", "Bearer " + jeton)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"ancienMotDePasse\":\"faux\",\"nouveauMotDePasse\":\"nouveaumdp123\"}"))
+                        .content("{\"ancienMotDePasse\":\"faux\",\"nouveauMotDePasse\":\"Nouveau-Mdp-2026\"}"))
                 .andExpect(status().isUnauthorized());
 
         mvc.perform(put("/api/v1/auth/me/mot-de-passe").header("Authorization", "Bearer " + jeton)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"ancienMotDePasse\":\"password\",\"nouveauMotDePasse\":\"nouveaumdp123\"}"))
+                        .content("{\"ancienMotDePasse\":\"password\",\"nouveauMotDePasse\":\"Nouveau-Mdp-2026\"}"))
                 .andExpect(status().isNoContent());
 
-        connecter("juliette.nguyen@mail.be", "nouveaumdp123");
+        connecter("juliette.nguyen@mail.be", "Nouveau-Mdp-2026");
     }
 
     @Test

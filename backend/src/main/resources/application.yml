@@ -58,10 +58,25 @@ immoconnect:
     dossier: ${STORAGE_DIR:./stockage}            # photos des biens ; un volume Docker en production
   demonstration:
     photos: ${DEMO_PHOTOS:true}     # crée au démarrage les photos manquantes des annonces de test
+    boite-courriels: ${DEMO_BOITE_COURRIELS:}   # adresse de la boîte où arrivent les e-mails (Mailpit), vide en exploitation réelle
+  mesure:
+    site-id: ${MATOMO_SITE_ID:}     # numéro du site dans Matomo ; vide : aucune mesure d'audience
+    url: /matomo/                   # Matomo est servi par le même domaine
+  rendu:
+    coquille: ${RENDU_COQUILLE:}    # adresse interne de l'index.html construit (http://frontend/index.html) ; vide : pas de rendu serveur
   stripe:                           # sans clé secrète, les paiements passent en mode simulation (dev et tests)
     cle-secrete: ${STRIPE_SECRET_KEY:}
     cle-publique: ${STRIPE_PUBLISHABLE_KEY:}
     secret-webhook: ${STRIPE_WEBHOOK_SECRET:}
+    moyens: ${STRIPE_MOYENS:card,bancontact}   # moyens proposés : carte et Bancontact (repli sur la carte si Stripe refuse)
   jwt:
     secret: ${JWT_SECRET}           # clé HS256 (>= 32 octets) — fournie par l'environnement
-    duree-secondes: 3600            # jeton d'accès valable 1 h (livrable 16, §2.1)
+    duree-secondes: 900             # jeton d'accès valable 15 min, renouvelé par le cookie de session (livrable 16, §2.1)
+  securite:
+    cookie-securise: ${COOKIE_SECURE:true}          # le cookie de session ne voyage qu'en HTTPS
+    duree-session: 14d                              # durée de vie du jeton de rafraîchissement
+    activation-par-courriel: ${ACTIVATION_PAR_COURRIEL:true}
+    double-facteur: ${DOUBLE_FACTEUR:true}          # code par e-mail : agents, administrateurs, membres qui l'ont choisi
+    echecs-avant-verrouillage: 5                    # puis verrouillage d'une minute, doublé à chaque échec, plafonné à 15 min
+    connexions-par-minute: 10                       # par adresse IP
+    mots-de-passe-compromis: ${MOTS_DE_PASSE_COMPROMIS:hibp}   # hibp (Have I Been Pwned) ou local

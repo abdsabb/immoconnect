@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useParams, useSearchParams } from 'react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
@@ -9,6 +9,7 @@ import {
 } from '../services/rendezVous'
 import { BoutonPrincipal, Champ, classeInput, erreursApi } from '../components/Formulaire'
 import PaiementStripe from '../components/PaiementStripe'
+import { conversion } from '../services/mesure'
 import PaiementSimule from '../components/PaiementSimule'
 
 // Cas M4 « Prendre rendez-vous pour visiter un bien » — le scénario validé dans l'analyse (livrable 07, V3) :
@@ -31,6 +32,9 @@ export default function PriseRendezVous() {
   const [erreur, setErreur] = useState(null)
   const [bienRetire, setBienRetire] = useState(false)
   const [enCours, setEnCours] = useState(false)
+  // Retour de Bancontact : Stripe rappelle cette page avec l'identifiant du paiement et son issue
+  const [parametres, setParametres] = useSearchParams()
+  const retourTraite = useRef(false)
 
   const bien = useQuery({ queryKey: ['bien', id], queryFn: () => chargerBien(id) })
   const creneaux = useQuery({ queryKey: ['creneaux', id], queryFn: () => chargerCreneaux(id), enabled: estMembre })
@@ -88,7 +92,49 @@ export default function PriseRendezVous() {
     }
   }
 
+  // Bancontact : la page est quittée pendant le paiement ; la demande attend dans le stockage de session
+  const cleAttente = (paymentIntentId) => `immoconnect.paiement.${paymentIntentId}`
+  const mettreDeCote = () => sessionStorage.setItem(cleAttente(intention.paymentIntentId), JSON.stringify({ creneau, motif }))
+  const urlRetour = `${window.location.origin}/biens/${id}/rendez-vous`
+
+  useEffect(() => {
+    const paymentIntentId = parametres.get('payment_intent')
+    if (!paymentIntentId || retourTraite.current || !estMembre) return
+    retourTraite.current = true
+    const attente = sessionStorage.getItem(cleAttente(paymentIntentId))
+    sessionStorage.removeItem(cleAttente(paymentIntentId))
+    setParametres({}, { replace: true })
+    if (!attente) return
+    const { creneau: creneauAttendu, motif: motifAttendu } = JSON.parse(attente)
+    setCreneau(creneauAttendu)
+    setMotif(motifAttendu)
+    if (parametres.get('redirect_status') !== 'succeeded') {
+      setErreur(t('rdv.paiementRefuse'))
+      return
+    }
+    setEnCours(true)
+    const demandeAttendue = { bienId: Number(id), dateHeure: creneauAttendu.dateHeure, motif: motifAttendu.trim() || null, paymentIntentId }
+    // Bancontact confirme le paiement de façon asynchrone : s'il n'a pas encore abouti au retour, on réessaie un peu
+    const reserverDesQuePaye = async (essai = 0) => {
+      try {
+        return await reserver(demandeAttendue)
+      } catch (e) {
+        if (essai < 4 && e.response?.data?.champs?.paymentIntentId === "le paiement n'a pas abouti") {
+          await new Promise((r) => setTimeout(r, 1500))
+          return reserverDesQuePaye(essai + 1)
+        }
+        throw e
+      }
+    }
+    reserverDesQuePaye()
+      .then(terminer)
+      .catch((e) => traiterEchec(e, true))
+      .finally(() => setEnCours(false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parametres, estMembre])
+
   const terminer = (rdv) => {
+    conversion('rendez-vous', rdv.type)
     setRendezVous(rdv)
     setEtape('confirmation')
     queryClient.invalidateQueries({ queryKey: ['creneaux', id] })
@@ -178,7 +224,8 @@ export default function PriseRendezVous() {
         <div className="mt-6 space-y-6">
           <Recapitulatif bien={bien.data} creneau={creneau} motif={motif} />
           {paiement.data?.mode === 'stripe'
-            ? <PaiementStripe clePublique={paiement.data.clePublique} intention={intention} onPaye={apresPaiement} />
+            ? <PaiementStripe clePublique={paiement.data.clePublique} intention={intention} onPaye={apresPaiement}
+                retour={urlRetour} avantRedirection={mettreDeCote} />
             : <PaiementSimule intention={intention} onPaye={apresPaiement} />}
           <button type="button" onClick={() => { setIntention(null); setEtape('creneau') }} className="w-full text-center text-turquoise underline">
             {t('rdv.abandonner')}

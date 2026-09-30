@@ -24,7 +24,8 @@ public record RendezVousResume(
         StatutRendezVous statut,
         String motif,
         Creneau.Type type,
-        PaiementResume paiement) {
+        PaiementResume paiement,
+        LocalDateTime remboursableJusquA) {
 
     public record PaiementResume(BigDecimal montant, StatutPaiement statut, LocalDateTime payeLe) {
 
@@ -48,6 +49,6 @@ public record RendezVousResume(
                 adresseVisible ? rdv.getBien().getAdresse() + ", " + rdv.getBien().getCodePostal() + " " + rdv.getBien().getVille() : null,
                 rdv.getAgent().getNomComplet(), rdv.getMembre().getNomComplet(), rdv.getDateHeure(), rdv.getStatut(),
                 rdv.getMotif(), rdv.estPremium() ? Creneau.Type.premium : Creneau.Type.standard,
-                PaiementResume.depuis(rdv.getPaiement()));
+                PaiementResume.depuis(rdv.getPaiement()), rdv.remboursableJusquA());
     }
 }

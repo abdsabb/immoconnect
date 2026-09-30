@@ -42,11 +42,19 @@ public class BienService {
         return biens.findAll(specification, pagination).map(BienResume::depuis);
     }
 
-    /** Un bien archivé n'est plus visible publiquement : il est traité comme introuvable (RA5, livrable 15). */
-    public BienDetail detail(Integer id) {
+    /**
+     * Un bien archivé n'est plus visible publiquement : il est traité comme introuvable (RA5, livrable 15).
+     * Chaque consultation compte une vue pour le tableau de bord de l'agent (AG6), sauf celle de l'agent
+     * ou d'un administrateur, qui regardent leur propre travail.
+     */
+    @Transactional
+    public BienDetail detail(Integer id, boolean visiteur) {
         Bien bien = biens.findWithDetailsById(id)
                 .filter(b -> b.getStatut() != StatutBien.archive)
                 .orElseThrow(() -> new RessourceIntrouvableException("Bien", id));
+        if (visiteur) {
+            biens.compterUneVue(id);
+        }
         return BienDetail.depuis(bien);
     }
 }

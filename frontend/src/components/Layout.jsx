@@ -1,8 +1,10 @@
-import { useState } from 'react'
-import { NavLink, Outlet } from 'react-router'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
 import { useConversations } from '../services/messages'
+import { useConfiguration } from '../services/configuration'
+import { demarrerMesure, pageVue } from '../services/mesure'
 
 const LANGUES = ['fr', 'nl', 'en']
 
@@ -34,12 +36,91 @@ function BarreEspace({ role }) {
   )
 }
 
-// Gabarit commun à toutes les pages : en-tête (logo, navigation à 5 entrées,
-// sélecteur de langue) et pied de page — structure du site du livrable 10, où l'entrée
-// « Biens » s'est dédoublée en « À vendre » et « À louer ».
+/**
+ * Entrée « Biens » de la navigation : un lien vers tout le catalogue, avec un sous-menu
+ * « À vendre » / « À louer ». Sur grand écran, le sous-menu s'ouvre au survol, au clic ou au
+ * clavier (Entrée, Espace, flèche bas ; Échap le ferme) ; sur téléphone, les trois liens sont
+ * simplement listés.
+ */
+function MenuBiens({ lien, contenu, fermer, mobile }) {
+  const { t } = useTranslation()
+  const [ouvert, setOuvert] = useState(false)
+  const conteneur = useRef(null)
+  const location = useLocation()
+  const sousLiens = [['/a-vendre', contenu('nav.vente', 'offre.vente')], ['/a-louer', contenu('nav.location', 'offre.location')]]
+  // Un clic hors du menu le referme ; un lien choisi aussi
+  useEffect(() => {
+    if (!ouvert) return undefined
+    const clicDehors = (e) => { if (!conteneur.current?.contains(e.target)) setOuvert(false) }
+    document.addEventListener('pointerdown', clicDehors)
+    return () => document.removeEventListener('pointerdown', clicDehors)
+  }, [ouvert])
+
+  if (mobile) {
+    return (
+      <>
+        <NavLink to="/biens" className={lien} onClick={fermer}>{contenu('nav.biens', 'nav.biens')}</NavLink>
+        {sousLiens.map(([chemin, libelle]) => (
+          <NavLink key={chemin} to={chemin} className={(etat) => `${lien(etat)} pl-8`} onClick={fermer}>{libelle}</NavLink>
+        ))}
+      </>
+    )
+  }
+  const actif = ['/biens', '/a-vendre', '/a-louer'].some((c) => location.pathname.startsWith(c))
+  return (
+    <div ref={conteneur} className="relative" onMouseEnter={() => setOuvert(true)} onMouseLeave={() => setOuvert(false)}
+      onKeyDown={(e) => { if (e.key === 'Escape') setOuvert(false) }}>
+      <NavLink to="/biens" className={() => lien({ isActive: actif })} aria-haspopup="menu" aria-expanded={ouvert}
+        onKeyDown={(e) => { if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); setOuvert(true) } }}>
+        {contenu('nav.biens', 'nav.biens')}
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden="true" className="ml-1 inline">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </NavLink>
+      {ouvert && (
+        <ul role="menu" aria-label={t('nav.biens')} className="absolute left-0 top-full z-20 min-w-44 rounded-md bg-nuit py-1 shadow-lg ring-1 ring-white/10">
+          {sousLiens.map(([chemin, libelle]) => (
+            <li key={chemin} role="none">
+              <NavLink role="menuitem" to={chemin} className={(etat) => `block ${lien(etat)}`} onClick={() => setOuvert(false)}>{libelle}</NavLink>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
+// Gabarit commun à toutes les pages : en-tête (logo, navigation à quatre entrées — Accueil, Biens,
+// Blog, Connexion —, sélecteur de langue) et pied de page, structure du site du livrable 10.
+// L'entrée « Biens » mène au catalogue et déplie « À vendre » et « À louer ».
 export default function Layout() {
   const { t, i18n } = useTranslation()
   const { estConnecte, utilisateur, deconnecter } = useAuth()
+  const naviguer = useNavigate()
+  // Identité de l'agence et langues actives, réglées par l'administrateur (cas A5 et A6)
+  const configuration = useConfiguration().data
+  const site = configuration?.site
+  // À chaque changement de page, l'onglet reprend le nom du site ; la page affichée pose ensuite son propre titre
+  const { pathname } = useLocation()
+  const premierRendu = useRef(true)
+  useLayoutEffect(() => {
+    // La page d'arrivée porte déjà le titre donné par le serveur : on n'y touche pas
+    if (premierRendu.current) { premierRendu.current = false; return }
+    document.title = site?.nom ?? 'ImmoConnect'
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname])
+  // Mesure d'audience sans cookie (Matomo auto-hébergé) : une page vue par changement de route, après que
+  // la page a posé son titre
+  useEffect(() => {
+    demarrerMesure(configuration?.mesure)
+    const minuterie = setTimeout(() => pageVue(window.location.pathname + window.location.search, document.title), 300)
+    return () => clearTimeout(minuterie)
+  }, [pathname, configuration?.mesure])
+  const langues = LANGUES.filter((l) => !site?.languesActives || site.languesActives.includes(l))
+  useEffect(() => {
+    // Une langue désactivée par l'administrateur ne reste pas affichée : retour au français
+    if (site?.languesActives && !site.languesActives.includes(i18n.resolvedLanguage)) i18n.changeLanguage('fr')
+  }, [site, i18n])
   // Textes du site gérés par l'administrateur (cas A6) ; à défaut, le texte livré avec l'interface
   const contenu = (cle, repli) => t(`contenu:${cle}`, { defaultValue: t(repli) })
   // Sur téléphone, la navigation se replie derrière un bouton ; un lien choisi la referme
@@ -47,14 +128,13 @@ export default function Layout() {
   const fermer = () => setMenuOuvert(false)
   const lien = ({ isActive }) =>
     `px-3 py-2 rounded-md font-titre font-semibold ${isActive ? 'text-corail' : 'text-white hover:text-turquoise'}`
-  const liens = (
+  const liens = (mobile) => (
     <>
       <NavLink to="/" end className={lien} onClick={fermer}>{contenu('nav.accueil', 'nav.accueil')}</NavLink>
-      <NavLink to="/a-vendre" className={lien} onClick={fermer}>{contenu('nav.vente', 'offre.vente')}</NavLink>
-      <NavLink to="/a-louer" className={lien} onClick={fermer}>{contenu('nav.location', 'offre.location')}</NavLink>
+      <MenuBiens lien={lien} contenu={contenu} fermer={fermer} mobile={mobile} />
       <NavLink to="/blog" className={lien} onClick={fermer}>{contenu('nav.blog', 'nav.blog')}</NavLink>
       {estConnecte ? (
-        <button type="button" onClick={() => { fermer(); deconnecter() }}
+        <button type="button" onClick={() => { fermer(); deconnecter().then(() => naviguer('/')) }}
           className="px-3 py-2 rounded-md text-left font-titre font-semibold text-white/80 hover:text-turquoise">
           {t('nav.deconnexion')} ({utilisateur?.prenom})
         </button>
@@ -71,9 +151,9 @@ export default function Layout() {
           <NavLink to="/" onClick={fermer} className="font-titre text-2xl font-extrabold tracking-tight">
             Immo<span className="text-corail">Connect</span>
           </NavLink>
-          <nav aria-label="Navigation principale" className="hidden md:flex items-center gap-1">{liens}</nav>
+          <nav aria-label="Navigation principale" className="hidden md:flex items-center gap-1">{liens(false)}</nav>
           <div className="flex items-center gap-1" role="group" aria-label="Langue">
-            {LANGUES.map((l) => (
+            {langues.map((l) => (
               <button
                 key={l}
                 type="button"
@@ -95,7 +175,7 @@ export default function Layout() {
           </div>
         </div>
         {menuOuvert && (
-          <nav id="menu-mobile" aria-label="Navigation principale" className="flex flex-col border-t border-white/10 px-4 py-2 md:hidden">{liens}</nav>
+          <nav id="menu-mobile" aria-label="Navigation principale" className="flex flex-col border-t border-white/10 px-4 py-2 md:hidden">{liens(true)}</nav>
         )}
         {estConnecte && <BarreEspace role={utilisateur?.role} />}
       </header>
@@ -106,11 +186,16 @@ export default function Layout() {
 
       <footer className="bg-nuit text-white/80 text-sm">
         <div className="mx-auto max-w-6xl px-4 py-6 flex flex-wrap justify-between gap-2">
-          <span>© {new Date().getFullYear()} ImmoConnect — Bruxelles</span>
+          <span>
+            © {new Date().getFullYear()} {site?.nom ?? 'ImmoConnect'}
+            {site?.adresse && <span className="hidden sm:inline"> — {site.adresse}</span>}
+            {site?.telephone && <span className="hidden sm:inline"> · <a href={`tel:${site.telephone.replace(/ /g, '')}`} className="hover:text-white">{site.telephone}</a></span>}
+          </span>
           <span className="flex gap-4">
             {/* Liens internes : un lien ordinaire rechargerait la page et fermerait la session, gardée en mémoire */}
             <NavLink to="/mentions-legales" className="hover:text-white">{contenu('footer.mentions', 'pied.mentions')}</NavLink>
             <NavLink to="/confidentialite" className="hover:text-white">{contenu('footer.rgpd', 'pied.confidentialite')}</NavLink>
+            <NavLink to="/conditions" className="hover:text-white">{t('pied.conditions')}</NavLink>
             <NavLink to="/credits-photos" className="hover:text-white">{t('pied.credits')}</NavLink>
             <span>{t('pied.osm')}</span>
           </span>

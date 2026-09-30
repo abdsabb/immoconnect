@@ -16,12 +16,12 @@ documentée ainsi qu'un volet Open Data.
 
 | Couche | Technologie |
 |---|---|
-| Front-end | React 19 + Vite · Tailwind CSS 4 · React Router · react-i18next · TanStack Query · react-leaflet |
+| Front-end | React 19 + Vite · Tailwind CSS 4 · React Router · react-i18next · TanStack Query · react-leaflet · FullCalendar · Vitest + React Testing Library |
 | Back-end | Spring Boot 4.1 (Java 21 LTS) — API REST `/api/v1` · Spring Security · Spring Data JPA · springdoc (Swagger) |
 | Base de données | MySQL 8.4 LTS — migrations Flyway (`backend/src/main/resources/db/migration`) |
 | Paiement | Stripe (PaymentIntents + webhooks signés) |
 | Conteneurisation | Docker Compose (dev et prod) · images Docker, Nginx et Caddy (HTTPS) en production |
-| Intégration continue | GitHub Actions à chaque push : tests backend (Testcontainers), build frontend, images Docker |
+| Intégration continue | GitHub Actions à chaque push : tests backend (Testcontainers), lint, tests et build frontend (Vitest), images Docker |
 
 ## Structure du dépôt
 
@@ -36,7 +36,7 @@ documentée ainsi qu'un volet Open Data.
 ├── docs/uml/                Sources PlantUML des diagrammes d'analyse (livrable 07) et du schéma BDD
 ├── .github/workflows/ci.yml Intégration continue
 ├── docker-compose.yml       Environnement de développement (MySQL 8.4 + Adminer + Mailpit)
-├── docker-compose.prod.yml  Production : Caddy (HTTPS), frontend, backend, MySQL, Mailpit
+├── docker-compose.prod.yml  Production : frontend, backend, MySQL + Caddy (HTTPS), Mailpit, sauvegardes, Matomo
 ├── deploiement/Caddyfile    Routage et certificat HTTPS de la production
 └── .env.example             Modèle du fichier .env de production
 ```
@@ -77,6 +77,10 @@ cd frontend && npm install && npm run dev
 ```
 
 Tests backend (nécessitent Docker, un MySQL 8.4 jetable est lancé par Testcontainers) : `cd backend && ./mvnw verify`.
+Tests frontend (Vitest + React Testing Library : formulaires, validations, étape du code) : `cd frontend && npm test`.
+
+Le code du front-end est découpé par route (`React.lazy`) : les pages publiques les plus visitées partent avec
+l'application, les espaces connectés, le blog, les pages légales et la carte Leaflet se chargent à la première visite.
 
 > Dépannage sans Docker : le profil par défaut fonctionne aussi avec le MySQL/MariaDB de XAMPP
 > (base `immoconnect`, utilisateur `immo` / `immo`). La référence reste MySQL 8.4.
@@ -110,7 +114,37 @@ Le niveau d'accès d'un administrateur limite ce qu'il peut faire dans le back-o
 les catégories et les traductions ; le gestionnaire gère en plus les comptes, le journal d'audit, les statistiques
 et les clés API ; le super-administrateur agit aussi sur les comptes des administrateurs.
 
+Les agents et les administrateurs se connectent en deux étapes : après le mot de passe, un code à six chiffres est
+envoyé par e-mail. En développement, il se lit dans Mailpit (http://localhost:8025) ; en production, dans la boîte
+de démonstration `/courriels/`. Les comptes créés depuis le site reçoivent un lien d'activation au même endroit.
+
 Les photos téléversées sont enregistrées dans `backend/stockage/` (variable `STORAGE_DIR`), hors du dépôt.
+
+### Sécurité des comptes
+
+- **Sessions** : le jeton d'accès (JWT HS256) vit 15 minutes ; un cookie de session `immoconnect_session` (HttpOnly,
+  Secure, SameSite=Strict, limité à `/api/v1/auth`) le renouvelle pendant 14 jours. Le cookie est tourné à chaque
+  renouvellement ; la réutilisation d'un ancien cookie ferme toutes les sessions du compte. Les jetons ne sont
+  stockés qu'en empreinte SHA-256 (table `jeton`).
+- **Mots de passe** : 8 à 72 caractères, minuscules, majuscules et un chiffre, refusés s'ils figurent dans une fuite
+  connue (Have I Been Pwned, par k-anonymat : cinq caractères de l'empreinte SHA-1 partent, jamais le mot de passe ;
+  repli sur une liste embarquée si le service est injoignable). Hachage bcrypt.
+- **Double facteur** : code à six chiffres par e-mail, valable 10 minutes, cinq essais ; imposé aux agents et aux
+  administrateurs, au choix pour les membres (profil).
+- **Blocage** : après 5 échecs, le compte est verrouillé 1 minute, puis le double à chaque série, jusqu'à 15 minutes ;
+  une adresse inconnue est bloquée de la même façon, sans révéler qu'elle est inconnue ; 10 connexions par minute et
+  par adresse IP, au-delà `429` avec `Retry-After`.
+- **Activation et réinitialisation** : lien d'activation valable 24 heures, lien de réinitialisation 30 minutes, à
+  usage unique ; la réinitialisation ferme toutes les sessions et prévient par e-mail.
+- **Inscription** : acceptation des conditions générales obligatoire et horodatée (`cgu_acceptees_le`), consentement
+  aux communications distinct.
+- **Droits RGPD** : accès et rectification (profil), portabilité (`GET /auth/me/export`, fichier JSON), effacement
+  (désinscription RA11). **Signalement de contenus** (DSA) : lien « Signaler ce contenu » sous chaque message reçu,
+  annonce et article ; un gestionnaire retire (message vidé, annonce hors ligne, article archivé) ou conserve, avec
+  une décision motivée, définitive et journalisée.
+
+Ces mécanismes se règlent dans `application.yml` (`immoconnect.securite.*`) et par les variables
+`ACTIVATION_PAR_COURRIEL`, `DOUBLE_FACTEUR`, `MOTS_DE_PASSE_COMPROMIS` et `COOKIE_SECURE` (voir `.env.example`).
 
 ### Biens à vendre et biens à louer
 
@@ -125,6 +159,21 @@ Deux flux RSS 2.0 publics annoncent les nouveautés du site : les 20 derniers ar
 annonces disponibles, à vendre, à louer ou les deux. Un flux ne montre que ce qu'un visiteur voit déjà : ni brouillon,
 ni bien retiré, ni adresse exacte, ni nom d'agent. Le document est produit par l'écrivain XML du JDK, qui échappe
 les textes. Les pages du site déclarent les flux dans leur en-tête, et les affichent par un lien « Flux RSS ».
+
+### Référencement : pages publiques rendues côté serveur
+
+Une application React renvoie par défaut une page vide que le navigateur remplit ensuite. Pour les moteurs de
+recherche, les pages publiques — accueil, `/a-vendre`, `/a-louer`, `/biens`, `/biens/{id}`, `/blog`, `/blog/{id}` —
+sont donc **rendues par le serveur** : Nginx les confie au backend (`/rendu/...`), qui complète l'`index.html` construit
+avec le titre, la description, la balise canonique, les balises `hreflang` (fr, nl, en, selon les langues actives), les
+données **Schema.org** (`RealEstateAgent`, `RealEstateListing`, `ItemList`, `Blog`, `BlogPosting`) et le contenu
+visible. Le navigateur affiche cette page tout de suite, puis l'application React prend le relais. Un bien archivé ou
+un article non publié répond `404`. Si le backend ne répond pas, Nginx sert l'application seule.
+
+- `?lng=nl` choisit la langue d'une page : c'est l'adresse des versions linguistiques annoncées par `hreflang`.
+- `/sitemap.xml` : plan du site généré depuis les données (biens disponibles, articles publiés, trois langues).
+- `/robots.txt` : pages publiques indexables ; espaces connectés, API et boîte de démonstration exclus.
+- En développement (`npm run dev`), Vite sert l'application sans rendu serveur ; `RENDU_COQUILLE` l'active.
 
 ### Photos des annonces de test
 
@@ -144,21 +193,26 @@ page `/credits-photos`.
 | GET | `/api/v1/biens` — recherche multicritères paginée (type d'offre, ville, catégorie, prix, chambres, superficie, tri) | public |
 | GET | `/api/v1/biens/{id}` — détail, photos, agent (adresse exacte masquée) | public |
 | GET | `/api/v1/traductions/{fr\|nl\|en}` — dictionnaire d'interface | public |
-| POST | `/api/v1/auth/register` · `/api/v1/auth/login` — inscription, jeton JWT | public |
+| POST | `/api/v1/auth/register` · `/api/v1/auth/login` — inscription (202 si activation par e-mail), connexion (202 et défi si second facteur) | public |
+| POST | `/api/v1/auth/login/code` · `/auth/refresh` · `/auth/logout` — code du second facteur, renouvellement par le cookie de session, déconnexion | public |
+| POST | `/api/v1/auth/mot-de-passe-oublie` · `/auth/reinitialisation` · `/auth/activation` · `/auth/activation/renvoi` — liens à usage unique reçus par e-mail | public |
+| GET | `/api/v1/configuration` — options publiques : activation, double facteur, boîte de démonstration, identité de l'agence et langues actives (A5) | public |
+| GET | `/api/v1/auth/me/export` — toutes mes données en JSON (portabilité, RGPD) | JWT |
+| POST | `/api/v1/signalements` — signaler un message reçu, une annonce ou un article (DSA) | JWT |
 | GET / PATCH / DELETE | `/api/v1/auth/me` — profil, modification, désinscription (soft delete RA11) | JWT |
 | PUT | `/api/v1/auth/me/mot-de-passe` | JWT |
 | GET | `/api/v1/biens/{id}/creneaux` — créneaux de visite libres, standard et premium | JWT membre |
 | GET | `/api/v1/rendez-vous` — mes visites (membre) ou mon agenda (agent) | JWT |
 | POST | `/api/v1/rendez-vous` — réserver un créneau (409 si le créneau vient d'être pris) | JWT membre |
 | PATCH | `/api/v1/rendez-vous/{id}/confirmer` · `/honorer` | JWT agent du rendez-vous |
-| PATCH | `/api/v1/rendez-vous/{id}/annuler` — rembourse un créneau premium payé (RA8) | JWT membre ou agent du rendez-vous |
+| PATCH | `/api/v1/rendez-vous/{id}/annuler` — rembourse un créneau premium payé (RA8), sauf annulation par le membre moins de 24 h avant la visite (RA14) | JWT membre ou agent du rendez-vous |
 | PUT / DELETE | `/api/v1/biens/{id}/favori` — ajouter ou retirer un favori (idempotent) | JWT membre |
 | GET | `/api/v1/membres/moi/favoris` — mes favoris, paginés | JWT membre |
 | GET / POST | `/api/v1/messages` — mes conversations, envoyer un message | JWT membre ou agent |
 | GET | `/api/v1/messages/conversations/{interlocuteurId}` — messages échangés avec un interlocuteur | JWT membre ou agent |
 | PATCH | `/api/v1/messages/conversations/{interlocuteurId}/lu` — marquer les messages reçus comme lus | JWT membre ou agent |
 | GET | `/api/v1/paiements/config` — mode de paiement, clé publiable, prix du créneau premium | public |
-| POST | `/api/v1/paiements/intent` — préparer le paiement Stripe d'un créneau premium | JWT membre |
+| POST | `/api/v1/paiements/intent` — préparer le paiement Stripe d'un créneau premium (carte ou Bancontact, `STRIPE_MOYENS`) | JWT membre |
 | POST | `/api/v1/webhooks/stripe` — notifications de paiement | signature Stripe |
 | GET | `/api/v1/categories` — catégories de biens | public |
 | GET | `/api/v1/articles` · `/articles/{id}` · `/articles/categories` — blog, articles publiés uniquement (RA4) | public |
@@ -168,6 +222,8 @@ page `/credits-photos`.
 | GET / POST / PATCH | `/api/v1/admin/utilisateurs` · `/admin/agents` · `/utilisateurs/{id}/activer` · `/desactiver` | JWT admin, niveau 2 |
 | GET | `/api/v1/admin/journal` · `/admin/statistiques` — journal d'audit filtrable, statistiques | JWT admin, niveau 2 |
 | GET / POST / PATCH | `/api/v1/admin/cles-api` · `/cles-api/{id}/revoquer` — clés API (RA12) | JWT admin, niveau 2 |
+| GET / PATCH | `/api/v1/admin/signalements` · `/signalements/{id}` — signalements à trancher : retirer ou conserver, décision motivée | JWT admin, niveau 2 |
+| GET / PUT | `/api/v1/admin/parametres` — nom, coordonnées, horaires de l'agence, langues actives (A5, A6) | JWT admin, niveau 2 |
 | POST / PUT / DELETE | `/api/v1/admin/categories` · `/admin/articles` · `/admin/traductions/{cle}` | JWT admin, niveau 1 |
 | GET | `/api/v1/flux/articles` · `/flux/biens?typeOffre=` — flux RSS 2.0 des derniers articles et des dernières annonces | public |
 | GET | `/api/v1/open-data/biens` · `/open-data/statistiques` — données anonymisées, CC BY 4.0, 60 appels/min | clé API (`X-API-Key`) |
@@ -176,27 +232,81 @@ Documentation interactive : `/swagger-ui.html` · erreurs au format problem+json
 
 ## Déployer en production
 
-La production tourne sur un VPS Linux avec Docker. Le fichier `docker-compose.prod.yml` démarre cinq conteneurs ;
-seul Caddy est exposé à Internet (ports 80 et 443), il obtient et renouvelle le certificat HTTPS.
+La production tourne sur un VPS Linux avec Docker. Seul Caddy est exposé à Internet (ports 80 et 443) ; il obtient et
+renouvelle le certificat HTTPS. **Trois conteneurs portent l'application** — `frontend`, `backend`, `db` — et cinq
+services d'exploitation les entourent.
 
 | Conteneur | Rôle |
 |---|---|
-| `caddy` | Point d'entrée HTTPS : `/api`, `/storage` et Swagger vers le backend, le reste vers le frontend |
-| `frontend` | Application React servie par Nginx |
+| `frontend` | Application React servie par Nginx ; confie les pages publiques au backend pour le rendu serveur |
 | `backend` | API Spring Boot, profil `prod`, utilisateur non root |
 | `db` | MySQL 8.4, sans port publié ; schéma et données de test appliqués par Flyway |
+| `caddy` | Point d'entrée HTTPS et en-têtes de sécurité : `/api`, `/storage` et Swagger vers le backend, le reste vers le frontend |
 | `mailpit` | Boîte de réception de démonstration sur `/courriels/` : capture les e-mails, n'en envoie aucun |
+| `sauvegarde` | Sauvegarde de la base chaque nuit et des photos chaque dimanche, chiffrées |
+| `matomo`, `matomo-db` | Mesure d'audience auto-hébergée, sans cookie, sur `/matomo/` |
 
 ```bash
 git clone https://github.com/abdsabb/immoconnect.git && cd immoconnect
-cp .env.example .env && nano .env        # domaine, mots de passe, clé JWT, clés Stripe
+cp .env.example .env && nano .env        # domaine, mots de passe, clé JWT, clés Stripe, phrase de passe des sauvegardes
 docker compose -f docker-compose.prod.yml up -d --build
 docker compose -f docker-compose.prod.yml ps
 ```
 
-Mettre à jour : `git pull` puis la même commande `up -d --build`. Les données survivent dans les volumes Docker
-(`mysql-data`, `photos`). Le webhook Stripe se déclare dans le tableau de bord Stripe sur
-`https://<domaine>/api/v1/webhooks/stripe` ; son secret va dans `STRIPE_WEBHOOK_SECRET`.
+Mettre à jour : `git pull`, la même commande `up -d --build`, puis `docker compose -f docker-compose.prod.yml restart caddy`
+quand `deploiement/Caddyfile` a changé (Caddy ne relit pas seul sa configuration). Les données survivent dans les
+volumes Docker (`mysql-data`, `photos`, `sauvegardes`, `matomo-data`, `matomo-db-data`). Le webhook Stripe se déclare
+dans le tableau de bord Stripe sur `https://<domaine>/api/v1/webhooks/stripe` ; son secret va dans `STRIPE_WEBHOOK_SECRET`.
+
+### En-têtes de sécurité
+
+Posés par Caddy (`deploiement/Caddyfile`) : `Strict-Transport-Security`, `X-Content-Type-Options`, `Referrer-Policy`
+pour tout le site ; pour l'application, `X-Frame-Options: DENY`, `Permissions-Policy` et une **politique de sécurité de
+contenu** : scripts et cadres limités au site et à Stripe, tuiles de carte d'OpenStreetMap, aucun script en ligne.
+
+### Sauvegardes
+
+Le conteneur `sauvegarde` exporte la base chaque nuit à 3 h 15 (`mysqldump --single-transaction`, le site reste en
+ligne) et archive les photos chaque dimanche, dans le volume `sauvegardes`. Les fichiers sont chiffrés en AES-256 avec
+`SAUVEGARDE_PASSPHRASE` ; sans phrase de passe, ils ne le sont pas et le journal le signale. Rétention : 14 jours pour la
+base, 8 semaines pour les photos.
+
+```bash
+docker compose -f docker-compose.prod.yml logs sauvegarde                              # ce qui a été sauvegardé
+docker compose -f docker-compose.prod.yml exec sauvegarde bash /sauvegarder.sh maintenant
+docker compose -f docker-compose.prod.yml exec sauvegarde bash /restaurer.sh           # lister
+docker compose -f docker-compose.prod.yml exec sauvegarde bash /restaurer.sh verifier <fichier>   # test de restauration
+```
+
+`verifier` relit la sauvegarde dans une base jetable et affiche le nombre de tables, de biens et de comptes : c'est le
+**test de restauration**, à refaire chaque trimestre. `restaurer <fichier>` remplace les données du site (arrêter le
+backend avant). Une copie hors du serveur reste à la charge de l'exploitant, par exemple chaque semaine :
+`docker run --rm -v immoconnect-prod_sauvegardes:/s -v /root/copie:/c alpine cp -a /s/. /c/` puis `scp` ou `rclone`.
+
+### Mesure d'audience (Matomo)
+
+Matomo tourne sur le même serveur, derrière `https://<domaine>/matomo/` : aucune donnée ne part chez un tiers. Le site
+ne dépose aucun cookie de mesure (`disableCookies`), respecte « Ne pas me pister », et suit trois conversions : prise de
+rendez-vous, envoi de message, création de compte. Première installation, une seule fois :
+
+1. ouvrir `https://<domaine>/matomo/` et suivre l'assistant — la base est déjà renseignée (`matomo-db`) ;
+2. créer le super-utilisateur, puis le site « ImmoConnect » (adresse du site, fuseau Europe/Brussels) ;
+3. dans `.env`, mettre `MATOMO_SITE_ID=1` (le numéro du site créé), puis `docker compose -f docker-compose.prod.yml up -d`.
+
+Tant que `MATOMO_SITE_ID` est vide, le site ne charge pas Matomo.
+
+### Détection d'intrusion
+
+- **Application** : dix échecs de connexion, ou cinq comptes différents essayés, en dix minutes depuis une même adresse
+  ⇒ adresse bannie de la connexion pendant quinze minutes et alerte ; clé API révoquée présentée ⇒ alerte. L'alerte
+  est enregistrée (rubrique « Sécurité » du back-office), écrite au journal du backend et envoyée par e-mail aux
+  super-administrateurs. Seuils : `immoconnect.securite.intrusion.*`.
+- **Serveur** : fail2ban lit ces alertes et ferme les ports web à l'adresse ; le pare-feu n'ouvre que SSH et le web.
+  Installation : [deploiement/fail2ban/LISEZMOI.md](deploiement/fail2ban/LISEZMOI.md).
+- **Conteneurs** : contrôles de santé (`docker compose ps`), redémarrage automatique, `/actuator/health` pour un
+  service de surveillance externe.
+- **Dépendances** : Dependabot ouvre une pull request par mise à jour Maven, npm, Docker et GitHub Actions
+  (`.github/dependabot.yml`).
 
 ## Branches, commits et releases
 

@@ -69,7 +69,7 @@
       },
       "premium": {
         "titre": "En soirée et le week-end : {{prix}}",
-        "texte": "Paiement sécurisé par carte, visite confirmée aussitôt. Remboursé si la visite est annulée."
+        "texte": "Paiement sécurisé par carte ou Bancontact, visite confirmée aussitôt. Remboursé si vous annulez jusqu’à 24 h avant."
       },
       "bouton": "Trouver un bien à visiter"
     },
@@ -143,7 +143,10 @@
     "agent": "Votre agent",
     "introuvable": "Ce bien n'existe pas ou n'est plus disponible.",
     "retour": "Retour aux biens",
-    "loyerParMois": "{{prix}} / mois"
+    "loyerParMois": "{{prix}} / mois",
+    "peb": "PEB",
+    "pebLabel": "Classe PEB",
+    "pebTitre": "Certificat de performance énergétique : classe {{classe}}"
   },
   "statut": {
     "disponible": "Disponible",
@@ -156,7 +159,8 @@
     "mentions": "Mentions légales",
     "confidentialite": "Confidentialité",
     "osm": "© les contributeurs OpenStreetMap",
-    "credits": "Crédits photos"
+    "credits": "Crédits photos",
+    "conditions": "Conditions générales"
   },
   "auth": {
     "connexionTitre": "Se connecter",
@@ -174,7 +178,41 @@
     "motDePasseCourt": "Au moins 8 caractères",
     "pasDeCompte": "Pas encore de compte ?",
     "dejaCompte": "Déjà inscrit ?",
-    "donnees": "Vos données servent uniquement à faire fonctionner votre compte. Le détail est sur la page"
+    "donnees": "Vos données servent uniquement à faire fonctionner votre compte. Le détail est sur la page",
+    "motDePasseCasse": "Mêlez minuscules et majuscules",
+    "motDePasseChiffre": "Ajoutez au moins un chiffre",
+    "motDePasseRegles": "8 caractères au moins, avec une minuscule, une majuscule et un chiffre. Un mot de passe connu des fuites de données est refusé.",
+    "motDePasseOublie": "Mot de passe oublié ?",
+    "retourConnexion": "Retour à la connexion",
+    "valider": "Valider",
+    "recommencer": "Recommencer la connexion",
+    "codeTitre": "Code de connexion",
+    "codeSousTitre": "Un code à six chiffres vient d’être envoyé à {{email}}. Il est valable dix minutes.",
+    "code": "Code reçu par e-mail",
+    "codeFormat": "Six chiffres",
+    "renvoyerActivation": "Renvoyer le lien d’activation",
+    "activationRenvoyee": "Si cette adresse correspond à un compte non activé, un nouveau lien vient de partir.",
+    "oubliTitre": "Mot de passe oublié",
+    "oubliSousTitre": "Indiquez votre adresse e-mail : vous recevrez un lien pour choisir un nouveau mot de passe.",
+    "oubliBouton": "Envoyer le lien",
+    "oubliEnvoye": "Si cette adresse correspond à un compte, un e-mail vient de partir. Le lien est valable trente minutes.",
+    "reinitialisationTitre": "Nouveau mot de passe",
+    "reinitialisationBouton": "Enregistrer le nouveau mot de passe",
+    "reinitialisationFaite": "Votre mot de passe est changé et toutes vos sessions ont été fermées. Vous pouvez vous connecter.",
+    "activationTitre": "Activation du compte",
+    "activationFaite": "Votre adresse est confirmée : votre compte est actif et vous êtes connecté.",
+    "activationLienManquant": "Ce lien est incomplet.",
+    "activationAide": "Le lien a peut-être déjà servi, ou expiré. Essayez de vous connecter : un nouveau lien pourra être renvoyé.",
+    "verifiezTitre": "Vérifiez vos e-mails",
+    "verifiezTexte": "Un e-mail vient de partir vers {{email}}. Ouvrez le lien qu’il contient pour activer votre compte ; il est valable 24 heures.",
+    "verifiezDemo": "Site de démonstration : les e-mails ne sont pas envoyés à votre adresse, ils arrivent dans la boîte de démonstration.",
+    "verifiezBoite": "Ouvrir la boîte de démonstration",
+    "cguAvant": "J’accepte les",
+    "cgu": "conditions générales",
+    "cguEntre": "et j’ai lu la",
+    "cguRequises": "Les conditions générales doivent être acceptées.",
+    "consentement": "J’accepte de recevoir des informations sur les nouveaux biens et les actualités de l’agence. Ce choix se modifie à tout moment dans le profil.",
+    "cguConfidentialite": "politique de confidentialité"
   },
   "profil": {
     "titre": "Bonjour {{prenom}}",
@@ -189,7 +227,16 @@
     "desinscription": "Supprimer mon compte",
     "desinscriptionExplication": "Conformément au RGPD, vos données personnelles seront anonymisées et vos favoris supprimés. L'historique de vos rendez-vous et paiements est conservé sans identité (obligations comptables).",
     "supprimerCompte": "Supprimer définitivement mon compte",
-    "confirmerDesinscription": "Confirmer la suppression de votre compte ? Cette action est irréversible."
+    "confirmerDesinscription": "Confirmer la suppression de votre compte ? Cette action est irréversible.",
+    "securiteEtChoix": "Sécurité et communications",
+    "doubleFacteur": "Connexion en deux étapes",
+    "doubleFacteurExplication": "À chaque connexion, un code envoyé par e-mail sera demandé en plus du mot de passe.",
+    "doubleFacteurImpose": "Obligatoire pour votre rôle : un code envoyé par e-mail est demandé à chaque connexion.",
+    "communications": "Informations de l’agence",
+    "communicationsExplication": "Recevoir des informations sur les nouveaux biens et les actualités. Retirable à tout moment.",
+    "mesDonnees": "Mes données",
+    "telechargerMesDonnees": "Télécharger mes données (JSON)",
+    "mesDonneesExplication": "Recevez une copie de toutes les données que le site détient sur vous : compte, favoris, visites, paiements, messages et historique (droit à la portabilité, RGPD)."
   },
   "rdv": {
     "titre": "Prendre rendez-vous",
@@ -214,7 +261,7 @@
     "date": "Date de la visite",
     "prix": "Prix du créneau",
     "explicationStandard": "Votre demande est envoyée à l'agent, qui la confirme ou vous propose un autre moment.",
-    "explicationPremium": "Un créneau premium est confirmé dès le paiement. En cas d'annulation, vous êtes remboursé.",
+    "explicationPremium": "Un créneau premium est confirmé dès le paiement. Vous êtes remboursé si vous annulez jusqu’à 24 heures avant la visite.",
     "envoyerDemande": "Envoyer ma demande",
     "passerAuPaiement": "Passer au paiement",
     "changerCreneau": "Choisir un autre créneau",
@@ -257,7 +304,16 @@
       "honorer": "Visite effectuée"
     },
     "confirmerAnnulation": "Annuler ce rendez-vous ?",
-    "confirmerAnnulationPayee": "Annuler ce rendez-vous ? Le paiement du créneau premium sera remboursé."
+    "confirmerAnnulationPayee": "Annuler ce rendez-vous ? Le paiement du créneau premium sera remboursé.",
+    "annulationGratuite": "Annulation remboursée",
+    "remboursableJusquA": "jusqu’au {{date}}",
+    "annulationSansRemboursement": "plus possible : moins de 24 h avant la visite, le créneau n’est pas remboursé",
+    "confirmerAnnulationTardive": "Annuler ce rendez-vous ? Moins de 24 heures avant la visite, le créneau premium n’est pas remboursé.",
+    "affichage": "Affichage",
+    "vue": {
+      "liste": "Liste",
+      "agenda": "Agenda"
+    }
   },
   "favori": {
     "titre": "Mes favoris",
@@ -339,7 +395,11 @@
     "photoFormat": "Seules les photos JPEG et PNG sont acceptées.",
     "photoTropLourde": "Une photo pèse 5 Mo au plus.",
     "typeOffre": "Type d'offre",
-    "loyer": "Loyer mensuel (€)"
+    "loyer": "Loyer mensuel (€)",
+    "peb": "Classe PEB",
+    "pebChoisir": "Choisir…",
+    "pebAide": "La classe énergétique du certificat PEB est obligatoire dans toute publicité immobilière.",
+    "vues": "Vues"
   },
   "blog": {
     "titre": "Blog",
@@ -363,7 +423,10 @@
       "articles": "Blog",
       "categories": "Catégories",
       "traductions": "Langues",
-      "clesApi": "Clés API"
+      "clesApi": "Clés API",
+      "signalements": "Signalements",
+      "parametres": "Paramètres",
+      "securite": "Sécurité"
     },
     "role": {
       "membre": "Membre",
@@ -475,6 +538,61 @@
       "archive": "Article archivé.",
       "supprime": "Article supprimé.",
       "confirmerSuppression": "Supprimer définitivement « {{titre}} » ?"
+    },
+    "signalement": {
+      "explication": "Contenus signalés par les utilisateurs. Retirer un contenu vide le message, met l’annonce hors ligne ou archive l’article ; conserver le laisse en place. Chaque décision est motivée, définitive et journalisée.",
+      "statuts": {
+        "ouvert": "À traiter",
+        "retire": "Retirés",
+        "conserve": "Conservés"
+      },
+      "aucun": "Aucun signalement dans cette liste.",
+      "date": "Date",
+      "contenu": "Contenu",
+      "motif": "Motif",
+      "auteur": "Signalé par",
+      "decision": "Décision",
+      "motivation": "Motivation de la décision (obligatoire)",
+      "motivationRequise": "Motivez la décision avant de trancher.",
+      "retirer": "Retirer",
+      "conserver": "Conserver",
+      "retireFait": "Contenu retiré et décision enregistrée.",
+      "conserveFait": "Contenu conservé et décision enregistrée.",
+      "types": {
+        "message": "Message",
+        "bien": "Annonce",
+        "article": "Article"
+      }
+    },
+    "parametre": {
+      "explication": "Identité de l’agence affichée sur le site et langues proposées aux visiteurs. Les clés de paiement et de courriel ne se règlent pas ici : elles restent sur le serveur.",
+      "cles": {
+        "agence.nom": "Nom de l’agence",
+        "agence.slogan": "Slogan",
+        "agence.adresse": "Adresse",
+        "agence.telephone": "Téléphone",
+        "agence.email": "Adresse e-mail",
+        "agence.horaires": "Horaires",
+        "langues.actives": "Langues actives"
+      },
+      "languesExplication": "Une langue désactivée disparaît du sélecteur ; le français, langue des textes de référence, reste toujours actif.",
+      "enregistrer": "Enregistrer",
+      "enregistre": "Paramètres enregistrés.",
+      "derniereModification": "Dernière modification par {{qui}}, le {{quand}}"
+    },
+    "alerte": {
+      "explication": "Alertes de la détection d’intrusion. Une adresse qui enchaîne les échecs de connexion ou essaie de nombreux comptes est bannie de la connexion pendant quinze minutes ; une clé API révoquée encore présentée est signalée.",
+      "aucune": "Aucune alerte.",
+      "date": "Date",
+      "type": "Type",
+      "ip": "Adresse IP",
+      "detail": "Détail",
+      "types": {
+        "rafale_echecs": "Rafale d’échecs de connexion",
+        "enumeration": "Énumération d’identifiants",
+        "cle_revoquee": "Clé API révoquée présentée"
+      },
+      "procedure": "Procédure : vérifier le journal d’audit, bloquer l’adresse ou révoquer la clé, évaluer l’impact, documenter. Si des données personnelles sont concernées : notification à l’Autorité de protection des données sous 72 heures."
     }
   },
   "erreur": {
@@ -484,7 +602,11 @@
     "conflit-etat": "Cette action n'est plus possible pour ce rendez-vous.",
     "interdit": "Vous n'avez pas le droit d'effectuer cette action.",
     "fichier-trop-volumineux": "Une photo pèse 5 Mo au plus.",
-    "quota-depasse": "Trop d'appels : réessayez dans une minute."
+    "quota-depasse": "Trop d'appels : réessayez dans une minute.",
+    "trop-de-tentatives": "Trop de tentatives. Patientez quelques minutes avant de réessayer.",
+    "lien-invalide": "Ce lien ou ce code n’est plus valable.",
+    "code-invalide": "Code incorrect.",
+    "compte-non-active": "Confirmez d’abord votre adresse e-mail : ouvrez le lien reçu à l’inscription."
   },
   "credits": {
     "titre": "Crédits photos",
@@ -509,5 +631,24 @@
   "offre": {
     "vente": "À vendre",
     "location": "À louer"
+  },
+  "langue": {
+    "fr": "Français",
+    "nl": "Nederlands",
+    "en": "English"
+  },
+  "signalement": {
+    "bouton": "Signaler ce contenu",
+    "titre": "Signaler un contenu",
+    "motif": "Motif",
+    "description": "Expliquez le problème",
+    "envoyer": "Envoyer le signalement",
+    "merci": "Merci, votre signalement sera examiné par l’équipe du site.",
+    "motifs": {
+      "illicite": "Contenu illicite",
+      "arnaque": "Arnaque ou tromperie",
+      "indesirable": "Publicité ou contenu indésirable",
+      "autre": "Autre"
+    }
   }
 }

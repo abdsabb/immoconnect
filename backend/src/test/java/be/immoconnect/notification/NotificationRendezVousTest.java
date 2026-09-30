@@ -135,7 +135,7 @@ class NotificationRendezVousTest {
     private String inscrire(String nom, String prenom, String email, String langue) throws Exception {
         return corps(mvc.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"nom\":\"" + nom + "\",\"prenom\":\"" + prenom + "\",\"email\":\"" + email
-                                + "\",\"motDePasse\":\"motdepasse123\",\"langue\":\"" + langue + "\"}"))
+                                + "\",\"motDePasse\":\"Visite-Bxl-2026\",\"cguAcceptees\":true,\"langue\":\"" + langue + "\"}"))
                 .andExpect(status().isCreated())).get("jeton").asString();
     }
 

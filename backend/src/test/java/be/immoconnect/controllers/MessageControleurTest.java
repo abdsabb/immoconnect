@@ -154,7 +154,7 @@ class MessageControleurTest {
 
     private JsonNode inscrire(String email, String prenom) throws Exception {
         return json.readTree(mvc.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"nom\":\"Test\",\"prenom\":\"" + prenom + "\",\"email\":\"" + email + "\",\"motDePasse\":\"motdepasse123\"}"))
+                        .content("{\"nom\":\"Test\",\"prenom\":\"" + prenom + "\",\"email\":\"" + email + "\",\"motDePasse\":\"Visite-Bxl-2026\",\"cguAcceptees\":true}"))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString());
     }

@@ -9,12 +9,30 @@
 {$DOMAINE} {
 	encode gzip
 
-	# Le navigateur n'utilisera plus que HTTPS pour ce domaine (livrable 16, §4.2)
-	header Strict-Transport-Security "max-age=31536000"
+	# En-têtes de sécurité posés par le proxy, pour tout le site (livrable 16, §4.2)
+	header {
+		# « defer » : appliqué à la réponse finale, en remplaçant ce que le serveur en amont aurait déjà posé
+		defer
+		# Le navigateur n'utilisera plus que HTTPS pour ce domaine
+		Strict-Transport-Security "max-age=31536000"
+		# Le type annoncé par le serveur fait foi : pas de « devinette » sur le contenu d'un fichier
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
 
 	# Boîte de réception de démonstration (Mailpit), protégée par mot de passe
 	handle /courriels* {
 		reverse_proxy mailpit:8025
+	}
+
+	# Mesure d'audience Matomo, auto-hébergée : tableau de bord et collecte (matomo.js, matomo.php)
+	redir /matomo /matomo/ 308
+	handle_path /matomo/* {
+		reverse_proxy matomo:80 {
+			# Matomo est servi sous /matomo : il doit le savoir pour construire ses liens
+			header_up X-Forwarded-Uri /matomo
+		}
 	}
 
 	# API REST, photos des biens et documentation Swagger → backend
@@ -27,8 +45,19 @@
 		reverse_proxy backend:8080
 	}
 
-	# Tout le reste : l'application React servie par Nginx
+	# Tout le reste : l'application React servie par Nginx (pages publiques rendues par le backend)
 	handle {
+		header {
+			defer
+			# Politique de sécurité de contenu : seuls le site lui-même et Stripe (paiement) peuvent
+			# fournir des scripts et des cadres ; les tuiles de carte viennent d'OpenStreetMap. Aucun script
+			# « en ligne » n'est autorisé : un texte injecté dans une page ne s'exécuterait pas.
+			Content-Security-Policy "default-src 'self'; script-src 'self' https://js.stripe.com https://*.js.stripe.com https://m.stripe.network; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.stripe.com; font-src 'self' data:; connect-src 'self' https://api.stripe.com https://*.stripe.com https://m.stripe.network; frame-src https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com https://m.stripe.network; object-src 'none'; base-uri 'self'; form-action 'self' https://*.stripe.com; frame-ancestors 'none'"
+			# Anti-détournement de clic : le site ne s'affiche dans aucun cadre
+			X-Frame-Options "DENY"
+			# Le site ne demande ni caméra, ni micro, ni position
+			Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(self \"https://js.stripe.com\")"
+		}
 		reverse_proxy frontend:80
 	}
 }

@@ -12,9 +12,10 @@ import { TYPES_OFFRE } from '../services/biens'
 import { BoutonPrincipal, Champ, classeInput, erreursApi } from '../components/Formulaire'
 import { Photo } from '../components/CarteBien'
 import CarteChoixPosition from '../components/CarteChoixPosition'
+import { CLASSES_PEB } from '../components/EtiquettePeb'
 
 const VIDE = {
-  typeOffre: 'vente', categorieId: '', titre: '', description: '', prix: '', superficie: '', nbChambres: '',
+  typeOffre: 'vente', categorieId: '', titre: '', description: '', prix: '', superficie: '', nbChambres: '', peb: '',
   adresse: '', ville: '', codePostal: '', latitude: '', longitude: '', statut: 'archive',
 }
 
@@ -128,7 +129,14 @@ export default function AnnonceFormulaire() {
           <Champ label={t('bien.chambresLabel')} erreur={errors.nbChambres?.message}>
             <input type="number" step="1" min="0" max="20" {...champ('nbChambres', nombre(0, 20))} />
           </Champ>
+          <Champ label={t('annonce.peb')} erreur={errors.peb?.message}>
+            <select {...champ('peb', requis)}>
+              <option value="">{t('annonce.pebChoisir')}</option>
+              {CLASSES_PEB.map((c) => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </Champ>
         </div>
+        <p className="-mt-2 text-xs text-gray-500">{t('annonce.pebAide')}</p>
 
         <h2 className="pt-4 text-xl font-bold text-nuit">{t('bien.localisation')}</h2>
         <p className="text-sm text-gray-600">{t('annonce.explicationAdresse')}</p>

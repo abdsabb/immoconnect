@@ -88,7 +88,7 @@ class AdministrationControleurTest {
     void unCompteDesactiveNePeutPlusSeConnecterPuisLePeutANouveau() throws Exception {
         String admin = connecter(GESTIONNAIRE, "password");
         int membre = corps(mvc.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"nom\":\"Test\",\"prenom\":\"Bloque\",\"email\":\"bloque@test.immoconnect.be\",\"motDePasse\":\"motdepasse123\"}"))
+                        .content("{\"nom\":\"Test\",\"prenom\":\"Bloque\",\"email\":\"bloque@test.immoconnect.be\",\"motDePasse\":\"Visite-Bxl-2026\",\"cguAcceptees\":true}"))
                 .andExpect(status().isCreated())).get("utilisateur").get("id").asInt();
 
         mvc.perform(patch("/api/v1/admin/utilisateurs/" + membre + "/desactiver").header("Authorization", "Bearer " + admin))
@@ -96,14 +96,14 @@ class AdministrationControleurTest {
                 .andExpect(jsonPath("$.actif").value(false));
         // Même réponse générique que pour un mauvais mot de passe : rien ne dit que le compte existe
         mvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\":\"bloque@test.immoconnect.be\",\"motDePasse\":\"motdepasse123\"}"))
+                        .content("{\"email\":\"bloque@test.immoconnect.be\",\"motDePasse\":\"Visite-Bxl-2026\",\"cguAcceptees\":true}"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.detail").value("Identifiants invalides"));
 
         mvc.perform(patch("/api/v1/admin/utilisateurs/" + membre + "/activer").header("Authorization", "Bearer " + admin))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.actif").value(true));
-        connecter("bloque@test.immoconnect.be", "motdepasse123");
+        connecter("bloque@test.immoconnect.be", "Visite-Bxl-2026");
     }
 
     @Test

@@ -24,6 +24,13 @@ export const supprimerCategorie = (id) => api.delete(`/admin/categories/${id}`)
 
 // A7 — clés API
 export const chargerClesApi = () => api.get('/admin/cles-api').then(donnees)
+
+// Signalements de contenus (chapitre 11) et paramètres du site (A5)
+export const chargerSignalements = (filtres) => api.get('/admin/signalements', { params: sansVide(filtres) }).then(donnees)
+export const trancherSignalement = (id, decision) => api.patch(`/admin/signalements/${id}`, decision).then(donnees)
+export const chargerParametres = () => api.get('/admin/parametres').then(donnees)
+export const chargerAlertes = (filtres) => api.get('/admin/alertes', { params: sansVide(filtres) }).then(donnees)
+export const enregistrerParametres = (valeurs) => api.put('/admin/parametres', { valeurs }).then(donnees)
 export const genererCleApi = (libelle) => api.post('/admin/cles-api', { libelle }).then(donnees)
 export const revoquerCleApi = (id) => api.patch(`/admin/cles-api/${id}/revoquer`).then(donnees)
 

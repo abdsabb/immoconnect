@@ -1,12 +1,16 @@
-import { useState } from 'react'
+import { Suspense, lazy, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
 import { chargerBien, cheminListe, formatPrixBien } from '../services/biens'
 import { Photo } from '../components/CarteBien'
-import CarteOSM from '../components/CarteOSM'
+// La carte (Leaflet) pèse lourd : elle se charge à part, après le contenu de la fiche
+const CarteOSM = lazy(() => import('../components/CarteOSM'))
 import BoutonFavori from '../components/BoutonFavori'
+import EtiquettePeb from '../components/EtiquettePeb'
+import BoutonSignaler from '../components/BoutonSignaler'
+import { useTitrePage } from '../services/titre'
 
 // Fiche d'un bien (gabarit « article », maquette Figure 15) : galerie, caractéristiques,
 // localisation OSM et panneau d'action persistant « Prendre rendez-vous » / « Envoyer un message ».
@@ -17,6 +21,7 @@ export default function BienDetail() {
   const peutAgir = !utilisateur || utilisateur.role === 'membre'
   const [photoActive, setPhotoActive] = useState(0)
   const { data: bien, isPending, error } = useQuery({ queryKey: ['bien', id], queryFn: () => chargerBien(id) })
+  useTitrePage(bien?.titre)
 
   if (isPending) return <p className="mx-auto max-w-6xl px-4 py-10 text-gray-500">{t('commun.chargement')}</p>
   if (error) {
@@ -59,9 +64,10 @@ export default function BienDetail() {
             <BoutonFavori bien={bien} className="shrink-0 border border-gray-200" />
           </div>
 
-          <dl className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-perle rounded-xl p-4">
+          <dl className="grid grid-cols-2 sm:grid-cols-5 gap-4 bg-perle rounded-xl p-4">
             <div><dt className="text-xs uppercase text-gray-500">{t('bien.superficie')}</dt><dd className="font-semibold">{bien.superficie} m²</dd></div>
             <div><dt className="text-xs uppercase text-gray-500">{t('bien.chambresLabel')}</dt><dd className="font-semibold">{bien.nbChambres}</dd></div>
+            <div><dt className="text-xs uppercase text-gray-500">{t('bien.pebLabel')}</dt><dd><EtiquettePeb classe={bien.peb} grande /></dd></div>
             <div><dt className="text-xs uppercase text-gray-500">{t('bien.statutLabel')}</dt><dd className="font-semibold">{t(`statut.${bien.statut}`)}</dd></div>
             <div><dt className="text-xs uppercase text-gray-500">{t('bien.publieLe')}</dt><dd className="font-semibold">{new Date(bien.publieLe).toLocaleDateString('fr-BE')}</dd></div>
           </dl>
@@ -74,7 +80,9 @@ export default function BienDetail() {
           <div>
             <h2 className="text-xl font-bold text-nuit">{t('bien.localisation')}</h2>
             <p className="mt-1 text-sm text-gray-500">{t('bien.adresseApres')}</p>
-            <CarteOSM latitude={bien.latitude} longitude={bien.longitude} titre={bien.titre} className="mt-3 h-80" />
+            <Suspense fallback={<div className="mt-3 h-80 rounded-xl bg-perle" aria-hidden="true" />}>
+              <CarteOSM latitude={bien.latitude} longitude={bien.longitude} titre={bien.titre} className="mt-3 h-80" />
+            </Suspense>
           </div>
         </div>
 
@@ -101,6 +109,7 @@ export default function BienDetail() {
             <p className="font-semibold text-nuit">{bien.agent.nomComplet}</p>
             <p className="text-gray-600">{bien.agent.telephonePro}</p>
           </div>
+          <BoutonSignaler typeContenu="bien" contenuId={bien.id} discret className="pt-2" />
         </aside>
       </div>
     </section>

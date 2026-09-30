@@ -14,7 +14,12 @@
           "This site is designed, developed and published by Abdulrahman Sabbagh, a student at ICC Brussels, as part of his final integrated project.",
           "For any question about the site or its content, the point of contact is the project repository."
         ],
-        "liens": [{ "texte": "Project repository on GitHub", "url": "https://github.com/abdsabb/immoconnect" }]
+        "liens": [
+          {
+            "texte": "Project repository on GitHub",
+            "url": "https://github.com/abdsabb/immoconnect"
+          }
+        ]
       },
       {
         "titre": "The agency shown",
@@ -42,14 +47,19 @@
           "The listings are test data. Prices, surface areas, addresses and descriptions were generated for the demonstration and do not match any real property.",
           "The photos are illustrations: none of them shows the property described by the listing."
         ],
-        "liens": [{ "texte": "Photo credits", "chemin": "/credits-photos" }]
+        "liens": [
+          {
+            "texte": "Photo credits",
+            "chemin": "/credits-photos"
+          }
+        ]
       },
       {
         "titre": "Paid viewings",
         "paragraphes": [
           "A daytime viewing, Monday to Friday, is free. A viewing in the evening or at the weekend costs €15, all taxes included. The price is shown before payment.",
-          "Payment is made by card, through Stripe. The site neither receives nor stores any card number.",
-          "If the viewing is cancelled before its scheduled time, by the member or by the agent, the amount paid is refunded in full.",
+          "Payment is made by card or Bancontact, through Stripe. The site neither receives nor stores any card number.",
+          "A member who cancels at least 24 hours before the viewing is refunded in full; after that, the amount remains due. If the agent cancels, the refund is always in full.",
           "On this demonstration site, Stripe runs in test mode: use the card 4242 4242 4242 4242, a future date and any three digits. A real card would be declined."
         ]
       },
@@ -69,7 +79,7 @@
         "titre": "User content",
         "paragraphes": [
           "Messages exchanged between a member and an agent are the sole responsibility of their author. The site does not carry out general monitoring of these messages.",
-          "To report unlawful content, use the point of contact given above. Reported content is reviewed and, if unlawful, removed."
+          "To report unlawful content, use the 'Report this content' link under every message received, every listing and every article. The report is reviewed by an administrator, who removes the content or keeps it and gives the reason for the decision; that decision is kept with the report."
         ]
       },
       {
@@ -99,22 +109,74 @@
         "paragraphes": [
           "The data controller is the publisher of the site, Abdulrahman Sabbagh. The point of contact is given in the legal notice."
         ],
-        "liens": [{ "texte": "Legal notice", "chemin": "/mentions-legales" }]
+        "liens": [
+          {
+            "texte": "Legal notice",
+            "chemin": "/mentions-legales"
+          }
+        ]
       },
       {
         "titre": "Data processed",
         "paragraphes": [
-          "The site only processes the data it needs to work. It contains no advertising and no audience measurement, and sells no data."
+          "The site only processes the data it needs to work. It contains no advertising and sells no data."
         ],
         "tableau": {
-          "colonnes": ["Processing", "Data", "Legal basis", "Retention"],
+          "colonnes": [
+            "Processing",
+            "Data",
+            "Legal basis",
+            "Retention"
+          ],
           "lignes": [
-            ["Account", "Last name, first name, e-mail address, phone (optional), language, password stored as a hash", "Performance of the contract", "Until the account is deleted"],
-            ["Favourites", "Saved properties", "Performance of the contract", "Erased when the account is deleted"],
-            ["Messages", "Text of the messages exchanged with an agent", "Performance of the contract", "Text erased when the account is deleted"],
-            ["Viewings", "Property, date, time, reason for the viewing", "Performance of the contract", "Kept without identity after the account is deleted"],
-            ["Payments", "Amount, date, Stripe payment reference; no card data", "Performance of the contract and accounting obligation", "Kept without identity after the account is deleted"],
-            ["Security log", "Action performed, date, IP address, account concerned", "Legitimate interest: security of the service", "Kept after the account is deleted, IP address included, linked to an account that has become anonymous"]
+            [
+              "Account",
+              "Last name, first name, e-mail address, phone (optional), language, password stored as a hash",
+              "Performance of the contract",
+              "Until the account is deleted"
+            ],
+            [
+              "Favourites",
+              "Saved properties",
+              "Performance of the contract",
+              "Erased when the account is deleted"
+            ],
+            [
+              "Messages",
+              "Text of the messages exchanged with an agent",
+              "Performance of the contract",
+              "Text erased when the account is deleted"
+            ],
+            [
+              "Viewings",
+              "Property, date, time, reason for the viewing",
+              "Performance of the contract",
+              "Kept without identity after the account is deleted"
+            ],
+            [
+              "Payments",
+              "Amount, date, Stripe payment reference; no card data",
+              "Performance of the contract and accounting obligation",
+              "Kept without identity after the account is deleted"
+            ],
+            [
+              "Security log",
+              "Action performed, date, IP address, account concerned",
+              "Legitimate interest: security of the service",
+              "Kept after the account is deleted, IP address included, linked to an account that has become anonymous"
+            ],
+            [
+              "Sessions and links",
+              "Hash of the session cookie, of the activation and reset links and of the login codes, IP address",
+              "Performance of the contract and security",
+              "Expired tokens deleted after thirty days"
+            ],
+            [
+              "Audience measurement",
+              "Pages viewed, referrer, device type, actions (viewing, message, sign-up); truncated IP address",
+              "Legitimate interest: improving the site",
+              "Anonymous statistics, on the site's own server"
+            ]
           ]
         }
       },
@@ -138,28 +200,31 @@
         ],
         "liste": [
           "Contabo GmbH (Germany): hosting of the server and the database.",
-          "Stripe Payments Europe Ltd (Ireland): card payment. Stripe may transfer data to the United States, under the Data Privacy Framework and standard contractual clauses.",
+          "Stripe Payments Europe Ltd (Ireland): payment by card or Bancontact. Stripe may transfer data to the United States, under the Data Privacy Framework and standard contractual clauses.",
           "OpenStreetMap Foundation (United Kingdom): map tiles are loaded from its servers, which receive your IP address when a map is displayed."
         ]
       },
       {
         "titre": "Cookies and local storage",
         "paragraphes": [
-          "The site sets no cookie. It therefore shows no consent banner."
+          "The site sets a single, strictly necessary cookie: it therefore shows no consent banner."
         ],
         "liste": [
+          "Session: after login, a cookie 'immoconnect_session' keeps your session open for fourteen days. It cannot be read by scripts, is sent only to this site and is closed by logging out.",
           "Language: your choice (French, Dutch or English) is saved in the local storage of your browser, under the name 'i18nextLng'. It does not leave your device.",
-          "Login: your session is kept in memory for as long as the page stays open. Reloading the page logs you out.",
-          "Payment: on the payment page only, Stripe sets its own cookies to fight fraud. They are necessary for the payment."
+          "Payment: on the payment page only, Stripe sets its own cookies to fight fraud. They are necessary for the payment.",
+          "Audience measurement: the site counts its visits with Matomo, installed on its own server. No cookie is set, no data is sent to a third party, the IP address is truncated and the browser's 'Do Not Track' signal is honoured."
         ]
       },
       {
         "titre": "Security",
         "liste": [
           "Exchanges with the site are encrypted (HTTPS).",
-          "Passwords are stored as a hash (bcrypt): nobody can read them, not even an administrator.",
+          "Passwords are stored as a hash (bcrypt): nobody can read them, not even an administrator. A chosen password is checked against known data breaches through the Have I Been Pwned service, without ever being sent to it: only five characters of its hash leave.",
+          "Agents and administrators log in in two steps, with a code sent by e-mail; members can opt in.",
+          "After several failures, login is blocked for a few minutes, for longer each time.",
           "Each account can only access its own data; rights depend on the role.",
-          "Logins and sensitive actions are recorded in a log."
+          "Logins, failed logins and sensitive actions are recorded in a log."
         ]
       },
       {
@@ -170,7 +235,7 @@
         "liste": [
           "Access and rectification: view and change your data in 'My profile'.",
           "Erasure: the 'Delete my account' button in your profile erases your favourites and the text of your messages, and replaces your name, e-mail address and phone number with anonymous values. The operation is immediate and irreversible.",
-          "Portability, objection and restriction: send your request to the point of contact; you will receive an answer within 30 days."
+          "Portability: the 'Download my data' button in your profile gives you, in JSON, a copy of everything the site holds about you. Objection and restriction: send your request to the point of contact; you will receive an answer within 30 days."
         ]
       },
       {
@@ -178,12 +243,83 @@
         "paragraphes": [
           "You can lodge a complaint with the Belgian Data Protection Authority, rue de la Presse 35, 1000 Brussels."
         ],
-        "liens": [{ "texte": "dataprotectionauthority.be", "url": "https://www.dataprotectionauthority.be" }]
+        "liens": [
+          {
+            "texte": "dataprotectionauthority.be",
+            "url": "https://www.dataprotectionauthority.be"
+          }
+        ]
       },
       {
         "titre": "Open data",
         "paragraphes": [
           "The site publishes data about its listings through a programming interface. This data contains no information about members: no name, no e-mail address, no viewings."
+        ]
+      }
+    ]
+  },
+  "conditions": {
+    "titre": "Terms and conditions",
+    "sections": [
+      {
+        "titre": "Purpose",
+        "paragraphes": [
+          "These terms govern the use of the ImmoConnect site and the purchase of a premium viewing slot. They are accepted when the account is created, and recalled before each payment."
+        ]
+      },
+      {
+        "titre": "Account",
+        "paragraphes": [
+          "An account is personal. You choose a strong password and keep it secret; agents and administrators log in in two steps. You can delete your account at any time from your profile: your favourites and messages are erased, your viewings and payments kept without your identity."
+        ]
+      },
+      {
+        "titre": "Viewings",
+        "paragraphes": [
+          "A daytime viewing request, Monday to Friday, is free; the agent confirms or declines it. A premium slot, in the evening or at the weekend, is confirmed as soon as it is paid. The exact address of the property is given once the viewing is confirmed."
+        ]
+      },
+      {
+        "titre": "Price and payment",
+        "paragraphes": [
+          "The premium slot costs €15, all taxes included, a price shown before any commitment. Payment is made by card or Bancontact, through Stripe; the site neither receives nor stores any card number. A confirmation is sent by e-mail."
+        ]
+      },
+      {
+        "titre": "Cancellation and refund",
+        "paragraphes": [
+          "You can cancel a viewing from your account. A premium slot cancelled at least 24 hours before the viewing is refunded in full; cancelled later, it is not refunded. If the agent cancels, or if the property is no longer available, the refund is always in full.",
+          "Right of withdrawal: the viewing is a dated service, performed before the end of the legal fourteen-day period. By paying, you request its performance on the chosen date and accept that this period does not apply; the more generous cancellation rule above still applies to you."
+        ]
+      },
+      {
+        "titre": "User content",
+        "paragraphes": [
+          "The messages you write to agents are your sole responsibility. You warrant that you have the right to publish what you write and grant the site only the licence needed to deliver it. Unlawful content may be removed."
+        ]
+      },
+      {
+        "titre": "Liability",
+        "paragraphes": [
+          "The agency is responsible for the accuracy of its listings. The site may be interrupted for maintenance. On this demonstration site, no real obligation arises: agency, properties and payments are fictitious."
+        ]
+      },
+      {
+        "titre": "Personal data",
+        "paragraphes": [
+          "The processing of your data is described in the privacy policy."
+        ],
+        "liens": [
+          {
+            "texte": "Privacy policy",
+            "chemin": "/confidentialite"
+          }
+        ]
+      },
+      {
+        "titre": "Applicable law",
+        "paragraphes": [
+          "These terms are governed by Belgian law."
         ]
       }
     ]

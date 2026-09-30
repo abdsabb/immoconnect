@@ -6,6 +6,7 @@ import be.immoconnect.dto.CritereRechercheBien;
 import be.immoconnect.dto.PageReponse;
 import be.immoconnect.entities.StatutBien;
 import be.immoconnect.entities.TypeOffre;
+import be.immoconnect.security.ConfigurationJwt;
 import be.immoconnect.services.BienService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,6 +15,8 @@ import java.math.BigDecimal;
 import java.util.Set;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,9 +62,12 @@ public class BienControleur {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Détail complet d'un bien", description = "Photos ordonnées, agent responsable et localisation approximative.")
-    public BienDetail detail(@PathVariable Integer id) {
-        return service.detail(id);
+    @Operation(summary = "Détail complet d'un bien",
+            description = "Photos ordonnées, classe PEB, agent responsable et localisation approximative. Chaque consultation par un visiteur ou un membre compte une vue (tableau de bord de l'agent).")
+    public BienDetail detail(@PathVariable Integer id, @AuthenticationPrincipal Jwt jeton) {
+        String role = jeton == null ? null : jeton.getClaimAsString(ConfigurationJwt.CLAIM_ROLE);
+        boolean visiteur = role == null || "membre".equals(role);
+        return service.detail(id, visiteur);
     }
 
     /** « prix,asc » -> Sort ; un champ inconnu est refusé (400) pour ne jamais exposer la structure interne. */

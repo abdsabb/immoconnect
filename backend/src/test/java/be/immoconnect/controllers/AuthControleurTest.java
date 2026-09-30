@@ -37,7 +37,7 @@ class AuthControleurTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.type").value("Bearer"))
                 .andExpect(jsonPath("$.jeton").isNotEmpty())
-                .andExpect(jsonPath("$.expireDans").value(3600))
+                .andExpect(jsonPath("$.expireDans").value(900))
                 .andExpect(jsonPath("$.utilisateur.role").value("membre"));
     }
 
@@ -69,7 +69,7 @@ class AuthControleurTest {
     @Test
     void lInscriptionCreeUnMembreConnecteEtRefuseLesDoublons() throws Exception {
         String corps = "{\"nom\":\"Dupont\",\"prenom\":\"Léa\",\"email\":\"lea.dupont@test.be\","
-                + "\"motDePasse\":\"motdepasse123\",\"langue\":\"nl\"}";
+                + "\"motDePasse\":\"Visite-Bxl-2026\",\"cguAcceptees\":true,\"langue\":\"nl\"}";
         mvc.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON).content(corps))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.jeton").isNotEmpty())
@@ -87,6 +87,7 @@ class AuthControleurTest {
                 .andExpect(status().isUnprocessableContent())
                 .andExpect(jsonPath("$.champs.email").exists())
                 .andExpect(jsonPath("$.champs.motDePasse").exists())
+                .andExpect(jsonPath("$.champs.cguAcceptees").exists())
                 .andExpect(jsonPath("$.champs.nom").exists());
     }
 }

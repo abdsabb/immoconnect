@@ -1,5 +1,6 @@
 package be.immoconnect.dto;
 
+import be.immoconnect.entities.Peb;
 import be.immoconnect.entities.StatutBien;
 import be.immoconnect.entities.TypeOffre;
 import jakarta.validation.constraints.DecimalMax;
@@ -34,6 +35,7 @@ public record RequeteBien(
         @NotNull(message = "le nombre de chambres est obligatoire")
         @Min(value = 0, message = "le nombre de chambres ne peut être négatif")
         @Max(value = 20, message = "20 chambres au plus") Integer nbChambres,
+        @NotNull(message = "la classe PEB est obligatoire") Peb peb,
         @NotBlank(message = "l'adresse est obligatoire")
         @Size(max = 150, message = "l'adresse ne peut dépasser 150 caractères") String adresse,
         @NotBlank(message = "la ville est obligatoire")

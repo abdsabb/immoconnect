@@ -11,4 +11,7 @@ public interface JournalAuditRepository extends JpaRepository<JournalAudit, Inte
     /** Les actions présentes dans le journal, pour le filtre du back-office. */
     @Query("select distinct j.action from JournalAudit j order by j.action")
     List<String> actions();
+
+    /** Historique d'un compte, pour l'export de ses données (portabilité). */
+    List<JournalAudit> findByUtilisateurIdOrderByHorodatageAsc(Integer utilisateurId);
 }

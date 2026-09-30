@@ -210,8 +210,9 @@ public class ServiceRendezVous {
 
     /**
      * Annulation par le membre qui a réservé ou par l'agent qui reçoit : demande/confirme -> annule.
-     * RA8 : l'annulation d'un créneau payé rembourse le membre. Si le remboursement échoue, l'exception
-     * annule la transaction : le rendez-vous reste confirmé, jamais « annulé mais non remboursé ».
+     * RA8 : l'annulation d'un créneau payé rembourse le membre, sauf (RA14) s'il annule lui-même moins
+     * de 24 heures avant la visite. Si le remboursement échoue, l'exception annule la transaction : le
+     * rendez-vous reste confirmé, jamais « annulé mais non remboursé ».
      */
     @Transactional
     public RendezVousResume annuler(Integer id, Integer utilisateurId, String ip) {
@@ -220,15 +221,21 @@ public class ServiceRendezVous {
         if (!parLAgent && !rdv.getMembre().getId().equals(utilisateurId)) {
             throw new OperationInterditeException("Ce rendez-vous ne vous appartient pas");
         }
-        rdv.annuler(maintenant());
+        LocalDateTime maintenant = maintenant();
+        boolean remboursable = rdv.remboursable(maintenant, parLAgent);
+        rdv.annuler(maintenant);
         Utilisateur auteur = parLAgent ? rdv.getAgent() : rdv.getMembre();
         audit.enregistrer(auteur, "annulation_rdv", "rendez_vous#" + id, ip);
 
         Paiement paiement = rdv.getPaiement();
         if (paiement != null && paiement.getStatut() == StatutPaiement.reussi) {
-            passerelle.rembourser(paiement.getStripePaymentIntentId());
-            paiement.rembourser();
-            audit.enregistrer(auteur, "remboursement", "paiement#" + paiement.getId(), ip);
+            if (remboursable) {
+                passerelle.rembourser(paiement.getStripePaymentIntentId());
+                paiement.rembourser();
+                audit.enregistrer(auteur, "remboursement", "paiement#" + paiement.getId(), ip);
+            } else {
+                audit.enregistrer(auteur, "annulation_tardive", "paiement#" + paiement.getId(), ip);
+            }
         }
         publier(rdv, parLAgent ? EvenementRendezVous.Type.annule_par_agent : EvenementRendezVous.Type.annule_par_membre);
         return parLAgent ? RendezVousResume.pourAgent(rdv) : RendezVousResume.pourMembre(rdv);

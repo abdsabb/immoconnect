@@ -1,36 +1,52 @@
+import { Suspense, lazy } from 'react'
 import { Routes, Route } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import Layout from './components/Layout'
 import RouteProtegee from './auth/RouteProtegee'
 import Accueil from './pages/Accueil'
 import Biens from './pages/Biens'
 import BienDetail from './pages/BienDetail'
-import Connexion from './pages/Connexion'
-import Inscription from './pages/Inscription'
-import Profil from './pages/Profil'
-import PriseRendezVous from './pages/PriseRendezVous'
-import MesRendezVous from './pages/MesRendezVous'
-import MesFavoris from './pages/MesFavoris'
-import Messagerie from './pages/Messagerie'
-import MesAnnonces from './pages/MesAnnonces'
-import AnnonceFormulaire from './pages/AnnonceFormulaire'
-import Blog from './pages/Blog'
-import Article from './pages/Article'
-import CreditsPhotos from './pages/CreditsPhotos'
-import PageLegale from './pages/PageLegale'
-import Administration from './pages/admin/Administration'
-import TableauDeBord from './pages/admin/TableauDeBord'
-import Comptes from './pages/admin/Comptes'
-import Journal from './pages/admin/Journal'
-import Articles from './pages/admin/Articles'
-import ArticleFormulaire from './pages/admin/ArticleFormulaire'
-import Categories from './pages/admin/Categories'
-import Traductions from './pages/admin/Traductions'
-import ClesApi from './pages/admin/ClesApi'
+
+// Découpage du code par route (chapitre 10) : les pages publiques les plus visitées partent avec
+// l'application, les espaces connectés, le blog et les pages légales se chargent à la première visite
+const Connexion = lazy(() => import('./pages/Connexion'))
+const Inscription = lazy(() => import('./pages/Inscription'))
+const Profil = lazy(() => import('./pages/Profil'))
+const PriseRendezVous = lazy(() => import('./pages/PriseRendezVous'))
+const MesRendezVous = lazy(() => import('./pages/MesRendezVous'))
+const MesFavoris = lazy(() => import('./pages/MesFavoris'))
+const Messagerie = lazy(() => import('./pages/Messagerie'))
+const MesAnnonces = lazy(() => import('./pages/MesAnnonces'))
+const AnnonceFormulaire = lazy(() => import('./pages/AnnonceFormulaire'))
+const Blog = lazy(() => import('./pages/Blog'))
+const Article = lazy(() => import('./pages/Article'))
+const CreditsPhotos = lazy(() => import('./pages/CreditsPhotos'))
+const PageLegale = lazy(() => import('./pages/PageLegale'))
+const MotDePasseOublie = lazy(() => import('./pages/MotDePasseOublie'))
+const Activation = lazy(() => import('./pages/Activation'))
+const Administration = lazy(() => import('./pages/admin/Administration'))
+const TableauDeBord = lazy(() => import('./pages/admin/TableauDeBord'))
+const Comptes = lazy(() => import('./pages/admin/Comptes'))
+const Journal = lazy(() => import('./pages/admin/Journal'))
+const Articles = lazy(() => import('./pages/admin/Articles'))
+const ArticleFormulaire = lazy(() => import('./pages/admin/ArticleFormulaire'))
+const Categories = lazy(() => import('./pages/admin/Categories'))
+const Traductions = lazy(() => import('./pages/admin/Traductions'))
+const ClesApi = lazy(() => import('./pages/admin/ClesApi'))
+const Signalements = lazy(() => import('./pages/admin/Signalements'))
+const Parametres = lazy(() => import('./pages/admin/Parametres'))
+const Alertes = lazy(() => import('./pages/admin/Alertes'))
 
 // Arborescence issue de la charte (livrable 10) : pages publiques, connexion/inscription,
 // espace membre, espace agent, back-office administrateur.
+function Chargement() {
+  const { t } = useTranslation()
+  return <p className="mx-auto max-w-3xl px-4 py-12 text-gray-500">{t('commun.chargement')}</p>
+}
+
 export default function App() {
   return (
+    <Suspense fallback={<Chargement />}>
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Accueil />} />
@@ -43,8 +59,12 @@ export default function App() {
         <Route path="credits-photos" element={<CreditsPhotos />} />
         <Route path="mentions-legales" element={<PageLegale key="mentions" page="mentions" />} />
         <Route path="confidentialite" element={<PageLegale key="confidentialite" page="confidentialite" />} />
+        <Route path="conditions" element={<PageLegale key="conditions" page="conditions" />} />
         <Route path="connexion" element={<Connexion />} />
         <Route path="inscription" element={<Inscription />} />
+        <Route path="mot-de-passe-oublie" element={<MotDePasseOublie />} />
+        <Route path="reinitialisation" element={<MotDePasseOublie />} />
+        <Route path="activation" element={<Activation />} />
         <Route element={<RouteProtegee />}>
           <Route path="profil" element={<Profil />} />
           <Route path="biens/:id/rendez-vous" element={<PriseRendezVous />} />
@@ -71,10 +91,14 @@ export default function App() {
             <Route path="categories" element={<Categories />} />
             <Route path="traductions" element={<Traductions />} />
             <Route path="cles-api" element={<ClesApi />} />
+            <Route path="signalements" element={<Signalements />} />
+            <Route path="parametres" element={<Parametres />} />
+            <Route path="securite" element={<Alertes />} />
           </Route>
         </Route>
         <Route path="*" element={<Biens />} />
       </Route>
     </Routes>
+    </Suspense>
   )
 }

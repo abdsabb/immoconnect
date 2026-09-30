@@ -1,6 +1,7 @@
 package be.immoconnect.dto;
 
 import be.immoconnect.entities.Bien;
+import be.immoconnect.entities.Peb;
 import be.immoconnect.entities.StatutBien;
 import be.immoconnect.entities.TypeOffre;
 import java.math.BigDecimal;
@@ -19,6 +20,7 @@ public record BienGestion(
         BigDecimal prix,
         BigDecimal superficie,
         Integer nbChambres,
+        Peb peb,
         String adresse,
         String ville,
         String codePostal,
@@ -34,16 +36,19 @@ public record BienGestion(
     public record PhotoGestion(Integer id, String url, Integer ordre, String legende) {
     }
 
-    /** Favoris, demandes de visite en attente et visites confirmées à venir. */
-    public record Indicateurs(long favoris, long demandesEnAttente, long visitesAVenir) {
+    /** Vues de la fiche, favoris, demandes de visite en attente et visites confirmées à venir (cas AG6). */
+    public record Indicateurs(long vues, long favoris, long demandesEnAttente, long visitesAVenir) {
 
-        public static final Indicateurs AUCUN = new Indicateurs(0, 0, 0);
+        /** Un bien que personne n'a encore mis en favori ni demandé à visiter. */
+        public static Indicateurs sansActivite(Bien bien) {
+            return new Indicateurs(bien.getNbVues(), 0, 0, 0);
+        }
     }
 
     public static BienGestion depuis(Bien bien, Indicateurs indicateurs) {
         return new BienGestion(bien.getId(), bien.getTitre(), bien.getDescription(), bien.getTypeOffre(), bien.getPrix(),
                 bien.getSuperficie(),
-                bien.getNbChambres(), bien.getAdresse(), bien.getVille(), bien.getCodePostal(), bien.getLatitude(),
+                bien.getNbChambres(), bien.getPeb(), bien.getAdresse(), bien.getVille(), bien.getCodePostal(), bien.getLatitude(),
                 bien.getLongitude(), bien.getStatut(), bien.getPublieLe(), bien.getCategorie().getId(),
                 bien.getCategorie().getNom(),
                 bien.getPhotos().stream().map(p -> new PhotoGestion(p.getId(), p.getUrl(), p.getOrdre(), p.getLegende())).toList(),

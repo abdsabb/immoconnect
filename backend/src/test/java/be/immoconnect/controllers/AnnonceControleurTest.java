@@ -49,7 +49,7 @@ class AnnonceControleurTest {
 
     private static final String ANNONCE = """
             {"categorieId": 2, "titre": "Appartement 2 chambres — Schaerbeek", "description": "Lumineux, proche du parc Josaphat.",
-             "prix": 289000, "superficie": 92.5, "nbChambres": 2, "adresse": "Avenue Louis Bertrand 40",
+             "prix": 289000, "superficie": 92.5, "nbChambres": 2, "peb": "B", "adresse": "Avenue Louis Bertrand 40",
              "ville": "Schaerbeek", "codePostal": "1030", "latitude": 50.8642, "longitude": 4.3789%s}
             """;
 
@@ -156,7 +156,7 @@ class AnnonceControleurTest {
         String agent = connecter(AGENT);
         // Un membre créé pour ce test : son agenda est vide, quel que soit l'ordre d'exécution des tests
         String membre = corps(mvc.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"nom\":\"Test\",\"prenom\":\"Visiteur\",\"email\":\"visiteur.annonce@test.immoconnect.be\",\"motDePasse\":\"motdepasse123\"}"))
+                        .content("{\"nom\":\"Test\",\"prenom\":\"Visiteur\",\"email\":\"visiteur.annonce@test.immoconnect.be\",\"motDePasse\":\"Visite-Bxl-2026\",\"cguAcceptees\":true}"))
                 .andExpect(status().isCreated())).get("jeton").asString();
         int id = corps(creer(agent).andExpect(status().isCreated())).get("id").asInt();
         televerser(agent, id, image("jpg", 800, 600), "facade.jpg", null).andExpect(status().isCreated());
@@ -270,7 +270,27 @@ class AnnonceControleurTest {
                 .andExpect(jsonPath("$.champs.superficie").isNotEmpty())
                 .andExpect(jsonPath("$.champs.nbChambres").isNotEmpty())
                 .andExpect(jsonPath("$.champs.codePostal").isNotEmpty())
-                .andExpect(jsonPath("$.champs.latitude").isNotEmpty());
+                .andExpect(jsonPath("$.champs.latitude").isNotEmpty())
+                .andExpect(jsonPath("$.champs.peb").value("la classe PEB est obligatoire"));
+    }
+
+    /** AG6 : chaque consultation publique de la fiche compte une vue ; l'agent qui relit son annonce, non. */
+    @Test
+    void lesVuesDeLaFichePubliqueSeComptentPourLeTableauDeBord() throws Exception {
+        String agent = connecter(AGENT);
+        int bien = corps(mvc.perform(get("/api/v1/agents/moi/biens").header("Authorization", "Bearer " + agent))
+                .andExpect(status().isOk())).valueStream()
+                .filter(b -> "disponible".equals(b.get("statut").asString())).findFirst().orElseThrow().get("id").asInt();
+        long avant = corps(mvc.perform(get("/api/v1/agents/moi/biens/" + bien).header("Authorization", "Bearer " + agent))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.peb").isNotEmpty())).get("indicateurs").get("vues").asLong();
+
+        mvc.perform(get("/api/v1/biens/" + bien)).andExpect(status().isOk()).andExpect(jsonPath("$.peb").isNotEmpty());
+        mvc.perform(get("/api/v1/biens/" + bien).header("Authorization", "Bearer " + connecter(MEMBRE))).andExpect(status().isOk());
+        mvc.perform(get("/api/v1/biens/" + bien).header("Authorization", "Bearer " + agent)).andExpect(status().isOk());
+
+        mvc.perform(get("/api/v1/agents/moi/biens/" + bien).header("Authorization", "Bearer " + agent))
+                .andExpect(jsonPath("$.indicateurs.vues").value(avant + 2));
     }
 
     @Test

@@ -67,6 +67,10 @@ public class Bien {
     @Column(name = "nb_chambres", nullable = false)
     private Integer nbChambres;
 
+    /** Classe énergétique, affichée sur chaque carte et chaque fiche (obligation légale, chapitre 11). */
+    @Column(nullable = false, columnDefinition = "ENUM('A++','A+','A','B','C','D','E','F','G')")
+    private Peb peb;
+
     @Column(nullable = false, length = 150)
     private String adresse;
 
@@ -88,6 +92,11 @@ public class Bien {
 
     @Column(name = "publie_le", nullable = false)
     private LocalDate publieLe;
+
+    /** Vues de la fiche publique (cas AG6), incrémentées en base par le dépôt : jamais lues puis réécrites. */
+    @Column(name = "nb_vues", nullable = false)
+    @Setter(AccessLevel.NONE)
+    private Integer nbVues = 0;
 
     /** Composition 1..* : les photos n'existent pas sans leur bien (ON DELETE CASCADE, règle RA10). */
     @OneToMany(mappedBy = "bien", cascade = CascadeType.ALL, orphanRemoval = true)

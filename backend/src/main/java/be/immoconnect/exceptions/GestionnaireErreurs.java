@@ -6,8 +6,10 @@ import be.immoconnect.paiement.PasserellePaiement.SignatureInvalideException;
 import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
@@ -94,6 +96,34 @@ public class GestionnaireErreurs {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     ProblemDetail parametreInvalide(MethodArgumentTypeMismatchException e) {
         return probleme(HttpStatus.BAD_REQUEST, "Requête invalide", "Le paramètre « " + e.getName() + " » est invalide", "requete-invalide");
+    }
+
+    /** Force brute : 429, avec le délai d'attente dans Retry-After. */
+    @ExceptionHandler(TropDeTentativesException.class)
+    ResponseEntity<ProblemDetail> tropDeTentatives(TropDeTentativesException e) {
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                .header(HttpHeaders.RETRY_AFTER, String.valueOf(e.getSecondesAvantReprise()))
+                .body(probleme(HttpStatus.TOO_MANY_REQUESTS, "Trop de tentatives", e.getMessage(), "trop-de-tentatives"));
+    }
+
+    /** Lien ou code d'un e-mail inconnu, expiré ou déjà utilisé : 400, sans dire lequel. */
+    @ExceptionHandler(JetonInvalideException.class)
+    ProblemDetail jetonInvalide(JetonInvalideException e) {
+        return probleme(HttpStatus.BAD_REQUEST, "Lien invalide", e.getMessage(), "lien-invalide");
+    }
+
+    /** Code du double facteur incorrect : 401, avec les essais restants. */
+    @ExceptionHandler(CodeInvalideException.class)
+    ProblemDetail codeInvalide(CodeInvalideException e) {
+        ProblemDetail pd = probleme(HttpStatus.UNAUTHORIZED, "Code incorrect", e.getMessage(), "code-invalide");
+        pd.setProperty("essaisRestants", e.getEssaisRestants());
+        return pd;
+    }
+
+    /** Identifiants corrects mais adresse non confirmée : 403, le lien d'activation peut être renvoyé. */
+    @ExceptionHandler(CompteNonActiveException.class)
+    ProblemDetail compteNonActive(CompteNonActiveException e) {
+        return probleme(HttpStatus.FORBIDDEN, "Compte non activé", e.getMessage(), "compte-non-active");
     }
 
     /** Identifiants invalides : réponse 401 générique, sans révéler si l'adresse existe (livrable 16 §2.2). */

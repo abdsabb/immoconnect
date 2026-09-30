@@ -1,5 +1,6 @@
 package be.immoconnect.dto;
 
+import be.immoconnect.entities.Peb;
 import be.immoconnect.entities.TypeOffre;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -9,6 +10,6 @@ import java.time.LocalDate;
  * l'adresse, l'agent ou un identifiant. Pour une location, le prix est le loyer mensuel.
  */
 public record BienOuvert(TypeOffre typeOffre, String categorie, String ville, String codePostal, BigDecimal prix,
-                         BigDecimal superficie, Integer nbChambres, BigDecimal latitude, BigDecimal longitude,
+                         BigDecimal superficie, Integer nbChambres, Peb peb, BigDecimal latitude, BigDecimal longitude,
                          LocalDate publieLe) {
 }

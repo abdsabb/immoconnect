@@ -4,7 +4,8 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
 import { api } from '../services/api'
-import { Champ, BoutonPrincipal, classeInput, erreursApi } from '../components/Formulaire'
+import { exporterMesDonnees } from '../services/configuration'
+import { Champ, BoutonPrincipal, classeInput, erreursApi, reglesMotDePasse } from '../components/Formulaire'
 
 // Espace membre : profil (M6), mot de passe, désinscription RGPD (M7 — soft delete RA11)
 export default function Profil() {
@@ -13,8 +14,11 @@ export default function Profil() {
   const navigate = useNavigate()
   const [message, setMessage] = useState(null)
   const [erreur, setErreur] = useState(null)
+  const [erreurExport, setErreurExport] = useState(null)
+  const [exportEnCours, setExportEnCours] = useState(false)
 
-  const profil = useForm({ defaultValues: { nom: utilisateur?.nom, prenom: utilisateur?.prenom, telephone: '', langue: utilisateur?.langue ?? 'fr' } })
+  const profil = useForm({ defaultValues: { nom: utilisateur?.nom, prenom: utilisateur?.prenom, telephone: '', langue: utilisateur?.langue ?? 'fr',
+    doubleFacteur: utilisateur?.doubleFacteur ?? false, consentementCommunications: utilisateur?.consentementCommunications ?? false } })
   const mdp = useForm()
 
   const enregistrerProfil = async (valeurs) => {
@@ -39,6 +43,25 @@ export default function Profil() {
       setMessage(t('profil.motDePasseChange'))
     } catch (e) {
       setErreur(erreursApi(e, t).message)
+    }
+  }
+
+  // Portabilité (article 20 du RGPD) : le fichier JSON renvoyé par l'API est proposé au téléchargement
+  const telechargerMesDonnees = async () => {
+    setErreurExport(null)
+    setExportEnCours(true)
+    try {
+      const fichier = await exporterMesDonnees()
+      const url = URL.createObjectURL(fichier)
+      const lien = document.createElement('a')
+      lien.href = url
+      lien.download = 'immoconnect-mes-donnees.json'
+      lien.click()
+      URL.revokeObjectURL(url)
+    } catch (e) {
+      setErreurExport(erreursApi(e, t).message)
+    } finally {
+      setExportEnCours(false)
     }
   }
 
@@ -82,6 +105,23 @@ export default function Profil() {
             </select>
           </Champ>
         </div>
+        <fieldset className="space-y-3 rounded-lg bg-perle p-4">
+          <legend className="px-1 text-sm font-semibold text-nuit">{t('profil.securiteEtChoix')}</legend>
+          <label className="flex items-start gap-3 text-sm text-gray-700">
+            <input type="checkbox" className="mt-1" disabled={utilisateur.doubleFacteurImpose} {...profil.register('doubleFacteur')} />
+            <span>
+              <strong className="block text-nuit">{t('profil.doubleFacteur')}</strong>
+              {utilisateur.doubleFacteurImpose ? t('profil.doubleFacteurImpose') : t('profil.doubleFacteurExplication')}
+            </span>
+          </label>
+          <label className="flex items-start gap-3 text-sm text-gray-700">
+            <input type="checkbox" className="mt-1" {...profil.register('consentementCommunications')} />
+            <span>
+              <strong className="block text-nuit">{t('profil.communications')}</strong>
+              {t('profil.communicationsExplication')}
+            </span>
+          </label>
+        </fieldset>
         <BoutonPrincipal chargement={profil.formState.isSubmitting}>{t('profil.enregistrer')}</BoutonPrincipal>
       </form>
 
@@ -93,10 +133,21 @@ export default function Profil() {
         </Champ>
         <Champ label={t('profil.nouveauMotDePasse')} erreur={mdp.formState.errors.nouveauMotDePasse?.message}>
           <input type="password" autoComplete="new-password" className={classeInput(mdp.formState.errors.nouveauMotDePasse)}
-            {...mdp.register('nouveauMotDePasse', { required: t('auth.requis'), minLength: { value: 8, message: t('auth.motDePasseCourt') } })} />
+            {...mdp.register('nouveauMotDePasse', reglesMotDePasse(t))} />
         </Champ>
+        <p className="text-xs text-gray-500">{t('auth.motDePasseRegles')}</p>
         <BoutonPrincipal chargement={mdp.formState.isSubmitting}>{t('profil.changerMotDePasse')}</BoutonPrincipal>
       </form>
+
+      <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-3">
+        <h2 className="text-xl font-bold text-nuit">{t('profil.mesDonnees')}</h2>
+        <p className="text-sm text-gray-700">{t('profil.mesDonneesExplication')}</p>
+        {erreurExport && <p role="alert" className="text-sm text-erreur">{erreurExport}</p>}
+        <button type="button" onClick={telechargerMesDonnees} disabled={exportEnCours}
+          className="border-2 border-nuit text-nuit hover:bg-perle font-titre font-bold rounded-lg px-4 py-2 disabled:opacity-60">
+          {t('profil.telechargerMesDonnees')}
+        </button>
+      </div>
 
       {utilisateur.role === 'membre' && (
         <div className="border border-erreur/40 rounded-xl p-6 space-y-3">

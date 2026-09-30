@@ -69,7 +69,7 @@
       },
       "premium": {
         "titre": "’s Avonds en in het weekend: {{prix}}",
-        "texte": "Beveiligde betaling met kaart, bezoek meteen bevestigd. Terugbetaald als het bezoek geannuleerd wordt."
+        "texte": "Beveiligde betaling met kaart of Bancontact, bezoek meteen bevestigd. Terugbetaald als u tot 24 u vooraf annuleert."
       },
       "bouton": "Een pand vinden om te bezoeken"
     },
@@ -143,7 +143,10 @@
     "agent": "Uw makelaar",
     "introuvable": "Dit pand bestaat niet of is niet meer beschikbaar.",
     "retour": "Terug naar de panden",
-    "loyerParMois": "{{prix}} / maand"
+    "loyerParMois": "{{prix}} / maand",
+    "peb": "EPC",
+    "pebLabel": "EPC-klasse",
+    "pebTitre": "Energieprestatiecertificaat: klasse {{classe}}"
   },
   "statut": {
     "disponible": "Beschikbaar",
@@ -156,7 +159,8 @@
     "mentions": "Wettelijke vermeldingen",
     "confidentialite": "Privacy",
     "osm": "© OpenStreetMap-bijdragers",
-    "credits": "Fotocredits"
+    "credits": "Fotocredits",
+    "conditions": "Algemene voorwaarden"
   },
   "auth": {
     "connexionTitre": "Aanmelden",
@@ -174,7 +178,41 @@
     "motDePasseCourt": "Minstens 8 tekens",
     "pasDeCompte": "Nog geen account?",
     "dejaCompte": "Al geregistreerd?",
-    "donnees": "Uw gegevens dienen alleen om uw account te laten werken. De details staan op de pagina"
+    "donnees": "Uw gegevens dienen alleen om uw account te laten werken. De details staan op de pagina",
+    "motDePasseCasse": "Meng kleine letters en hoofdletters",
+    "motDePasseChiffre": "Voeg minstens één cijfer toe",
+    "motDePasseRegles": "Minstens 8 tekens, met een kleine letter, een hoofdletter en een cijfer. Een wachtwoord uit een bekend datalek wordt geweigerd.",
+    "motDePasseOublie": "Wachtwoord vergeten?",
+    "retourConnexion": "Terug naar aanmelden",
+    "valider": "Bevestigen",
+    "recommencer": "Opnieuw aanmelden",
+    "codeTitre": "Aanmeldcode",
+    "codeSousTitre": "Er is zopas een code van zes cijfers naar {{email}} gestuurd. Hij is tien minuten geldig.",
+    "code": "Code uit de e-mail",
+    "codeFormat": "Zes cijfers",
+    "renvoyerActivation": "Activeringslink opnieuw sturen",
+    "activationRenvoyee": "Als dit adres bij een niet-geactiveerde account hoort, is zopas een nieuwe link vertrokken.",
+    "oubliTitre": "Wachtwoord vergeten",
+    "oubliSousTitre": "Geef uw e-mailadres op: u ontvangt een link om een nieuw wachtwoord te kiezen.",
+    "oubliBouton": "Link sturen",
+    "oubliEnvoye": "Als dit adres bij een account hoort, is zopas een e-mail vertrokken. De link is dertig minuten geldig.",
+    "reinitialisationTitre": "Nieuw wachtwoord",
+    "reinitialisationBouton": "Nieuw wachtwoord opslaan",
+    "reinitialisationFaite": "Uw wachtwoord is gewijzigd en al uw sessies zijn afgesloten. U kunt zich aanmelden.",
+    "activationTitre": "Account activeren",
+    "activationFaite": "Uw adres is bevestigd: uw account is actief en u bent aangemeld.",
+    "activationLienManquant": "Deze link is onvolledig.",
+    "activationAide": "De link is misschien al gebruikt of verlopen. Probeer u aan te melden: een nieuwe link kan opnieuw gestuurd worden.",
+    "verifiezTitre": "Controleer uw e-mails",
+    "verifiezTexte": "Er is zopas een e-mail naar {{email}} vertrokken. Open de link erin om uw account te activeren; hij is 24 uur geldig.",
+    "verifiezDemo": "Demonstratiesite: de e-mails worden niet naar uw adres gestuurd, ze komen toe in de demonstratiemailbox.",
+    "verifiezBoite": "Demonstratiemailbox openen",
+    "cguAvant": "Ik aanvaard de",
+    "cgu": "algemene voorwaarden",
+    "cguEntre": "en ik heb het",
+    "cguRequises": "De algemene voorwaarden moeten aanvaard worden.",
+    "consentement": "Ik wil informatie ontvangen over nieuwe panden en het nieuws van het kantoor. Deze keuze kan altijd in het profiel gewijzigd worden.",
+    "cguConfidentialite": "privacybeleid gelezen"
   },
   "profil": {
     "titre": "Hallo {{prenom}}",
@@ -189,7 +227,16 @@
     "desinscription": "Mijn account verwijderen",
     "desinscriptionExplication": "Conform de AVG worden uw persoonsgegevens geanonimiseerd en uw favorieten verwijderd. De historiek van uw afspraken en betalingen blijft zonder identiteit bewaard (boekhoudkundige verplichtingen).",
     "supprimerCompte": "Mijn account definitief verwijderen",
-    "confirmerDesinscription": "Het verwijderen van uw account bevestigen? Dit kan niet ongedaan worden gemaakt."
+    "confirmerDesinscription": "Het verwijderen van uw account bevestigen? Dit kan niet ongedaan worden gemaakt.",
+    "securiteEtChoix": "Beveiliging en communicatie",
+    "doubleFacteur": "Aanmelden in twee stappen",
+    "doubleFacteurExplication": "Bij elke aanmelding wordt naast het wachtwoord een per e-mail gestuurde code gevraagd.",
+    "doubleFacteurImpose": "Verplicht voor uw rol: bij elke aanmelding wordt een per e-mail gestuurde code gevraagd.",
+    "communications": "Informatie van het kantoor",
+    "communicationsExplication": "Informatie ontvangen over nieuwe panden en nieuws. Altijd intrekbaar.",
+    "mesDonnees": "Mijn gegevens",
+    "telechargerMesDonnees": "Mijn gegevens downloaden (JSON)",
+    "mesDonneesExplication": "Ontvang een kopie van alle gegevens die de site over u bewaart: account, favorieten, bezoeken, betalingen, berichten en geschiedenis (recht op overdraagbaarheid, AVG)."
   },
   "rdv": {
     "titre": "Afspraak maken",
@@ -214,7 +261,7 @@
     "date": "Datum van het bezoek",
     "prix": "Prijs van het tijdslot",
     "explicationStandard": "Uw aanvraag wordt naar de makelaar gestuurd, die ze bevestigt of een ander moment voorstelt.",
-    "explicationPremium": "Een premium tijdslot is bevestigd zodra het betaald is. Bij annulering wordt u terugbetaald.",
+    "explicationPremium": "Een premium tijdslot is bevestigd zodra het betaald is. U wordt terugbetaald als u tot 24 uur vóór het bezoek annuleert.",
     "envoyerDemande": "Mijn aanvraag versturen",
     "passerAuPaiement": "Naar de betaling",
     "changerCreneau": "Een ander tijdslot kiezen",
@@ -257,7 +304,16 @@
       "honorer": "Bezoek afgelegd"
     },
     "confirmerAnnulation": "Deze afspraak annuleren?",
-    "confirmerAnnulationPayee": "Deze afspraak annuleren? De betaling van het premium tijdslot wordt terugbetaald."
+    "confirmerAnnulationPayee": "Deze afspraak annuleren? De betaling van het premium tijdslot wordt terugbetaald.",
+    "annulationGratuite": "Terugbetaalde annulering",
+    "remboursableJusquA": "tot {{date}}",
+    "annulationSansRemboursement": "niet meer mogelijk: minder dan 24 u vóór het bezoek wordt het tijdstip niet terugbetaald",
+    "confirmerAnnulationTardive": "Deze afspraak annuleren? Minder dan 24 uur vóór het bezoek wordt het premium tijdstip niet terugbetaald.",
+    "affichage": "Weergave",
+    "vue": {
+      "liste": "Lijst",
+      "agenda": "Agenda"
+    }
   },
   "favori": {
     "titre": "Mijn favorieten",
@@ -339,7 +395,11 @@
     "photoFormat": "Alleen JPEG- en PNG-foto's worden aanvaard.",
     "photoTropLourde": "Een foto weegt hoogstens 5 MB.",
     "typeOffre": "Type aanbod",
-    "loyer": "Maandelijkse huur (€)"
+    "loyer": "Maandelijkse huur (€)",
+    "peb": "EPC-klasse",
+    "pebChoisir": "Kiezen…",
+    "pebAide": "De energieklasse van het EPC is verplicht in elke vastgoedadvertentie.",
+    "vues": "Weergaven"
   },
   "blog": {
     "titre": "Blog",
@@ -363,7 +423,10 @@
       "articles": "Blog",
       "categories": "Categorieën",
       "traductions": "Talen",
-      "clesApi": "API-sleutels"
+      "clesApi": "API-sleutels",
+      "signalements": "Meldingen",
+      "parametres": "Instellingen",
+      "securite": "Beveiliging"
     },
     "role": {
       "membre": "Lid",
@@ -475,6 +538,61 @@
       "archive": "Artikel gearchiveerd.",
       "supprime": "Artikel verwijderd.",
       "confirmerSuppression": "« {{titre}} » definitief verwijderen?"
+    },
+    "signalement": {
+      "explication": "Door gebruikers gemelde inhoud. Verwijderen wist het bericht, haalt de advertentie offline of archiveert het artikel; behouden laat de inhoud staan. Elke beslissing wordt gemotiveerd, is definitief en wordt gelogd.",
+      "statuts": {
+        "ouvert": "Te behandelen",
+        "retire": "Verwijderd",
+        "conserve": "Behouden"
+      },
+      "aucun": "Geen meldingen in deze lijst.",
+      "date": "Datum",
+      "contenu": "Inhoud",
+      "motif": "Reden",
+      "auteur": "Gemeld door",
+      "decision": "Beslissing",
+      "motivation": "Motivering van de beslissing (verplicht)",
+      "motivationRequise": "Motiveer de beslissing voordat u beslist.",
+      "retirer": "Verwijderen",
+      "conserver": "Behouden",
+      "retireFait": "Inhoud verwijderd en beslissing opgeslagen.",
+      "conserveFait": "Inhoud behouden en beslissing opgeslagen.",
+      "types": {
+        "message": "Bericht",
+        "bien": "Advertentie",
+        "article": "Artikel"
+      }
+    },
+    "parametre": {
+      "explication": "Identiteit van het kantoor op de site en talen die de bezoekers krijgen. Betaal- en e-mailsleutels worden hier niet ingesteld: die blijven op de server.",
+      "cles": {
+        "agence.nom": "Naam van het kantoor",
+        "agence.slogan": "Slogan",
+        "agence.adresse": "Adres",
+        "agence.telephone": "Telefoon",
+        "agence.email": "E-mailadres",
+        "agence.horaires": "Openingsuren",
+        "langues.actives": "Actieve talen"
+      },
+      "languesExplication": "Een uitgeschakelde taal verdwijnt uit de keuzelijst; het Frans, taal van de referentieteksten, blijft altijd actief.",
+      "enregistrer": "Opslaan",
+      "enregistre": "Instellingen opgeslagen.",
+      "derniereModification": "Laatst gewijzigd door {{qui}} op {{quand}}"
+    },
+    "alerte": {
+      "explication": "Waarschuwingen van de inbraakdetectie. Een adres dat mislukte aanmeldingen opstapelt of veel accounts probeert, wordt vijftien minuten uitgesloten van het aanmelden; een ingetrokken API-sleutel die nog gebruikt wordt, wordt gemeld.",
+      "aucune": "Geen waarschuwingen.",
+      "date": "Datum",
+      "type": "Type",
+      "ip": "IP-adres",
+      "detail": "Detail",
+      "types": {
+        "rafale_echecs": "Reeks mislukte aanmeldingen",
+        "enumeration": "Opsomming van accounts",
+        "cle_revoquee": "Ingetrokken API-sleutel gebruikt"
+      },
+      "procedure": "Procedure: het auditlogboek nakijken, het adres blokkeren of de sleutel intrekken, de impact inschatten, documenteren. Gaat het om persoonsgegevens: melding aan de Gegevensbeschermingsautoriteit binnen 72 uur."
     }
   },
   "erreur": {
@@ -484,7 +602,11 @@
     "conflit-etat": "Deze actie is niet meer mogelijk voor deze afspraak.",
     "interdit": "U mag deze actie niet uitvoeren.",
     "fichier-trop-volumineux": "Een foto weegt hoogstens 5 MB.",
-    "quota-depasse": "Te veel oproepen: probeer het over een minuut opnieuw."
+    "quota-depasse": "Te veel oproepen: probeer het over een minuut opnieuw.",
+    "trop-de-tentatives": "Te veel pogingen. Wacht enkele minuten voor u het opnieuw probeert.",
+    "lien-invalide": "Deze link of code is niet meer geldig.",
+    "code-invalide": "Verkeerde code.",
+    "compte-non-active": "Bevestig eerst uw e-mailadres: open de link die u bij de inschrijving ontving."
   },
   "credits": {
     "titre": "Fotocredits",
@@ -509,5 +631,24 @@
   "offre": {
     "vente": "Te koop",
     "location": "Te huur"
+  },
+  "langue": {
+    "fr": "Français",
+    "nl": "Nederlands",
+    "en": "English"
+  },
+  "signalement": {
+    "bouton": "Deze inhoud melden",
+    "titre": "Inhoud melden",
+    "motif": "Reden",
+    "description": "Leg het probleem uit",
+    "envoyer": "Melding versturen",
+    "merci": "Bedankt, uw melding wordt door het team van de site onderzocht.",
+    "motifs": {
+      "illicite": "Onwettige inhoud",
+      "arnaque": "Oplichting of misleiding",
+      "indesirable": "Reclame of ongewenste inhoud",
+      "autre": "Andere"
+    }
   }
 }

@@ -49,6 +49,13 @@ public class ServiceProfil {
         if (utilisateur instanceof Membre membre) {
             membre.setTelephone(requete.telephone() == null || requete.telephone().isBlank() ? null : requete.telephone().trim());
         }
+        // Un membre choisit son double facteur ; un agent ou un administrateur ne peut pas y renoncer
+        if (requete.doubleFacteur() != null && utilisateur instanceof Membre) {
+            utilisateur.setDoubleFacteur(requete.doubleFacteur());
+        }
+        if (requete.consentementCommunications() != null) {
+            utilisateur.setConsentementCommunications(requete.consentementCommunications());
+        }
         audit.enregistrer(utilisateur, "modification_profil", "utilisateur#" + id, ip);
         return UtilisateurResume.depuis(utilisateur);
     }

@@ -1,11 +1,13 @@
-import { useState } from 'react'
+import { Suspense, lazy, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import { useTitrePage } from '../services/titre'
 import { cheminListe, rechercherBiens, TYPES_OFFRE } from '../services/biens'
 import { chargerCategories } from '../services/annonces'
 import CarteBien from '../components/CarteBien'
-import CarteResultats from '../components/CarteResultats'
+// La carte (Leaflet) se charge à part : la liste s'affiche sans l'attendre
+const CarteResultats = lazy(() => import('../components/CarteResultats'))
 import LienFlux from '../components/LienFlux'
 
 const CRITERES = ['categorieId', 'ville', 'prixMin', 'prixMax', 'chambresMin', 'superficieMin', 'statut']
@@ -76,6 +78,7 @@ export default function Biens({ typeOffre: typeImpose }) {
   const location = typeOffre === 'location'
   const champ = 'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-nuit'
   const titre = t(typeImpose ? `biens.titre_${typeImpose}` : 'biens.titre')
+  useTitrePage(titre)
   const filtresActifs = CRITERES.some((nom) => criteres[nom] !== '') || (!typeImpose && typeChoisi !== '')
 
   return (
@@ -197,7 +200,9 @@ export default function Biens({ typeOffre: typeImpose }) {
           <aside className="lg:col-span-2 xl:col-span-1 xl:sticky xl:top-4" aria-label={t('biens.carte')}>
             <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
               <h2 className="px-1 pb-2 font-titre font-bold text-nuit">{t('biens.carte')}</h2>
-              <CarteResultats biens={data?.contenu ?? []} actif={survol} surSurvol={setSurvol} className="h-80 xl:h-[32rem]" />
+              <Suspense fallback={<div className="h-80 xl:h-[32rem] rounded-xl bg-perle" aria-hidden="true" />}>
+                <CarteResultats biens={data?.contenu ?? []} actif={survol} surSurvol={setSurvol} className="h-80 xl:h-[32rem]" />
+              </Suspense>
             </div>
           </aside>
         </div>
