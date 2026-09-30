@@ -1,13 +1,11 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useForm } from 'react-hook-form'
-import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
-import { api } from '../services/api'
+import { useConfiguration } from '../services/configuration'
 import { Champ, BoutonPrincipal, classeInput, erreursApi, reglesMotDePasse } from '../components/Formulaire'
 
-const chargerConfiguration = () => api.get('/configuration').then((r) => r.data)
 
 // Cas V7 : s'inscrire en tant que membre — validation côté client miroir du dictionnaire de données,
 // la validation faisant autorité restant celle du serveur (422 avec le détail par champ).
@@ -18,7 +16,7 @@ export default function Inscription() {
   const navigate = useNavigate()
   const [erreurApi, setErreurApi] = useState(null)
   const [enAttente, setEnAttente] = useState(null)
-  const configuration = useQuery({ queryKey: ['configuration'], queryFn: chargerConfiguration, staleTime: Infinity })
+  const configuration = useConfiguration()
   const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm({
     defaultValues: { langue: i18n.resolvedLanguage ?? 'fr', cguAcceptees: false, consentementCommunications: false },
   })

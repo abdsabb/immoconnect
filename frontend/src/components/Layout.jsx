@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
 import { useConversations } from '../services/messages'
+import { useConfiguration } from '../services/configuration'
 
 const LANGUES = ['fr', 'nl', 'en']
 
@@ -95,6 +96,13 @@ export default function Layout() {
   const { t, i18n } = useTranslation()
   const { estConnecte, utilisateur, deconnecter } = useAuth()
   const naviguer = useNavigate()
+  // Identité de l'agence et langues actives, réglées par l'administrateur (cas A5 et A6)
+  const site = useConfiguration().data?.site
+  const langues = LANGUES.filter((l) => !site?.languesActives || site.languesActives.includes(l))
+  useEffect(() => {
+    // Une langue désactivée par l'administrateur ne reste pas affichée : retour au français
+    if (site?.languesActives && !site.languesActives.includes(i18n.resolvedLanguage)) i18n.changeLanguage('fr')
+  }, [site, i18n])
   // Textes du site gérés par l'administrateur (cas A6) ; à défaut, le texte livré avec l'interface
   const contenu = (cle, repli) => t(`contenu:${cle}`, { defaultValue: t(repli) })
   // Sur téléphone, la navigation se replie derrière un bouton ; un lien choisi la referme
@@ -127,7 +135,7 @@ export default function Layout() {
           </NavLink>
           <nav aria-label="Navigation principale" className="hidden md:flex items-center gap-1">{liens(false)}</nav>
           <div className="flex items-center gap-1" role="group" aria-label="Langue">
-            {LANGUES.map((l) => (
+            {langues.map((l) => (
               <button
                 key={l}
                 type="button"
@@ -160,7 +168,11 @@ export default function Layout() {
 
       <footer className="bg-nuit text-white/80 text-sm">
         <div className="mx-auto max-w-6xl px-4 py-6 flex flex-wrap justify-between gap-2">
-          <span>© {new Date().getFullYear()} ImmoConnect — Bruxelles</span>
+          <span>
+            © {new Date().getFullYear()} {site?.nom ?? 'ImmoConnect'}
+            {site?.adresse && <span className="hidden sm:inline"> — {site.adresse}</span>}
+            {site?.telephone && <span className="hidden sm:inline"> · <a href={`tel:${site.telephone.replace(/ /g, '')}`} className="hover:text-white">{site.telephone}</a></span>}
+          </span>
           <span className="flex gap-4">
             {/* Liens internes : un lien ordinaire rechargerait la page et fermerait la session, gardée en mémoire */}
             <NavLink to="/mentions-legales" className="hover:text-white">{contenu('footer.mentions', 'pied.mentions')}</NavLink>
