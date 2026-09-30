@@ -1,0 +1,53 @@
+package be.immoconnect.repositories;
+
+import be.immoconnect.entities.Bien;
+import be.immoconnect.entities.StatutBien;
+import be.immoconnect.entities.TypeOffre;
+import java.math.BigDecimal;
+import org.springframework.data.jpa.domain.Specification;
+
+/** Critères de la recherche multicritères (cas « Rechercher un bien »), composables entre eux. */
+public final class BienSpecifications {
+
+    private BienSpecifications() {
+    }
+
+    public static Specification<Bien> statut(StatutBien statut) {
+        return (racine, requete, cb) -> statut == null ? null : cb.equal(racine.get("statut"), statut);
+    }
+
+    public static Specification<Bien> typeOffre(TypeOffre typeOffre) {
+        return (racine, requete, cb) -> typeOffre == null ? null : cb.equal(racine.get("typeOffre"), typeOffre);
+    }
+
+    /** Début du nom de la commune, ou début de son code postal : « ixel » comme « 1050 ». */
+    public static Specification<Bien> ville(String ville) {
+        return (racine, requete, cb) -> {
+            if (ville == null || ville.isBlank()) {
+                return null;
+            }
+            String debut = ville.trim().toLowerCase() + "%";
+            return cb.or(cb.like(cb.lower(racine.get("ville")), debut), cb.like(racine.get("codePostal"), debut));
+        };
+    }
+
+    public static Specification<Bien> categorie(Integer categorieId) {
+        return (racine, requete, cb) -> categorieId == null ? null : cb.equal(racine.get("categorie").get("id"), categorieId);
+    }
+
+    public static Specification<Bien> prixMin(BigDecimal prixMin) {
+        return (racine, requete, cb) -> prixMin == null ? null : cb.greaterThanOrEqualTo(racine.get("prix"), prixMin);
+    }
+
+    public static Specification<Bien> prixMax(BigDecimal prixMax) {
+        return (racine, requete, cb) -> prixMax == null ? null : cb.lessThanOrEqualTo(racine.get("prix"), prixMax);
+    }
+
+    public static Specification<Bien> chambresMin(Integer chambres) {
+        return (racine, requete, cb) -> chambres == null ? null : cb.greaterThanOrEqualTo(racine.get("nbChambres"), chambres);
+    }
+
+    public static Specification<Bien> superficieMin(BigDecimal superficie) {
+        return (racine, requete, cb) -> superficie == null ? null : cb.greaterThanOrEqualTo(racine.get("superficie"), superficie);
+    }
+}

@@ -1,9 +1,9 @@
 package be.immoconnect.notification;
 
-import be.immoconnect.depot.RendezVousRepository;
-import be.immoconnect.entite.RendezVous;
-import be.immoconnect.entite.StatutPaiement;
-import be.immoconnect.entite.Utilisateur;
+import be.immoconnect.entities.RendezVous;
+import be.immoconnect.entities.StatutPaiement;
+import be.immoconnect.entities.Utilisateur;
+import be.immoconnect.repositories.RendezVousRepository;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;

@@ -1,7 +1,7 @@
 package be.immoconnect.stockage;
 
-import be.immoconnect.depot.PhotoRepository;
-import be.immoconnect.entite.Photo;
+import be.immoconnect.entities.Photo;
+import be.immoconnect.repositories.PhotoRepository;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;

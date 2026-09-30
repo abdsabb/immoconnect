@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import be.immoconnect.depot.PhotoRepository;
-import be.immoconnect.entite.Photo;
+import be.immoconnect.entities.Photo;
+import be.immoconnect.repositories.PhotoRepository;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
