@@ -110,7 +110,33 @@ Le niveau d'accès d'un administrateur limite ce qu'il peut faire dans le back-o
 les catégories et les traductions ; le gestionnaire gère en plus les comptes, le journal d'audit, les statistiques
 et les clés API ; le super-administrateur agit aussi sur les comptes des administrateurs.
 
+Les agents et les administrateurs se connectent en deux étapes : après le mot de passe, un code à six chiffres est
+envoyé par e-mail. En développement, il se lit dans Mailpit (http://localhost:8025) ; en production, dans la boîte
+de démonstration `/courriels/`. Les comptes créés depuis le site reçoivent un lien d'activation au même endroit.
+
 Les photos téléversées sont enregistrées dans `backend/stockage/` (variable `STORAGE_DIR`), hors du dépôt.
+
+### Sécurité des comptes
+
+- **Sessions** : le jeton d'accès (JWT HS256) vit 15 minutes ; un cookie de session `immoconnect_session` (HttpOnly,
+  Secure, SameSite=Strict, limité à `/api/v1/auth`) le renouvelle pendant 14 jours. Le cookie est tourné à chaque
+  renouvellement ; la réutilisation d'un ancien cookie ferme toutes les sessions du compte. Les jetons ne sont
+  stockés qu'en empreinte SHA-256 (table `jeton`).
+- **Mots de passe** : 8 à 72 caractères, minuscules, majuscules et un chiffre, refusés s'ils figurent dans une fuite
+  connue (Have I Been Pwned, par k-anonymat : cinq caractères de l'empreinte SHA-1 partent, jamais le mot de passe ;
+  repli sur une liste embarquée si le service est injoignable). Hachage bcrypt.
+- **Double facteur** : code à six chiffres par e-mail, valable 10 minutes, cinq essais ; imposé aux agents et aux
+  administrateurs, au choix pour les membres (profil).
+- **Blocage** : après 5 échecs, le compte est verrouillé 1 minute, puis le double à chaque série, jusqu'à 15 minutes ;
+  une adresse inconnue est bloquée de la même façon, sans révéler qu'elle est inconnue ; 10 connexions par minute et
+  par adresse IP, au-delà `429` avec `Retry-After`.
+- **Activation et réinitialisation** : lien d'activation valable 24 heures, lien de réinitialisation 30 minutes, à
+  usage unique ; la réinitialisation ferme toutes les sessions et prévient par e-mail.
+- **Inscription** : acceptation des conditions générales obligatoire et horodatée (`cgu_acceptees_le`), consentement
+  aux communications distinct.
+
+Ces mécanismes se règlent dans `application.yml` (`immoconnect.securite.*`) et par les variables
+`ACTIVATION_PAR_COURRIEL`, `DOUBLE_FACTEUR`, `MOTS_DE_PASSE_COMPROMIS` et `COOKIE_SECURE` (voir `.env.example`).
 
 ### Biens à vendre et biens à louer
 
@@ -144,7 +170,10 @@ page `/credits-photos`.
 | GET | `/api/v1/biens` — recherche multicritères paginée (type d'offre, ville, catégorie, prix, chambres, superficie, tri) | public |
 | GET | `/api/v1/biens/{id}` — détail, photos, agent (adresse exacte masquée) | public |
 | GET | `/api/v1/traductions/{fr\|nl\|en}` — dictionnaire d'interface | public |
-| POST | `/api/v1/auth/register` · `/api/v1/auth/login` — inscription, jeton JWT | public |
+| POST | `/api/v1/auth/register` · `/api/v1/auth/login` — inscription (202 si activation par e-mail), connexion (202 et défi si second facteur) | public |
+| POST | `/api/v1/auth/login/code` · `/auth/refresh` · `/auth/logout` — code du second facteur, renouvellement par le cookie de session, déconnexion | public |
+| POST | `/api/v1/auth/mot-de-passe-oublie` · `/auth/reinitialisation` · `/auth/activation` · `/auth/activation/renvoi` — liens à usage unique reçus par e-mail | public |
+| GET | `/api/v1/configuration` — options publiques : activation, double facteur, boîte de démonstration | public |
 | GET / PATCH / DELETE | `/api/v1/auth/me` — profil, modification, désinscription (soft delete RA11) | JWT |
 | PUT | `/api/v1/auth/me/mot-de-passe` | JWT |
 | GET | `/api/v1/biens/{id}/creneaux` — créneaux de visite libres, standard et premium | JWT membre |
