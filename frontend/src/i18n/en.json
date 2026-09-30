@@ -308,7 +308,12 @@
     "annulationGratuite": "Refunded cancellation",
     "remboursableJusquA": "until {{date}}",
     "annulationSansRemboursement": "no longer possible: less than 24 h before the viewing, the slot is not refunded",
-    "confirmerAnnulationTardive": "Cancel this viewing? Less than 24 hours before the viewing, the premium slot is not refunded."
+    "confirmerAnnulationTardive": "Cancel this viewing? Less than 24 hours before the viewing, the premium slot is not refunded.",
+    "affichage": "View",
+    "vue": {
+      "liste": "List",
+      "agenda": "Calendar"
+    }
   },
   "favori": {
     "titre": "My favourites",

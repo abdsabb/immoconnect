@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
@@ -12,5 +13,12 @@ export default defineConfig({
       '/api': { target: 'http://localhost:8080', changeOrigin: true },
       '/storage': { target: 'http://localhost:8080', changeOrigin: true },
     },
+  },
+  // Tests des composants (Vitest + React Testing Library) : DOM simulé par jsdom, textes en français
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/tests/installation.js'],
+    css: false,
   },
 })

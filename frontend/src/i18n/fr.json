@@ -308,7 +308,12 @@
     "annulationGratuite": "Annulation remboursée",
     "remboursableJusquA": "jusqu’au {{date}}",
     "annulationSansRemboursement": "plus possible : moins de 24 h avant la visite, le créneau n’est pas remboursé",
-    "confirmerAnnulationTardive": "Annuler ce rendez-vous ? Moins de 24 heures avant la visite, le créneau premium n’est pas remboursé."
+    "confirmerAnnulationTardive": "Annuler ce rendez-vous ? Moins de 24 heures avant la visite, le créneau premium n’est pas remboursé.",
+    "affichage": "Affichage",
+    "vue": {
+      "liste": "Liste",
+      "agenda": "Agenda"
+    }
   },
   "favori": {
     "titre": "Mes favoris",

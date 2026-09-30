@@ -1,11 +1,12 @@
-import { useState } from 'react'
+import { Suspense, lazy, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
 import { chargerBien, cheminListe, formatPrixBien } from '../services/biens'
 import { Photo } from '../components/CarteBien'
-import CarteOSM from '../components/CarteOSM'
+// La carte (Leaflet) pèse lourd : elle se charge à part, après le contenu de la fiche
+const CarteOSM = lazy(() => import('../components/CarteOSM'))
 import BoutonFavori from '../components/BoutonFavori'
 import EtiquettePeb from '../components/EtiquettePeb'
 import BoutonSignaler from '../components/BoutonSignaler'
@@ -77,7 +78,9 @@ export default function BienDetail() {
           <div>
             <h2 className="text-xl font-bold text-nuit">{t('bien.localisation')}</h2>
             <p className="mt-1 text-sm text-gray-500">{t('bien.adresseApres')}</p>
-            <CarteOSM latitude={bien.latitude} longitude={bien.longitude} titre={bien.titre} className="mt-3 h-80" />
+            <Suspense fallback={<div className="mt-3 h-80 rounded-xl bg-perle" aria-hidden="true" />}>
+              <CarteOSM latitude={bien.latitude} longitude={bien.longitude} titre={bien.titre} className="mt-3 h-80" />
+            </Suspense>
           </div>
         </div>
 

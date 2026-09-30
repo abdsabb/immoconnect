@@ -308,7 +308,12 @@
     "annulationGratuite": "Terugbetaalde annulering",
     "remboursableJusquA": "tot {{date}}",
     "annulationSansRemboursement": "niet meer mogelijk: minder dan 24 u vóór het bezoek wordt het tijdstip niet terugbetaald",
-    "confirmerAnnulationTardive": "Deze afspraak annuleren? Minder dan 24 uur vóór het bezoek wordt het premium tijdstip niet terugbetaald."
+    "confirmerAnnulationTardive": "Deze afspraak annuleren? Minder dan 24 uur vóór het bezoek wordt het premium tijdstip niet terugbetaald.",
+    "affichage": "Weergave",
+    "vue": {
+      "liste": "Lijst",
+      "agenda": "Agenda"
+    }
   },
   "favori": {
     "titre": "Mijn favorieten",

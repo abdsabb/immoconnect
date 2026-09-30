@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
 import { changerStatut, chargerRendezVous, formatHeure, formatJour, formatMontant } from '../services/rendezVous'
 import { erreursApi } from '../components/Formulaire'
+import AgendaAgent from '../components/AgendaAgent'
 
 // Badges alignés sur l'énumération StatutRendezVous (diagramme d'état-transition)
 const BADGES = {
@@ -43,6 +44,12 @@ export default function MesRendezVous() {
   const role = utilisateur?.role
   const queryClient = useQueryClient()
   const [erreur, setErreur] = useState(null)
+  const [vue, setVue] = useState('liste')
+  // Un clic sur l'agenda mène au rendez-vous dans la liste, où se prennent les décisions
+  const choisir = (id) => {
+    setVue('liste')
+    requestAnimationFrame(() => document.getElementById(`rdv-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }))
+  }
 
   // La clé porte l'identifiant du compte : une liste n'est jamais servie à un autre utilisateur
   const { data, isPending, isError } = useQuery({
@@ -77,7 +84,19 @@ export default function MesRendezVous() {
       {isPending && role !== 'admin' && <p className="mt-6 text-gray-500">{t('commun.chargement')}</p>}
       {isError && <p role="alert" className="mt-6 text-erreur">{t('commun.erreurReseau')}</p>}
 
-      {data && (
+      {data && role === 'agent' && (
+        <div role="group" aria-label={t('rdv.affichage')} className="mt-6 flex gap-2">
+          {['liste', 'agenda'].map((v) => (
+            <button key={v} type="button" onClick={() => setVue(v)} aria-pressed={vue === v}
+              className={`rounded-lg px-3 py-2 text-sm font-titre font-semibold ${vue === v ? 'bg-nuit text-white' : 'bg-perle text-nuit hover:bg-gray-200'}`}>
+              {t(`rdv.vue.${v}`)}
+            </button>
+          ))}
+        </div>
+      )}
+      {data && vue === 'agenda' && <AgendaAgent rendezVous={data} langue={langue} onChoix={choisir} />}
+
+      {data && vue === 'liste' && (
         <>
           <Liste titre={t('rdv.aVenir')} vide={t('rdv.aucunAVenir')} rendezVous={aVenir} role={role} langue={langue}
             executer={executer} enCours={transition.isPending} />
@@ -100,7 +119,7 @@ function Liste({ titre, vide, rendezVous, role, langue, executer, enCours }) {
       {rendezVous.length === 0 && <p className="mt-2 text-gray-600">{vide}</p>}
       <ul className="mt-3 space-y-3">
         {rendezVous.map((rdv) => (
-          <li key={rdv.id} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+          <li key={rdv.id} id={`rdv-${rdv.id}`} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm scroll-mt-24">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
                 <p className="font-titre font-bold text-nuit first-letter:uppercase">

@@ -16,12 +16,12 @@ documentée ainsi qu'un volet Open Data.
 
 | Couche | Technologie |
 |---|---|
-| Front-end | React 19 + Vite · Tailwind CSS 4 · React Router · react-i18next · TanStack Query · react-leaflet |
+| Front-end | React 19 + Vite · Tailwind CSS 4 · React Router · react-i18next · TanStack Query · react-leaflet · FullCalendar · Vitest + React Testing Library |
 | Back-end | Spring Boot 4.1 (Java 21 LTS) — API REST `/api/v1` · Spring Security · Spring Data JPA · springdoc (Swagger) |
 | Base de données | MySQL 8.4 LTS — migrations Flyway (`backend/src/main/resources/db/migration`) |
 | Paiement | Stripe (PaymentIntents + webhooks signés) |
 | Conteneurisation | Docker Compose (dev et prod) · images Docker, Nginx et Caddy (HTTPS) en production |
-| Intégration continue | GitHub Actions à chaque push : tests backend (Testcontainers), build frontend, images Docker |
+| Intégration continue | GitHub Actions à chaque push : tests backend (Testcontainers), lint, tests et build frontend (Vitest), images Docker |
 
 ## Structure du dépôt
 
@@ -77,6 +77,10 @@ cd frontend && npm install && npm run dev
 ```
 
 Tests backend (nécessitent Docker, un MySQL 8.4 jetable est lancé par Testcontainers) : `cd backend && ./mvnw verify`.
+Tests frontend (Vitest + React Testing Library : formulaires, validations, étape du code) : `cd frontend && npm test`.
+
+Le code du front-end est découpé par route (`React.lazy`) : les pages publiques les plus visitées partent avec
+l'application, les espaces connectés, le blog, les pages légales et la carte Leaflet se chargent à la première visite.
 
 > Dépannage sans Docker : le profil par défaut fonctionne aussi avec le MySQL/MariaDB de XAMPP
 > (base `immoconnect`, utilisateur `immo` / `immo`). La référence reste MySQL 8.4.
