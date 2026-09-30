@@ -4,3 +4,9 @@ immoconnect:
     dossier: target/stockage-tests     # effacé par « mvn clean », jamais versionné
   demonstration:
     photos: false                      # inutile aux tests : 498 fichiers à copier à chaque démarrage
+  securite:
+    cookie-securise: false             # MockMvc parle en HTTP
+    activation-par-courriel: false     # les tests s'inscrivent et se connectent aussitôt ; un test dédié l'active
+    double-facteur: false              # idem : un test dédié l'active
+    mots-de-passe-compromis: local     # jamais d'appel réseau pendant les tests
+    connexions-par-minute: 1000        # les tests se connectent des dizaines de fois par minute ; un test dédié abaisse le seuil

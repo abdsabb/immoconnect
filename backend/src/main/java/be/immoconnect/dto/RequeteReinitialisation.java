@@ -3,8 +3,8 @@ package be.immoconnect.dto;
 import be.immoconnect.security.MotDePasseRobuste;
 import jakarta.validation.constraints.NotBlank;
 
-/** Changement de mot de passe : l'ancien est exigé pour prouver la possession du compte. */
-public record RequeteChangementMotDePasse(
-        @NotBlank String ancienMotDePasse,
+/** Nouveau mot de passe, accompagné du jeton reçu par e-mail (cas M10). */
+public record RequeteReinitialisation(
+        @NotBlank String jeton,
         @NotBlank @MotDePasseRobuste String nouveauMotDePasse) {
 }

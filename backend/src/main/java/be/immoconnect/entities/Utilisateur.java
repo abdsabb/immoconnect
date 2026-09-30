@@ -14,10 +14,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * Compte utilisateur (classe abstraite du diagramme de classes).
@@ -66,6 +69,28 @@ public abstract class Utilisateur {
     @Column(nullable = false)
     private boolean actif = true;
 
+    /** Adresse confirmée par le lien d'activation ; tant qu'elle ne l'est pas, le compte ne se connecte pas. */
+    @Column(name = "email_verifie", nullable = false)
+    private boolean emailVerifie = false;
+
+    /** Choix d'un membre ; pour un agent ou un administrateur, le second facteur est imposé par le rôle. */
+    @Column(name = "double_facteur", nullable = false)
+    private boolean doubleFacteur = false;
+
+    @JdbcTypeCode(SqlTypes.TINYINT)
+    @Column(name = "echecs_connexion", nullable = false)
+    private Integer echecsConnexion = 0;
+
+    @Column(name = "verrouille_jusqu_a")
+    private LocalDateTime verrouilleJusquA;
+
+    @Column(name = "cgu_acceptees_le")
+    private LocalDateTime cguAccepteesLe;
+
+    /** Consentement aux communications non essentielles : refusé par défaut, retirable à tout moment. */
+    @Column(name = "consentement_communications", nullable = false)
+    private boolean consentementCommunications = false;
+
     protected Utilisateur(String nom, String prenom, String email, String motDePasseHache, Langue langue) {
         this.nom = nom;
         this.prenom = prenom;
@@ -77,6 +102,15 @@ public abstract class Utilisateur {
 
     /** Rôle applicatif, tel que stocké dans la colonne discriminante (membre, agent, admin). */
     public abstract String getRole();
+
+    /** Un compte qui donne accès à des données de tiers exige toujours un second facteur. */
+    public boolean exigeDoubleFacteur() {
+        return doubleFacteur || !"membre".equals(getRole());
+    }
+
+    public boolean estVerrouille(LocalDateTime maintenant) {
+        return verrouilleJusquA != null && verrouilleJusquA.isAfter(maintenant);
+    }
 
     public String getNomComplet() {
         return prenom + " " + nom;

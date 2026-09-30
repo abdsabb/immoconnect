@@ -58,10 +58,19 @@ immoconnect:
     dossier: ${STORAGE_DIR:./stockage}            # photos des biens ; un volume Docker en production
   demonstration:
     photos: ${DEMO_PHOTOS:true}     # crée au démarrage les photos manquantes des annonces de test
+    boite-courriels: ${DEMO_BOITE_COURRIELS:}   # adresse de la boîte où arrivent les e-mails (Mailpit), vide en exploitation réelle
   stripe:                           # sans clé secrète, les paiements passent en mode simulation (dev et tests)
     cle-secrete: ${STRIPE_SECRET_KEY:}
     cle-publique: ${STRIPE_PUBLISHABLE_KEY:}
     secret-webhook: ${STRIPE_WEBHOOK_SECRET:}
   jwt:
     secret: ${JWT_SECRET}           # clé HS256 (>= 32 octets) — fournie par l'environnement
-    duree-secondes: 3600            # jeton d'accès valable 1 h (livrable 16, §2.1)
+    duree-secondes: 900             # jeton d'accès valable 15 min, renouvelé par le cookie de session (livrable 16, §2.1)
+  securite:
+    cookie-securise: ${COOKIE_SECURE:true}          # le cookie de session ne voyage qu'en HTTPS
+    duree-session: 14d                              # durée de vie du jeton de rafraîchissement
+    activation-par-courriel: ${ACTIVATION_PAR_COURRIEL:true}
+    double-facteur: ${DOUBLE_FACTEUR:true}          # code par e-mail : agents, administrateurs, membres qui l'ont choisi
+    echecs-avant-verrouillage: 5                    # puis verrouillage d'une minute, doublé à chaque échec, plafonné à 15 min
+    connexions-par-minute: 10                       # par adresse IP
+    mots-de-passe-compromis: ${MOTS_DE_PASSE_COMPROMIS:hibp}   # hibp (Have I Been Pwned) ou local

@@ -100,7 +100,7 @@ class FavoriControleurTest {
 
     private String inscrire(String email) throws Exception {
         return json.readTree(mvc.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"nom\":\"Test\",\"prenom\":\"Favoris\",\"email\":\"" + email + "\",\"motDePasse\":\"motdepasse123\"}"))
+                        .content("{\"nom\":\"Test\",\"prenom\":\"Favoris\",\"email\":\"" + email + "\",\"motDePasse\":\"Visite-Bxl-2026\",\"cguAcceptees\":true}"))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString()).get("jeton").asString();
     }

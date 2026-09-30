@@ -1,6 +1,7 @@
 package be.immoconnect.security;
 
 import be.immoconnect.services.ServiceClesApi;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,14 +22,16 @@ import tools.jackson.databind.ObjectMapper;
  * Configuration Spring Security de l'API (livrable 16, §1 à §3).
  * <ul>
  *   <li>API sans état : aucune session serveur, le JWT voyage dans l'en-tête Authorization ;</li>
- *   <li>CSRF désactivé : aucun cookie de session, la falsification de requête intersite est
- *       inopérante par conception ;</li>
+ *   <li>CSRF : le seul cookie, celui du jeton de rafraîchissement, est SameSite=Strict et limité à
+ *       /api/v1/auth ; un site tiers ne peut ni le faire envoyer, ni lire la réponse. La protection
+ *       CSRF par jeton synchronisé serait sans objet et reste désactivée ;</li>
  *   <li>sécurité par défaut : tout est fermé sauf les ressources publiques déclarées ici ;</li>
  *   <li>contrôle par rôle (RBAC) via les autorités ROLE_MEMBRE / ROLE_AGENT / ROLE_ADMIN portées par le jeton.</li>
  * </ul>
  */
 @Configuration
 @EnableWebSecurity
+@EnableConfigurationProperties(ProprietesSecurite.class)
 public class ConfigurationSecurite {
 
     @Bean
@@ -64,8 +67,12 @@ public class ConfigurationSecurite {
                 .requestMatchers(HttpMethod.GET, FiltreCleApi.CHEMIN + "**").permitAll()
                 // Niveau d'accès « public » (livrable 15, §4) : consultation et authentification
                 .requestMatchers(HttpMethod.GET, "/api/v1/biens/**", "/api/v1/articles/**",
-                        "/api/v1/traductions/**", "/api/v1/categories", "/api/v1/flux/**", "/storage/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login").permitAll()
+                        "/api/v1/traductions/**", "/api/v1/categories", "/api/v1/flux/**", "/api/v1/configuration",
+                        "/storage/**").permitAll()
+                // Inscription, connexion, code, session, mot de passe oublié, activation : aucun jeton d'accès n'existe encore
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/auth/login/code",
+                        "/api/v1/auth/refresh", "/api/v1/auth/logout", "/api/v1/auth/mot-de-passe-oublie",
+                        "/api/v1/auth/reinitialisation", "/api/v1/auth/activation", "/api/v1/auth/activation/renvoi").permitAll()
                 // Tout le reste exige un jeton valide
                 .anyRequest().authenticated())
             .oauth2ResourceServer(serveur -> serveur.jwt(jwt -> jwt.jwtAuthenticationConverter(convertisseur)))
@@ -79,6 +86,16 @@ public class ConfigurationSecurite {
         DaoAuthenticationProvider fournisseur = new DaoAuthenticationProvider(details);
         fournisseur.setPasswordEncoder(encodeur);
         return new ProviderManager(fournisseur);
+    }
+
+    /**
+     * Vérification des mots de passe choisis contre les fuites connues : Have I Been Pwned par défaut,
+     * la liste embarquée seule quand la configuration le demande (tests, réseau fermé).
+     */
+    @Bean
+    MotsDePasseCompromis motsDePasseCompromis(ProprietesSecurite proprietes) {
+        ListeMotsDePasseCourants liste = new ListeMotsDePasseCourants();
+        return "local".equalsIgnoreCase(proprietes.motsDePasseCompromis()) ? liste : new MotsDePasseFuites(liste);
     }
 
     /** Hachage des mots de passe : BCrypt, facteur de coût 12 (livrable 16, §2.1). */
