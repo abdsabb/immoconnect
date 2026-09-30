@@ -152,6 +152,49 @@ class PaiementControleurTest {
         assertThat(((PasserelleSimulee) passerelle).estRemboursee(id)).isTrue();
     }
 
+    /** RA14 : le membre qui annule moins de 24 heures avant la visite garde un créneau payé, non remboursé. */
+    @Test
+    void uneAnnulationTardiveParLeMembreNEstPasRemboursee() throws Exception {
+        String membre = connecter(MEMBRE);
+        int rendezVous = reserverPremiumDansDeuxHeures(membre);
+        String id = jdbc.queryForObject("SELECT stripe_payment_intent_id FROM paiement WHERE rendez_vous_id = ?", String.class, rendezVous);
+
+        mvc.perform(patch("/api/v1/rendez-vous/" + rendezVous + "/annuler").header("Authorization", "Bearer " + membre))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statut").value("annule"))
+                .andExpect(jsonPath("$.paiement.statut").value("reussi"));
+        assertThat(((PasserelleSimulee) passerelle).estRemboursee(id)).isFalse();
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM journal_audit WHERE action = 'annulation_tardive' AND entite = ?",
+                Integer.class, "paiement#" + jdbc.queryForObject("SELECT id FROM paiement WHERE rendez_vous_id = ?", Integer.class, rendezVous)))
+                .isEqualTo(1);
+    }
+
+    /** RA8 : l'agent qui annule rembourse toujours, même à la dernière minute. */
+    @Test
+    void uneAnnulationTardiveParLAgentRembourse() throws Exception {
+        String membre = connecter(MEMBRE);
+        int rendezVous = reserverPremiumDansDeuxHeures(membre);
+        String id = jdbc.queryForObject("SELECT stripe_payment_intent_id FROM paiement WHERE rendez_vous_id = ?", String.class, rendezVous);
+
+        mvc.perform(patch("/api/v1/rendez-vous/" + rendezVous + "/annuler").header("Authorization", "Bearer " + connecter("anke.vermeulen@mail.be")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.paiement.statut").value("rembourse"));
+        assertThat(((PasserelleSimulee) passerelle).estRemboursee(id)).isTrue();
+    }
+
+    /** Un créneau premium payé, puis avancé en base à dans deux heures : trop tard pour une annulation gratuite. */
+    private int reserverPremiumDansDeuxHeures(String membre) throws Exception {
+        String creneau = premierCreneau(membre, "premium");
+        JsonNode intention = preparer(membre, creneau);
+        payer(membre, intention, PasserelleSimulee.CARTE_ACCEPTEE).andExpect(status().isNoContent());
+        int rendezVous = corps(reserver(membre, creneau, intention.get("paymentIntentId").asString())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.remboursableJusquA").isNotEmpty())).get("id").asInt();
+        jdbc.update("UPDATE rendez_vous SET date_heure = ? WHERE id = ?",
+                java.time.LocalDateTime.now(java.time.ZoneId.of("Europe/Brussels")).plusHours(2).withSecond(0).withNano(0), rendezVous);
+        return rendezVous;
+    }
+
     @Test
     void unPaiementNeSertNiAUnAutreMembreNiAUnAutreCreneau() throws Exception {
         String membre = connecter(MEMBRE);

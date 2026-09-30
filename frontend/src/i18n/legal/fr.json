@@ -59,7 +59,7 @@
         "paragraphes": [
           "Une visite en journée, du lundi au vendredi, est gratuite. Une visite en soirée ou le week-end coûte 15 €, toutes taxes comprises. Le prix est affiché avant le paiement.",
           "Le paiement se fait par carte, par l'intermédiaire de Stripe. Le site ne reçoit et ne conserve aucun numéro de carte.",
-          "Si la visite est annulée avant l'heure prévue, par le membre ou par l'agent, le montant payé est remboursé en totalité.",
+          "Le membre qui annule au plus tard 24 heures avant la visite est remboursé en totalité ; passé ce délai, le montant reste dû. Si l'agent annule, le remboursement est toujours intégral.",
           "Sur ce site de démonstration, Stripe fonctionne en mode test : utilisez la carte 4242 4242 4242 4242, une date future et trois chiffres quelconques. Une vraie carte serait refusée."
         ]
       },

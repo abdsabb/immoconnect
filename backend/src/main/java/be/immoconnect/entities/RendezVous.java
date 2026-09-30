@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -99,6 +100,22 @@ public class RendezVous {
 
     public boolean estPremium() {
         return paiement != null;
+    }
+
+    /** Délai de rétractation gratuite d'un créneau premium (règle RA14, conditions générales). */
+    public static final Duration PREAVIS_REMBOURSEMENT = Duration.ofHours(24);
+
+    /** Dernier instant où le membre peut encore annuler un créneau premium en étant remboursé ; null si rien n'a été payé. */
+    public LocalDateTime remboursableJusquA() {
+        return estPremium() ? dateHeure.minus(PREAVIS_REMBOURSEMENT) : null;
+    }
+
+    /**
+     * RA14 : le membre qui annule un créneau premium moins de 24 heures avant la visite n'est pas
+     * remboursé ; l'agent qui annule rembourse toujours (RA8).
+     */
+    public boolean remboursable(LocalDateTime maintenant, boolean parLAgent) {
+        return estPremium() && (parLAgent || !maintenant.isAfter(remboursableJusquA()));
     }
 
     private void exigerTransition(boolean autorisee, String operation) {

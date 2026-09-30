@@ -180,7 +180,7 @@ page `/credits-photos`.
 | GET | `/api/v1/rendez-vous` — mes visites (membre) ou mon agenda (agent) | JWT |
 | POST | `/api/v1/rendez-vous` — réserver un créneau (409 si le créneau vient d'être pris) | JWT membre |
 | PATCH | `/api/v1/rendez-vous/{id}/confirmer` · `/honorer` | JWT agent du rendez-vous |
-| PATCH | `/api/v1/rendez-vous/{id}/annuler` — rembourse un créneau premium payé (RA8) | JWT membre ou agent du rendez-vous |
+| PATCH | `/api/v1/rendez-vous/{id}/annuler` — rembourse un créneau premium payé (RA8), sauf annulation par le membre moins de 24 h avant la visite (RA14) | JWT membre ou agent du rendez-vous |
 | PUT / DELETE | `/api/v1/biens/{id}/favori` — ajouter ou retirer un favori (idempotent) | JWT membre |
 | GET | `/api/v1/membres/moi/favoris` — mes favoris, paginés | JWT membre |
 | GET / POST | `/api/v1/messages` — mes conversations, envoyer un message | JWT membre ou agent |

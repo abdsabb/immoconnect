@@ -18,6 +18,13 @@ const BADGES = {
  * Transitions proposées, par rôle — le serveur reste seul juge (RA1, RA2 et propriété du rendez-vous) :
  * l'interface ne fait que masquer les boutons qui seraient refusés.
  */
+// RA8 et RA14 : un créneau payé est remboursé, sauf au membre qui annule moins de 24 h avant la visite
+function messageAnnulation(rdv, role) {
+  if (rdv.paiement?.statut !== 'reussi') return 'rdv.confirmerAnnulation'
+  if (role !== 'agent' && rdv.remboursableJusquA && new Date(rdv.remboursableJusquA) < new Date()) return 'rdv.confirmerAnnulationTardive'
+  return 'rdv.confirmerAnnulationPayee'
+}
+
 function actionsPossibles(rdv, role) {
   const futur = new Date(rdv.dateHeure) > new Date()
   const actif = rdv.statut === 'demande' || rdv.statut === 'confirme'
@@ -54,7 +61,7 @@ export default function MesRendezVous() {
   })
 
   const executer = (rdv, action) => {
-    if (action === 'annuler' && !window.confirm(t(rdv.paiement?.statut === 'reussi' ? 'rdv.confirmerAnnulationPayee' : 'rdv.confirmerAnnulation'))) return
+    if (action === 'annuler' && !window.confirm(t(messageAnnulation(rdv, role)))) return
     transition.mutate({ id: rdv.id, action })
   }
 
@@ -114,6 +121,10 @@ function Liste({ titre, vide, rendezVous, role, langue, executer, enCours }) {
               {rdv.paiement && (
                 <Detail titre={t('rdv.paiement')}
                   valeur={`${formatMontant(rdv.paiement.montant, langue)} · ${t(`rdv.paiementStatut.${rdv.paiement.statut}`)}`} />
+              )}
+              {role !== 'agent' && rdv.paiement?.statut === 'reussi' && rdv.remboursableJusquA && (rdv.statut === 'demande' || rdv.statut === 'confirme') && (
+                <Detail titre={t('rdv.annulationGratuite')}
+                  valeur={new Date(rdv.remboursableJusquA) < new Date() ? t('rdv.annulationSansRemboursement') : t('rdv.remboursableJusquA', { date: `${formatJour(rdv.remboursableJusquA, langue)} ${formatHeure(rdv.remboursableJusquA, langue)}` })} />
               )}
             </dl>
 

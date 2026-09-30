@@ -59,7 +59,7 @@
         "paragraphes": [
           "A daytime viewing, Monday to Friday, is free. A viewing in the evening or at the weekend costs €15, all taxes included. The price is shown before payment.",
           "Payment is made by card, through Stripe. The site neither receives nor stores any card number.",
-          "If the viewing is cancelled before its scheduled time, by the member or by the agent, the amount paid is refunded in full.",
+          "A member who cancels at least 24 hours before the viewing is refunded in full; after that, the amount remains due. If the agent cancels, the refund is always in full.",
           "On this demonstration site, Stripe runs in test mode: use the card 4242 4242 4242 4242, a future date and any three digits. A real card would be declined."
         ]
       },
