@@ -36,7 +36,7 @@ documentée ainsi qu'un volet Open Data.
 ├── docs/uml/                Sources PlantUML des diagrammes d'analyse (livrable 07) et du schéma BDD
 ├── .github/workflows/ci.yml Intégration continue
 ├── docker-compose.yml       Environnement de développement (MySQL 8.4 + Adminer + Mailpit)
-├── docker-compose.prod.yml  Production : Caddy (HTTPS), frontend, backend, MySQL, Mailpit
+├── docker-compose.prod.yml  Production : frontend, backend, MySQL + Caddy (HTTPS), Mailpit, sauvegardes, Matomo
 ├── deploiement/Caddyfile    Routage et certificat HTTPS de la production
 └── .env.example             Modèle du fichier .env de production
 ```
@@ -232,27 +232,81 @@ Documentation interactive : `/swagger-ui.html` · erreurs au format problem+json
 
 ## Déployer en production
 
-La production tourne sur un VPS Linux avec Docker. Le fichier `docker-compose.prod.yml` démarre cinq conteneurs ;
-seul Caddy est exposé à Internet (ports 80 et 443), il obtient et renouvelle le certificat HTTPS.
+La production tourne sur un VPS Linux avec Docker. Seul Caddy est exposé à Internet (ports 80 et 443) ; il obtient et
+renouvelle le certificat HTTPS. **Trois conteneurs portent l'application** — `frontend`, `backend`, `db` — et cinq
+services d'exploitation les entourent.
 
 | Conteneur | Rôle |
 |---|---|
-| `caddy` | Point d'entrée HTTPS : `/api`, `/storage` et Swagger vers le backend, le reste vers le frontend |
-| `frontend` | Application React servie par Nginx |
+| `frontend` | Application React servie par Nginx ; confie les pages publiques au backend pour le rendu serveur |
 | `backend` | API Spring Boot, profil `prod`, utilisateur non root |
 | `db` | MySQL 8.4, sans port publié ; schéma et données de test appliqués par Flyway |
+| `caddy` | Point d'entrée HTTPS et en-têtes de sécurité : `/api`, `/storage` et Swagger vers le backend, le reste vers le frontend |
 | `mailpit` | Boîte de réception de démonstration sur `/courriels/` : capture les e-mails, n'en envoie aucun |
+| `sauvegarde` | Sauvegarde de la base chaque nuit et des photos chaque dimanche, chiffrées |
+| `matomo`, `matomo-db` | Mesure d'audience auto-hébergée, sans cookie, sur `/matomo/` |
 
 ```bash
 git clone https://github.com/abdsabb/immoconnect.git && cd immoconnect
-cp .env.example .env && nano .env        # domaine, mots de passe, clé JWT, clés Stripe
+cp .env.example .env && nano .env        # domaine, mots de passe, clé JWT, clés Stripe, phrase de passe des sauvegardes
 docker compose -f docker-compose.prod.yml up -d --build
 docker compose -f docker-compose.prod.yml ps
 ```
 
-Mettre à jour : `git pull` puis la même commande `up -d --build`. Les données survivent dans les volumes Docker
-(`mysql-data`, `photos`). Le webhook Stripe se déclare dans le tableau de bord Stripe sur
-`https://<domaine>/api/v1/webhooks/stripe` ; son secret va dans `STRIPE_WEBHOOK_SECRET`.
+Mettre à jour : `git pull`, la même commande `up -d --build`, puis `docker compose -f docker-compose.prod.yml restart caddy`
+quand `deploiement/Caddyfile` a changé (Caddy ne relit pas seul sa configuration). Les données survivent dans les
+volumes Docker (`mysql-data`, `photos`, `sauvegardes`, `matomo-data`, `matomo-db-data`). Le webhook Stripe se déclare
+dans le tableau de bord Stripe sur `https://<domaine>/api/v1/webhooks/stripe` ; son secret va dans `STRIPE_WEBHOOK_SECRET`.
+
+### En-têtes de sécurité
+
+Posés par Caddy (`deploiement/Caddyfile`) : `Strict-Transport-Security`, `X-Content-Type-Options`, `Referrer-Policy`
+pour tout le site ; pour l'application, `X-Frame-Options: DENY`, `Permissions-Policy` et une **politique de sécurité de
+contenu** : scripts et cadres limités au site et à Stripe, tuiles de carte d'OpenStreetMap, aucun script en ligne.
+
+### Sauvegardes
+
+Le conteneur `sauvegarde` exporte la base chaque nuit à 3 h 15 (`mysqldump --single-transaction`, le site reste en
+ligne) et archive les photos chaque dimanche, dans le volume `sauvegardes`. Les fichiers sont chiffrés en AES-256 avec
+`SAUVEGARDE_PASSPHRASE` ; sans phrase de passe, ils ne le sont pas et le journal le signale. Rétention : 14 jours pour la
+base, 8 semaines pour les photos.
+
+```bash
+docker compose -f docker-compose.prod.yml logs sauvegarde                              # ce qui a été sauvegardé
+docker compose -f docker-compose.prod.yml exec sauvegarde bash /sauvegarder.sh maintenant
+docker compose -f docker-compose.prod.yml exec sauvegarde bash /restaurer.sh           # lister
+docker compose -f docker-compose.prod.yml exec sauvegarde bash /restaurer.sh verifier <fichier>   # test de restauration
+```
+
+`verifier` relit la sauvegarde dans une base jetable et affiche le nombre de tables, de biens et de comptes : c'est le
+**test de restauration**, à refaire chaque trimestre. `restaurer <fichier>` remplace les données du site (arrêter le
+backend avant). Une copie hors du serveur reste à la charge de l'exploitant, par exemple chaque semaine :
+`docker run --rm -v immoconnect-prod_sauvegardes:/s -v /root/copie:/c alpine cp -a /s/. /c/` puis `scp` ou `rclone`.
+
+### Mesure d'audience (Matomo)
+
+Matomo tourne sur le même serveur, derrière `https://<domaine>/matomo/` : aucune donnée ne part chez un tiers. Le site
+ne dépose aucun cookie de mesure (`disableCookies`), respecte « Ne pas me pister », et suit trois conversions : prise de
+rendez-vous, envoi de message, création de compte. Première installation, une seule fois :
+
+1. ouvrir `https://<domaine>/matomo/` et suivre l'assistant — la base est déjà renseignée (`matomo-db`) ;
+2. créer le super-utilisateur, puis le site « ImmoConnect » (adresse du site, fuseau Europe/Brussels) ;
+3. dans `.env`, mettre `MATOMO_SITE_ID=1` (le numéro du site créé), puis `docker compose -f docker-compose.prod.yml up -d`.
+
+Tant que `MATOMO_SITE_ID` est vide, le site ne charge pas Matomo.
+
+### Détection d'intrusion
+
+- **Application** : dix échecs de connexion, ou cinq comptes différents essayés, en dix minutes depuis une même adresse
+  ⇒ adresse bannie de la connexion pendant quinze minutes et alerte ; clé API révoquée présentée ⇒ alerte. L'alerte
+  est enregistrée (rubrique « Sécurité » du back-office), écrite au journal du backend et envoyée par e-mail aux
+  super-administrateurs. Seuils : `immoconnect.securite.intrusion.*`.
+- **Serveur** : fail2ban lit ces alertes et ferme les ports web à l'adresse ; le pare-feu n'ouvre que SSH et le web.
+  Installation : [deploiement/fail2ban/LISEZMOI.md](deploiement/fail2ban/LISEZMOI.md).
+- **Conteneurs** : contrôles de santé (`docker compose ps`), redémarrage automatique, `/actuator/health` pour un
+  service de surveillance externe.
+- **Dépendances** : Dependabot ouvre une pull request par mise à jour Maven, npm, Docker et GitHub Actions
+  (`.github/dependabot.yml`).
 
 ## Branches, commits et releases
 

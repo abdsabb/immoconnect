@@ -119,7 +119,7 @@
       {
         "titre": "Data processed",
         "paragraphes": [
-          "The site only processes the data it needs to work. It contains no advertising and no audience measurement, and sells no data."
+          "The site only processes the data it needs to work. It contains no advertising and sells no data."
         ],
         "tableau": {
           "colonnes": [
@@ -170,6 +170,12 @@
               "Hash of the session cookie, of the activation and reset links and of the login codes, IP address",
               "Performance of the contract and security",
               "Expired tokens deleted after thirty days"
+            ],
+            [
+              "Audience measurement",
+              "Pages viewed, referrer, device type, actions (viewing, message, sign-up); truncated IP address",
+              "Legitimate interest: improving the site",
+              "Anonymous statistics, on the site's own server"
             ]
           ]
         }
@@ -206,7 +212,8 @@
         "liste": [
           "Session: after login, a cookie 'immoconnect_session' keeps your session open for fourteen days. It cannot be read by scripts, is sent only to this site and is closed by logging out.",
           "Language: your choice (French, Dutch or English) is saved in the local storage of your browser, under the name 'i18nextLng'. It does not leave your device.",
-          "Payment: on the payment page only, Stripe sets its own cookies to fight fraud. They are necessary for the payment."
+          "Payment: on the payment page only, Stripe sets its own cookies to fight fraud. They are necessary for the payment.",
+          "Audience measurement: the site counts its visits with Matomo, installed on its own server. No cookie is set, no data is sent to a third party, the IP address is truncated and the browser's 'Do Not Track' signal is honoured."
         ]
       },
       {

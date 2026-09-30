@@ -19,9 +19,14 @@ public class ConfigurationControleur {
     private final ProprietesSecurite securite;
     private final ServiceParametres parametres;
     private final String boiteDeDemonstration;
+    private final ConfigurationPublique.Mesure mesure;
 
     public ConfigurationControleur(ProprietesSecurite securite, ServiceParametres parametres,
-                                   @Value("${immoconnect.demonstration.boite-courriels:}") String boiteDeDemonstration) {
+                                   @Value("${immoconnect.demonstration.boite-courriels:}") String boiteDeDemonstration,
+                                   @Value("${immoconnect.mesure.site-id:}") String siteMatomo,
+                                   @Value("${immoconnect.mesure.url:/matomo/}") String urlMatomo) {
+        // Sans numéro de site valide, l'interface ne charge pas Matomo
+        this.mesure = siteMatomo.matches("[1-9][0-9]{0,8}") ? new ConfigurationPublique.Mesure(urlMatomo, Integer.parseInt(siteMatomo)) : null;
         this.securite = securite;
         this.parametres = parametres;
         this.boiteDeDemonstration = boiteDeDemonstration;
@@ -31,6 +36,6 @@ public class ConfigurationControleur {
     @Operation(summary = "Réglages publics", description = "Activation par e-mail, double facteur, boîte de démonstration éventuelle, identité de l'agence et langues actives (cas A5).")
     public ConfigurationPublique lire() {
         return new ConfigurationPublique(securite.activationParCourriel(), securite.doubleFacteur(),
-                boiteDeDemonstration.isBlank() ? null : boiteDeDemonstration, parametres.site());
+                boiteDeDemonstration.isBlank() ? null : boiteDeDemonstration, parametres.site(), mesure);
     }
 }

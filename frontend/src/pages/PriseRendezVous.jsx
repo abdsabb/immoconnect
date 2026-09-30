@@ -9,6 +9,7 @@ import {
 } from '../services/rendezVous'
 import { BoutonPrincipal, Champ, classeInput, erreursApi } from '../components/Formulaire'
 import PaiementStripe from '../components/PaiementStripe'
+import { conversion } from '../services/mesure'
 import PaiementSimule from '../components/PaiementSimule'
 
 // Cas M4 « Prendre rendez-vous pour visiter un bien » — le scénario validé dans l'analyse (livrable 07, V3) :
@@ -133,6 +134,7 @@ export default function PriseRendezVous() {
   }, [parametres, estMembre])
 
   const terminer = (rdv) => {
+    conversion('rendez-vous', rdv.type)
     setRendezVous(rdv)
     setEtape('confirmation')
     queryClient.invalidateQueries({ queryKey: ['creneaux', id] })

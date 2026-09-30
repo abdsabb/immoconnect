@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
 import { useConfiguration } from '../services/configuration'
+import { conversion } from '../services/mesure'
 import { Champ, BoutonPrincipal, classeInput, erreursApi, reglesMotDePasse } from '../components/Formulaire'
 
 
@@ -25,6 +26,7 @@ export default function Inscription() {
     setErreurApi(null)
     try {
       const resultat = await inscrire(valeurs)
+      conversion('compte')
       if (resultat.activationRequise) {
         setEnAttente(valeurs.email)
         return

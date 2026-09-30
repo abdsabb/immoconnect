@@ -119,7 +119,7 @@
       {
         "titre": "Verwerkte gegevens",
         "paragraphes": [
-          "De site verwerkt alleen de gegevens die nodig zijn voor zijn werking. Hij bevat geen reclame en geen publieksmeting, en verkoopt geen gegevens."
+          "De site verwerkt alleen de gegevens die nodig zijn voor zijn werking. Hij bevat geen reclame en verkoopt geen gegevens."
         ],
         "tableau": {
           "colonnes": [
@@ -170,6 +170,12 @@
               "Hash van de sessiecookie, van de activerings- en herstellinks en van de aanmeldcodes, IP-adres",
               "Uitvoering van de overeenkomst en beveiliging",
               "Verlopen tokens gewist na dertig dagen"
+            ],
+            [
+              "Publieksmeting",
+              "Bekeken pagina's, herkomst, type toestel, acties (afspraak, bericht, inschrijving); ingekort IP-adres",
+              "Gerechtvaardigd belang: de site verbeteren",
+              "Anonieme statistieken, op de server van de site"
             ]
           ]
         }
@@ -206,7 +212,8 @@
         "liste": [
           "Sessie: na de aanmelding houdt een cookie 'immoconnect_session' uw sessie veertien dagen open. Hij is onleesbaar voor scripts, wordt alleen naar deze site gestuurd en wordt afgesloten bij het afmelden.",
           "Taal: uw keuze (Frans, Nederlands of Engels) wordt bewaard in de lokale opslag van uw browser, onder de naam 'i18nextLng'. Ze verlaat uw toestel niet.",
-          "Betaling: alleen op de betaalpagina plaatst Stripe zijn eigen cookies om fraude te bestrijden. Ze zijn nodig voor de betaling."
+          "Betaling: alleen op de betaalpagina plaatst Stripe zijn eigen cookies om fraude te bestrijden. Ze zijn nodig voor de betaling.",
+          "Publieksmeting: de site telt zijn bezoeken met Matomo, geïnstalleerd op zijn eigen server. Er wordt geen cookie geplaatst, er gaat geen gegeven naar een derde, het IP-adres wordt ingekort en het signaal 'Niet volgen' van de browser wordt gerespecteerd."
         ]
       },
       {

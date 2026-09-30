@@ -2,6 +2,8 @@
 # Démarrage : docker compose -f docker-compose.prod.yml up -d --build
 # Les secrets viennent du fichier .env placé à côté (modèle : .env.example), jamais versionné.
 # Seul Caddy est exposé à Internet (ports 80 et 443) ; la base et le backend restent sur le réseau Docker.
+# Trois conteneurs portent l'application (frontend, backend, db) ; les autres sont des services d'exploitation :
+# caddy (HTTPS), mailpit (boîte de démonstration), sauvegarde, matomo et sa base (mesure d'audience).
 name: immoconnect-prod
 
 services:
@@ -40,6 +42,8 @@ services:
       MAIL_FROM: ${MAIL_FROM:-no-reply@immoconnect.be}
       # Les e-mails arrivent dans Mailpit : le site le dit aux personnes qui s'inscrivent
       DEMO_BOITE_COURRIELS: ${DEMO_BOITE_COURRIELS:-/courriels/}
+      # Mesure d'audience Matomo : vide tant que le site n'est pas déclaré dans Matomo (voir le README)
+      MATOMO_SITE_ID: ${MATOMO_SITE_ID:-}
       COOKIE_SECURE: "true"
       ACTIVATION_PAR_COURRIEL: ${ACTIVATION_PAR_COURRIEL:-true}
       DOUBLE_FACTEUR: ${DOUBLE_FACTEUR:-true}
@@ -60,6 +64,65 @@ services:
     build: ./frontend
     restart: unless-stopped
     depends_on: [backend]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/index.html || exit 1"]
+      interval: 30s
+      retries: 3
+
+  # Sauvegardes : base chaque nuit, photos chaque dimanche, chiffrées si SAUVEGARDE_PASSPHRASE est fournie.
+  # Procédure de restauration et de test : deploiement/sauvegarde/restaurer.sh et README.
+  sauvegarde:
+    image: mysql:8.4
+    restart: unless-stopped
+    entrypoint: ["bash", "/sauvegarder.sh"]
+    environment:
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      SAUVEGARDE_PASSPHRASE: ${SAUVEGARDE_PASSPHRASE:-}
+      SAUVEGARDE_HEURE: ${SAUVEGARDE_HEURE:-03:15}
+      TZ: Europe/Brussels
+    volumes:
+      - ./deploiement/sauvegarde/sauvegarder.sh:/sauvegarder.sh:ro
+      - ./deploiement/sauvegarde/restaurer.sh:/restaurer.sh:ro
+      - sauvegardes:/sauvegardes
+      - photos:/photos:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Mesure d'audience auto-hébergée, sans cookie (chapitre 10) : aucune donnée ne quitte le serveur.
+  # Interface sur https://<domaine>/matomo/ ; première installation décrite dans le README.
+  matomo:
+    image: matomo:5-apache
+    restart: unless-stopped
+    environment:
+      MATOMO_DATABASE_HOST: matomo-db
+      MATOMO_DATABASE_ADAPTER: mysql
+      MATOMO_DATABASE_TABLES_PREFIX: matomo_
+      MATOMO_DATABASE_USERNAME: matomo
+      MATOMO_DATABASE_PASSWORD: ${MATOMO_DB_PASSWORD:-${DB_PASSWORD}}
+      MATOMO_DATABASE_DBNAME: matomo
+    volumes:
+      - matomo-data:/var/www/html
+    depends_on:
+      matomo-db:
+        condition: service_healthy
+
+  matomo-db:
+    image: mariadb:11.4
+    restart: unless-stopped
+    command: --max-allowed-packet=64MB
+    environment:
+      MARIADB_DATABASE: matomo
+      MARIADB_USER: matomo
+      MARIADB_PASSWORD: ${MATOMO_DB_PASSWORD:-${DB_PASSWORD}}
+      MARIADB_RANDOM_ROOT_PASSWORD: "yes"
+    volumes:
+      - matomo-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      retries: 12
 
   # Boîte de réception de démonstration : capture les e-mails de l'application, n'en envoie aucun.
   # Les comptes de test portent des adresses fictives ; un vrai serveur SMTP écrirait à des inconnus.
@@ -90,7 +153,7 @@ services:
       - ./deploiement/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
       - caddy-config:/config
-    depends_on: [frontend, backend, mailpit]
+    depends_on: [frontend, backend, mailpit, matomo]
 
 volumes:
   mysql-data:
@@ -98,3 +161,6 @@ volumes:
   mailpit-data:
   caddy-data:
   caddy-config:
+  sauvegardes:
+  matomo-data:
+  matomo-db-data:

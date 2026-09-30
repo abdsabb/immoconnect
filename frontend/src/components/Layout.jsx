@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
 import { useConversations } from '../services/messages'
 import { useConfiguration } from '../services/configuration'
+import { demarrerMesure, pageVue } from '../services/mesure'
 
 const LANGUES = ['fr', 'nl', 'en']
 
@@ -97,7 +98,8 @@ export default function Layout() {
   const { estConnecte, utilisateur, deconnecter } = useAuth()
   const naviguer = useNavigate()
   // Identité de l'agence et langues actives, réglées par l'administrateur (cas A5 et A6)
-  const site = useConfiguration().data?.site
+  const configuration = useConfiguration().data
+  const site = configuration?.site
   // À chaque changement de page, l'onglet reprend le nom du site ; la page affichée pose ensuite son propre titre
   const { pathname } = useLocation()
   const premierRendu = useRef(true)
@@ -107,6 +109,13 @@ export default function Layout() {
     document.title = site?.nom ?? 'ImmoConnect'
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname])
+  // Mesure d'audience sans cookie (Matomo auto-hébergé) : une page vue par changement de route, après que
+  // la page a posé son titre
+  useEffect(() => {
+    demarrerMesure(configuration?.mesure)
+    const minuterie = setTimeout(() => pageVue(window.location.pathname + window.location.search, document.title), 300)
+    return () => clearTimeout(minuterie)
+  }, [pathname, configuration?.mesure])
   const langues = LANGUES.filter((l) => !site?.languesActives || site.languesActives.includes(l))
   useEffect(() => {
     // Une langue désactivée par l'administrateur ne reste pas affichée : retour au français

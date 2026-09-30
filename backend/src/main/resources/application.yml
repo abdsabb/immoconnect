@@ -59,6 +59,9 @@ immoconnect:
   demonstration:
     photos: ${DEMO_PHOTOS:true}     # crée au démarrage les photos manquantes des annonces de test
     boite-courriels: ${DEMO_BOITE_COURRIELS:}   # adresse de la boîte où arrivent les e-mails (Mailpit), vide en exploitation réelle
+  mesure:
+    site-id: ${MATOMO_SITE_ID:}     # numéro du site dans Matomo ; vide : aucune mesure d'audience
+    url: /matomo/                   # Matomo est servi par le même domaine
   rendu:
     coquille: ${RENDU_COQUILLE:}    # adresse interne de l'index.html construit (http://frontend/index.html) ; vide : pas de rendu serveur
   stripe:                           # sans clé secrète, les paiements passent en mode simulation (dev et tests)

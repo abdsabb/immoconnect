@@ -119,7 +119,7 @@
       {
         "titre": "Données traitées",
         "paragraphes": [
-          "Le site ne traite que les données nécessaires à son fonctionnement. Il ne contient ni publicité ni mesure d'audience, et ne vend aucune donnée."
+          "Le site ne traite que les données nécessaires à son fonctionnement. Il ne contient aucune publicité et ne vend aucune donnée."
         ],
         "tableau": {
           "colonnes": [
@@ -170,6 +170,12 @@
               "Empreinte du cookie de session, des liens d'activation et de réinitialisation et des codes de connexion, adresse IP",
               "Exécution du contrat et sécurité",
               "Jetons expirés supprimés après trente jours"
+            ],
+            [
+              "Mesure d'audience",
+              "Pages vues, provenance, type d'appareil, actions (rendez-vous, message, inscription) ; adresse IP tronquée",
+              "Intérêt légitime : améliorer le site",
+              "Statistiques anonymes, sur le serveur du site"
             ]
           ]
         }
@@ -206,7 +212,8 @@
         "liste": [
           "Session : après la connexion, un cookie « immoconnect_session » garde votre session ouverte quatorze jours. Il est illisible par les scripts, envoyé uniquement à ce site et fermé par la déconnexion.",
           "Langue : votre choix (français, néerlandais ou anglais) est enregistré dans le stockage local de votre navigateur, sous le nom « i18nextLng ». Il ne quitte pas votre appareil.",
-          "Paiement : sur la page de paiement uniquement, Stripe dépose ses propres cookies pour lutter contre la fraude. Ils sont nécessaires au paiement."
+          "Paiement : sur la page de paiement uniquement, Stripe dépose ses propres cookies pour lutter contre la fraude. Ils sont nécessaires au paiement.",
+          "Mesure d'audience : le site compte ses visites avec Matomo, installé sur son propre serveur. Aucun cookie n'est déposé, aucune donnée n'est transmise à un tiers, l'adresse IP est tronquée et le signal « Ne pas me pister » du navigateur est respecté."
         ]
       },
       {
