@@ -1,0 +1,42 @@
+# Dependabot — alertes et mises à jour des dépendances sur les trois écosystèmes du projet
+# (chapitre 9, A06 « Composants vulnérables ») : Maven, npm et Docker, plus les actions de la CI.
+# Les pull requests visent la branche de développement ; elles passent la CI avant toute fusion.
+version: 2
+updates:
+  - package-ecosystem: maven
+    directory: /backend
+    target-branch: dev
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      spring:
+        patterns: ["org.springframework*"]
+  - package-ecosystem: npm
+    directory: /frontend
+    target-branch: dev
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      react:
+        patterns: ["react", "react-dom", "react-router", "@types/react*"]
+      outils:
+        dependency-type: development
+  - package-ecosystem: docker
+    directory: /backend
+    target-branch: dev
+    schedule:
+      interval: monthly
+  - package-ecosystem: docker
+    directory: /frontend
+    target-branch: dev
+    schedule:
+      interval: monthly
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: dev
+    schedule:
+      interval: monthly
