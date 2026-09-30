@@ -1,6 +1,6 @@
 # Image backend ImmoConnect — construction en deux étapes (livrable 13, §3.3)
 # Étape 1 : compilation Maven avec le JDK complet
-FROM eclipse-temurin:21-jdk-alpine AS build
+FROM eclipse-temurin:25-jdk-alpine AS build
 WORKDIR /app
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
@@ -9,7 +9,7 @@ COPY src ./src
 RUN ./mvnw -B --no-transfer-progress -DskipTests package
 
 # Étape 2 : image d'exécution allégée (JRE seul), utilisateur non-root (livrable 16)
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
 RUN addgroup -S immo && adduser -S immo -G immo
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
