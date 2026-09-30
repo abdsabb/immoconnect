@@ -29,7 +29,7 @@ jobs:
         run: ./mvnw -B --no-transfer-progress verify
       - name: Conserver le rapport de tests
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: rapports-tests-backend
           path: backend/target/surefire-reports
