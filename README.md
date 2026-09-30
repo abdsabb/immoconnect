@@ -114,9 +114,11 @@ Le niveau d'accès d'un administrateur limite ce qu'il peut faire dans le back-o
 les catégories et les traductions ; le gestionnaire gère en plus les comptes, le journal d'audit, les statistiques
 et les clés API ; le super-administrateur agit aussi sur les comptes des administrateurs.
 
-Les agents et les administrateurs se connectent en deux étapes : après le mot de passe, un code à six chiffres est
-envoyé par e-mail. En développement, il se lit dans Mailpit (http://localhost:8025) ; en production, dans la boîte
-de démonstration `/courriels/`. Les comptes créés depuis le site reçoivent un lien d'activation au même endroit.
+Avec `DOUBLE_FACTEUR=true`, les agents et les administrateurs se connectent en deux étapes : après le mot de passe, un
+code à six chiffres est envoyé par e-mail. En développement, il se lit dans Mailpit (http://localhost:8025) ; en
+production, dans la boîte de démonstration `/courriels/`. Avec `ACTIVATION_PAR_COURRIEL=true`, les comptes créés
+depuis le site reçoivent un lien d'activation au même endroit. Les deux sont coupés par défaut en production
+(`docker-compose.prod.yml`), pour que le jury se connecte directement.
 
 Les photos téléversées sont enregistrées dans `backend/stockage/` (variable `STORAGE_DIR`), hors du dépôt.
 
