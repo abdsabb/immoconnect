@@ -33,3 +33,17 @@ export function erreursApi(error, t) {
   const detail = pd.detail ?? pd.title ?? t('commun.erreurReseau')
   return { message: type ? t(`erreur.${type}`, { defaultValue: detail }) : detail, champs: pd.champs ?? {}, type }
 }
+
+/**
+ * Règles d'un mot de passe choisi, miroir de la règle serveur (8 caractères, minuscule, majuscule,
+ * chiffre). Les fuites connues ne se vérifient que côté serveur.
+ */
+export const reglesMotDePasse = (t) => ({
+  required: t('auth.requis'),
+  validate: (valeur) => {
+    if (valeur.length < 8) return t('auth.motDePasseCourt')
+    if (!/[a-z]/.test(valeur) || !/[A-Z]/.test(valeur)) return t('auth.motDePasseCasse')
+    if (!/[0-9]/.test(valeur)) return t('auth.motDePasseChiffre')
+    return true
+  },
+})

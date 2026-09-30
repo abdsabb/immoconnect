@@ -14,7 +14,12 @@
           "Deze site is ontworpen, ontwikkeld en gepubliceerd door Abdulrahman Sabbagh, student aan ICC Brussel, in het kader van zijn geïntegreerde proef.",
           "Voor elke vraag over de site of de inhoud ervan is de repository van het project het contactpunt."
         ],
-        "liens": [{ "texte": "Repository van het project op GitHub", "url": "https://github.com/abdsabb/immoconnect" }]
+        "liens": [
+          {
+            "texte": "Repository van het project op GitHub",
+            "url": "https://github.com/abdsabb/immoconnect"
+          }
+        ]
       },
       {
         "titre": "Het voorgestelde kantoor",
@@ -42,7 +47,12 @@
           "De advertenties zijn testgegevens. De prijzen, oppervlaktes, adressen en beschrijvingen zijn aangemaakt voor de demonstratie en stemmen met geen enkel echt pand overeen.",
           "De foto's zijn illustraties: geen enkele toont het pand dat de advertentie beschrijft."
         ],
-        "liens": [{ "texte": "Fotocredits", "chemin": "/credits-photos" }]
+        "liens": [
+          {
+            "texte": "Fotocredits",
+            "chemin": "/credits-photos"
+          }
+        ]
       },
       {
         "titre": "Betalende bezoeken",
@@ -99,7 +109,12 @@
         "paragraphes": [
           "De verwerkingsverantwoordelijke is de uitgever van de site, Abdulrahman Sabbagh. Het contactpunt staat in de wettelijke vermeldingen."
         ],
-        "liens": [{ "texte": "Wettelijke vermeldingen", "chemin": "/mentions-legales" }]
+        "liens": [
+          {
+            "texte": "Wettelijke vermeldingen",
+            "chemin": "/mentions-legales"
+          }
+        ]
       },
       {
         "titre": "Verwerkte gegevens",
@@ -107,14 +122,55 @@
           "De site verwerkt alleen de gegevens die nodig zijn voor zijn werking. Hij bevat geen reclame en geen publieksmeting, en verkoopt geen gegevens."
         ],
         "tableau": {
-          "colonnes": ["Verwerking", "Gegevens", "Rechtsgrond", "Bewaring"],
+          "colonnes": [
+            "Verwerking",
+            "Gegevens",
+            "Rechtsgrond",
+            "Bewaring"
+          ],
           "lignes": [
-            ["Account", "Naam, voornaam, e-mailadres, telefoon (facultatief), taal, wachtwoord in de vorm van een hash", "Uitvoering van de overeenkomst", "Tot de verwijdering van het account"],
-            ["Favorieten", "Bewaarde panden", "Uitvoering van de overeenkomst", "Gewist bij de verwijdering van het account"],
-            ["Berichten", "Tekst van de berichten met een makelaar", "Uitvoering van de overeenkomst", "Tekst gewist bij de verwijdering van het account"],
-            ["Afspraken", "Pand, datum, uur, reden van het bezoek", "Uitvoering van de overeenkomst", "Bewaard zonder identiteit na de verwijdering van het account"],
-            ["Betalingen", "Bedrag, datum, referentie van de betaling bij Stripe; geen kaartgegevens", "Uitvoering van de overeenkomst en boekhoudkundige verplichting", "Bewaard zonder identiteit na de verwijdering van het account"],
-            ["Beveiligingslogboek", "Uitgevoerde actie, datum, IP-adres, betrokken account", "Gerechtvaardigd belang: beveiliging van de dienst", "Bewaard na de verwijdering van het account, met het IP-adres, gekoppeld aan een anoniem geworden account"]
+            [
+              "Account",
+              "Naam, voornaam, e-mailadres, telefoon (facultatief), taal, wachtwoord in de vorm van een hash",
+              "Uitvoering van de overeenkomst",
+              "Tot de verwijdering van het account"
+            ],
+            [
+              "Favorieten",
+              "Bewaarde panden",
+              "Uitvoering van de overeenkomst",
+              "Gewist bij de verwijdering van het account"
+            ],
+            [
+              "Berichten",
+              "Tekst van de berichten met een makelaar",
+              "Uitvoering van de overeenkomst",
+              "Tekst gewist bij de verwijdering van het account"
+            ],
+            [
+              "Afspraken",
+              "Pand, datum, uur, reden van het bezoek",
+              "Uitvoering van de overeenkomst",
+              "Bewaard zonder identiteit na de verwijdering van het account"
+            ],
+            [
+              "Betalingen",
+              "Bedrag, datum, referentie van de betaling bij Stripe; geen kaartgegevens",
+              "Uitvoering van de overeenkomst en boekhoudkundige verplichting",
+              "Bewaard zonder identiteit na de verwijdering van het account"
+            ],
+            [
+              "Beveiligingslogboek",
+              "Uitgevoerde actie, datum, IP-adres, betrokken account",
+              "Gerechtvaardigd belang: beveiliging van de dienst",
+              "Bewaard na de verwijdering van het account, met het IP-adres, gekoppeld aan een anoniem geworden account"
+            ],
+            [
+              "Sessies en links",
+              "Hash van de sessiecookie, van de activerings- en herstellinks en van de aanmeldcodes, IP-adres",
+              "Uitvoering van de overeenkomst en beveiliging",
+              "Verlopen tokens gewist na dertig dagen"
+            ]
           ]
         }
       },
@@ -145,11 +201,11 @@
       {
         "titre": "Cookies en lokale opslag",
         "paragraphes": [
-          "De site plaatst geen enkele cookie. Hij toont dus geen toestemmingsbanner."
+          "De site plaatst één enkele, strikt noodzakelijke cookie: hij toont dus geen toestemmingsbanner."
         ],
         "liste": [
+          "Sessie: na de aanmelding houdt een cookie 'immoconnect_session' uw sessie veertien dagen open. Hij is onleesbaar voor scripts, wordt alleen naar deze site gestuurd en wordt afgesloten bij het afmelden.",
           "Taal: uw keuze (Frans, Nederlands of Engels) wordt bewaard in de lokale opslag van uw browser, onder de naam 'i18nextLng'. Ze verlaat uw toestel niet.",
-          "Aanmelding: uw sessie wordt in het geheugen bewaard zolang de pagina open blijft. De pagina herladen meldt u af.",
           "Betaling: alleen op de betaalpagina plaatst Stripe zijn eigen cookies om fraude te bestrijden. Ze zijn nodig voor de betaling."
         ]
       },
@@ -157,9 +213,11 @@
         "titre": "Beveiliging",
         "liste": [
           "De uitwisselingen met de site zijn versleuteld (HTTPS).",
-          "De wachtwoorden worden bewaard in de vorm van een hash (bcrypt): niemand kan ze lezen, ook een beheerder niet.",
+          "De wachtwoorden worden bewaard in de vorm van een hash (bcrypt): niemand kan ze lezen, ook een beheerder niet. Een gekozen wachtwoord wordt vergeleken met bekende datalekken via de dienst Have I Been Pwned, zonder ooit doorgegeven te worden: alleen vijf tekens van zijn hash vertrekken.",
+          "Makelaars en beheerders melden zich in twee stappen aan, met een per e-mail gestuurde code; leden kunnen dat kiezen.",
+          "Na meerdere mislukkingen wordt het aanmelden enkele minuten geblokkeerd, steeds langer.",
           "Elk account heeft alleen toegang tot zijn eigen gegevens; de rechten hangen af van de rol.",
-          "De aanmeldingen en de gevoelige acties worden in een logboek genoteerd."
+          "Aanmeldingen, mislukte aanmeldingen en gevoelige acties worden in een logboek genoteerd."
         ]
       },
       {
@@ -178,12 +236,83 @@
         "paragraphes": [
           "U kunt een klacht indienen bij de Gegevensbeschermingsautoriteit, Drukpersstraat 35, 1000 Brussel."
         ],
-        "liens": [{ "texte": "gegevensbeschermingsautoriteit.be", "url": "https://www.gegevensbeschermingsautoriteit.be" }]
+        "liens": [
+          {
+            "texte": "gegevensbeschermingsautoriteit.be",
+            "url": "https://www.gegevensbeschermingsautoriteit.be"
+          }
+        ]
       },
       {
         "titre": "Open data",
         "paragraphes": [
           "De site publiceert gegevens over zijn advertenties via een programmeerinterface. Deze gegevens bevatten geen informatie over de leden: geen naam, geen e-mailadres, geen afspraken."
+        ]
+      }
+    ]
+  },
+  "conditions": {
+    "titre": "Algemene voorwaarden",
+    "sections": [
+      {
+        "titre": "Voorwerp",
+        "paragraphes": [
+          "Deze voorwaarden regelen het gebruik van de site ImmoConnect en de aankoop van een premium bezoektijdstip. Ze worden aanvaard bij het aanmaken van de account en herhaald vóór elke betaling."
+        ]
+      },
+      {
+        "titre": "Account",
+        "paragraphes": [
+          "Een account is persoonlijk. U kiest een sterk wachtwoord en houdt het geheim; makelaars en beheerders melden zich in twee stappen aan. U kunt uw account altijd verwijderen vanuit uw profiel: uw favorieten en berichten worden gewist, uw afspraken en betalingen bewaard zonder uw identiteit."
+        ]
+      },
+      {
+        "titre": "Bezoeken",
+        "paragraphes": [
+          "Een bezoekaanvraag overdag, van maandag tot vrijdag, is gratis; de makelaar bevestigt of weigert ze. Een premium tijdstip, ’s avonds of in het weekend, wordt bevestigd zodra het betaald is. Het exacte adres van het pand wordt meegedeeld zodra het bezoek bevestigd is."
+        ]
+      },
+      {
+        "titre": "Prijs en betaling",
+        "paragraphes": [
+          "Het premium tijdstip kost 15 €, alle taksen inbegrepen, prijs getoond vóór elke verbintenis. De betaling gebeurt met kaart, via Stripe; de site ontvangt en bewaart geen kaartnummer. Een bevestiging wordt per e-mail gestuurd."
+        ]
+      },
+      {
+        "titre": "Annulering en terugbetaling",
+        "paragraphes": [
+          "U kunt een bezoek annuleren vanuit uw ruimte. Een premium tijdstip dat uiterlijk 24 uur vóór het bezoek geannuleerd wordt, wordt volledig terugbetaald; later geannuleerd, wordt het niet terugbetaald. Annuleert de makelaar, of is het pand niet meer beschikbaar, dan is de terugbetaling altijd volledig.",
+          "Herroepingsrecht: het bezoek is een dienst op datum, uitgevoerd vóór het einde van de wettelijke termijn van veertien dagen. Door te betalen vraagt u de uitvoering op de gekozen datum en aanvaardt u dat die termijn niet geldt; de gunstigere annuleringsregel hierboven blijft voor u gelden."
+        ]
+      },
+      {
+        "titre": "Inhoud van gebruikers",
+        "paragraphes": [
+          "De berichten die u aan makelaars schrijft verbinden alleen u. U garandeert dat u het recht hebt te publiceren wat u schrijft en verleent de site alleen de licentie die nodig is om het door te geven. Onwettige inhoud kan verwijderd worden."
+        ]
+      },
+      {
+        "titre": "Aansprakelijkheid",
+        "paragraphes": [
+          "Het kantoor staat in voor de juistheid van zijn advertenties. De site kan onderbroken worden voor onderhoud. Op deze demonstratiesite ontstaat geen enkele echte verplichting: kantoor, panden en betalingen zijn fictief."
+        ]
+      },
+      {
+        "titre": "Persoonsgegevens",
+        "paragraphes": [
+          "De verwerking van uw gegevens wordt beschreven in het privacybeleid."
+        ],
+        "liens": [
+          {
+            "texte": "Privacybeleid",
+            "chemin": "/confidentialite"
+          }
+        ]
+      },
+      {
+        "titre": "Toepasselijk recht",
+        "paragraphes": [
+          "Op deze voorwaarden is het Belgisch recht van toepassing."
         ]
       }
     ]

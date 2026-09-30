@@ -7,9 +7,11 @@ import { useAuth } from './AuthContext'
 // de toute façon (403) ce que le rôle ne permet pas.
 export default function RouteProtegee({ roles }) {
   const { t } = useTranslation()
-  const { estConnecte, utilisateur } = useAuth()
+  const { estConnecte, utilisateur, initialisation } = useAuth()
   const location = useLocation()
-  if (!estConnecte) return <Navigate to="/connexion" replace state={{ from: location.pathname }} />
+  // Au chargement de la page, la session est peut-être en train d'être rouverte : on attend avant de rediriger
+  if (initialisation) return <p className="mx-auto max-w-3xl px-4 py-12 text-gray-500">{t('commun.chargement')}</p>
+  if (!estConnecte) return <Navigate to="/connexion" replace state={{ from: location.pathname + location.search }} />
   if (roles && !roles.includes(utilisateur?.role)) {
     return <p role="alert" className="mx-auto max-w-3xl px-4 py-12 text-erreur">{t('erreur.interdit')}</p>
   }

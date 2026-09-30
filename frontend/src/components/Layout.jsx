@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, Outlet } from 'react-router'
+import { NavLink, Outlet, useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
 import { useConversations } from '../services/messages'
@@ -40,6 +40,7 @@ function BarreEspace({ role }) {
 export default function Layout() {
   const { t, i18n } = useTranslation()
   const { estConnecte, utilisateur, deconnecter } = useAuth()
+  const naviguer = useNavigate()
   // Textes du site gérés par l'administrateur (cas A6) ; à défaut, le texte livré avec l'interface
   const contenu = (cle, repli) => t(`contenu:${cle}`, { defaultValue: t(repli) })
   // Sur téléphone, la navigation se replie derrière un bouton ; un lien choisi la referme
@@ -54,7 +55,7 @@ export default function Layout() {
       <NavLink to="/a-louer" className={lien} onClick={fermer}>{contenu('nav.location', 'offre.location')}</NavLink>
       <NavLink to="/blog" className={lien} onClick={fermer}>{contenu('nav.blog', 'nav.blog')}</NavLink>
       {estConnecte ? (
-        <button type="button" onClick={() => { fermer(); deconnecter() }}
+        <button type="button" onClick={() => { fermer(); deconnecter().then(() => naviguer('/')) }}
           className="px-3 py-2 rounded-md text-left font-titre font-semibold text-white/80 hover:text-turquoise">
           {t('nav.deconnexion')} ({utilisateur?.prenom})
         </button>
@@ -111,6 +112,7 @@ export default function Layout() {
             {/* Liens internes : un lien ordinaire rechargerait la page et fermerait la session, gardée en mémoire */}
             <NavLink to="/mentions-legales" className="hover:text-white">{contenu('footer.mentions', 'pied.mentions')}</NavLink>
             <NavLink to="/confidentialite" className="hover:text-white">{contenu('footer.rgpd', 'pied.confidentialite')}</NavLink>
+            <NavLink to="/conditions" className="hover:text-white">{t('pied.conditions')}</NavLink>
             <NavLink to="/credits-photos" className="hover:text-white">{t('pied.credits')}</NavLink>
             <span>{t('pied.osm')}</span>
           </span>

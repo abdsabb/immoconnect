@@ -156,7 +156,8 @@
     "mentions": "Wettelijke vermeldingen",
     "confidentialite": "Privacy",
     "osm": "© OpenStreetMap-bijdragers",
-    "credits": "Fotocredits"
+    "credits": "Fotocredits",
+    "conditions": "Algemene voorwaarden"
   },
   "auth": {
     "connexionTitre": "Aanmelden",
@@ -174,7 +175,41 @@
     "motDePasseCourt": "Minstens 8 tekens",
     "pasDeCompte": "Nog geen account?",
     "dejaCompte": "Al geregistreerd?",
-    "donnees": "Uw gegevens dienen alleen om uw account te laten werken. De details staan op de pagina"
+    "donnees": "Uw gegevens dienen alleen om uw account te laten werken. De details staan op de pagina",
+    "motDePasseCasse": "Meng kleine letters en hoofdletters",
+    "motDePasseChiffre": "Voeg minstens één cijfer toe",
+    "motDePasseRegles": "Minstens 8 tekens, met een kleine letter, een hoofdletter en een cijfer. Een wachtwoord uit een bekend datalek wordt geweigerd.",
+    "motDePasseOublie": "Wachtwoord vergeten?",
+    "retourConnexion": "Terug naar aanmelden",
+    "valider": "Bevestigen",
+    "recommencer": "Opnieuw aanmelden",
+    "codeTitre": "Aanmeldcode",
+    "codeSousTitre": "Er is zopas een code van zes cijfers naar {{email}} gestuurd. Hij is tien minuten geldig.",
+    "code": "Code uit de e-mail",
+    "codeFormat": "Zes cijfers",
+    "renvoyerActivation": "Activeringslink opnieuw sturen",
+    "activationRenvoyee": "Als dit adres bij een niet-geactiveerde account hoort, is zopas een nieuwe link vertrokken.",
+    "oubliTitre": "Wachtwoord vergeten",
+    "oubliSousTitre": "Geef uw e-mailadres op: u ontvangt een link om een nieuw wachtwoord te kiezen.",
+    "oubliBouton": "Link sturen",
+    "oubliEnvoye": "Als dit adres bij een account hoort, is zopas een e-mail vertrokken. De link is dertig minuten geldig.",
+    "reinitialisationTitre": "Nieuw wachtwoord",
+    "reinitialisationBouton": "Nieuw wachtwoord opslaan",
+    "reinitialisationFaite": "Uw wachtwoord is gewijzigd en al uw sessies zijn afgesloten. U kunt zich aanmelden.",
+    "activationTitre": "Account activeren",
+    "activationFaite": "Uw adres is bevestigd: uw account is actief en u bent aangemeld.",
+    "activationLienManquant": "Deze link is onvolledig.",
+    "activationAide": "De link is misschien al gebruikt of verlopen. Probeer u aan te melden: een nieuwe link kan opnieuw gestuurd worden.",
+    "verifiezTitre": "Controleer uw e-mails",
+    "verifiezTexte": "Er is zopas een e-mail naar {{email}} vertrokken. Open de link erin om uw account te activeren; hij is 24 uur geldig.",
+    "verifiezDemo": "Demonstratiesite: de e-mails worden niet naar uw adres gestuurd, ze komen toe in de demonstratiemailbox.",
+    "verifiezBoite": "Demonstratiemailbox openen",
+    "cguAvant": "Ik aanvaard de",
+    "cgu": "algemene voorwaarden",
+    "cguEntre": "en ik heb het",
+    "cguRequises": "De algemene voorwaarden moeten aanvaard worden.",
+    "consentement": "Ik wil informatie ontvangen over nieuwe panden en het nieuws van het kantoor. Deze keuze kan altijd in het profiel gewijzigd worden.",
+    "cguConfidentialite": "privacybeleid gelezen"
   },
   "profil": {
     "titre": "Hallo {{prenom}}",
@@ -189,7 +224,13 @@
     "desinscription": "Mijn account verwijderen",
     "desinscriptionExplication": "Conform de AVG worden uw persoonsgegevens geanonimiseerd en uw favorieten verwijderd. De historiek van uw afspraken en betalingen blijft zonder identiteit bewaard (boekhoudkundige verplichtingen).",
     "supprimerCompte": "Mijn account definitief verwijderen",
-    "confirmerDesinscription": "Het verwijderen van uw account bevestigen? Dit kan niet ongedaan worden gemaakt."
+    "confirmerDesinscription": "Het verwijderen van uw account bevestigen? Dit kan niet ongedaan worden gemaakt.",
+    "securiteEtChoix": "Beveiliging en communicatie",
+    "doubleFacteur": "Aanmelden in twee stappen",
+    "doubleFacteurExplication": "Bij elke aanmelding wordt naast het wachtwoord een per e-mail gestuurde code gevraagd.",
+    "doubleFacteurImpose": "Verplicht voor uw rol: bij elke aanmelding wordt een per e-mail gestuurde code gevraagd.",
+    "communications": "Informatie van het kantoor",
+    "communicationsExplication": "Informatie ontvangen over nieuwe panden en nieuws. Altijd intrekbaar."
   },
   "rdv": {
     "titre": "Afspraak maken",
@@ -484,7 +525,11 @@
     "conflit-etat": "Deze actie is niet meer mogelijk voor deze afspraak.",
     "interdit": "U mag deze actie niet uitvoeren.",
     "fichier-trop-volumineux": "Een foto weegt hoogstens 5 MB.",
-    "quota-depasse": "Te veel oproepen: probeer het over een minuut opnieuw."
+    "quota-depasse": "Te veel oproepen: probeer het over een minuut opnieuw.",
+    "trop-de-tentatives": "Te veel pogingen. Wacht enkele minuten voor u het opnieuw probeert.",
+    "lien-invalide": "Deze link of code is niet meer geldig.",
+    "code-invalide": "Verkeerde code.",
+    "compte-non-active": "Bevestig eerst uw e-mailadres: open de link die u bij de inschrijving ontving."
   },
   "credits": {
     "titre": "Fotocredits",

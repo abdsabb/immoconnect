@@ -17,6 +17,8 @@ import Blog from './pages/Blog'
 import Article from './pages/Article'
 import CreditsPhotos from './pages/CreditsPhotos'
 import PageLegale from './pages/PageLegale'
+import MotDePasseOublie from './pages/MotDePasseOublie'
+import Activation from './pages/Activation'
 import Administration from './pages/admin/Administration'
 import TableauDeBord from './pages/admin/TableauDeBord'
 import Comptes from './pages/admin/Comptes'
@@ -43,8 +45,12 @@ export default function App() {
         <Route path="credits-photos" element={<CreditsPhotos />} />
         <Route path="mentions-legales" element={<PageLegale key="mentions" page="mentions" />} />
         <Route path="confidentialite" element={<PageLegale key="confidentialite" page="confidentialite" />} />
+        <Route path="conditions" element={<PageLegale key="conditions" page="conditions" />} />
         <Route path="connexion" element={<Connexion />} />
         <Route path="inscription" element={<Inscription />} />
+        <Route path="mot-de-passe-oublie" element={<MotDePasseOublie />} />
+        <Route path="reinitialisation" element={<MotDePasseOublie />} />
+        <Route path="activation" element={<Activation />} />
         <Route element={<RouteProtegee />}>
           <Route path="profil" element={<Profil />} />
           <Route path="biens/:id/rendez-vous" element={<PriseRendezVous />} />

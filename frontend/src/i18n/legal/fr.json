@@ -14,7 +14,12 @@
           "Ce site est conçu, développé et publié par Abdulrahman Sabbagh, étudiant à l'ICC Bruxelles, dans le cadre de son épreuve intégrée.",
           "Pour toute question sur le site ou son contenu, le point de contact est le dépôt du projet."
         ],
-        "liens": [{ "texte": "Dépôt du projet sur GitHub", "url": "https://github.com/abdsabb/immoconnect" }]
+        "liens": [
+          {
+            "texte": "Dépôt du projet sur GitHub",
+            "url": "https://github.com/abdsabb/immoconnect"
+          }
+        ]
       },
       {
         "titre": "L'agence présentée",
@@ -42,7 +47,12 @@
           "Les annonces sont des données de test. Les prix, les superficies, les adresses et les descriptions ont été générés pour la démonstration et ne correspondent à aucun bien réel.",
           "Les photos sont des illustrations : aucune ne montre le bien décrit par l'annonce."
         ],
-        "liens": [{ "texte": "Crédits photos", "chemin": "/credits-photos" }]
+        "liens": [
+          {
+            "texte": "Crédits photos",
+            "chemin": "/credits-photos"
+          }
+        ]
       },
       {
         "titre": "Visites payantes",
@@ -99,7 +109,12 @@
         "paragraphes": [
           "Le responsable du traitement est l'éditeur du site, Abdulrahman Sabbagh. Le point de contact est indiqué dans les mentions légales."
         ],
-        "liens": [{ "texte": "Mentions légales", "chemin": "/mentions-legales" }]
+        "liens": [
+          {
+            "texte": "Mentions légales",
+            "chemin": "/mentions-legales"
+          }
+        ]
       },
       {
         "titre": "Données traitées",
@@ -107,14 +122,55 @@
           "Le site ne traite que les données nécessaires à son fonctionnement. Il ne contient ni publicité ni mesure d'audience, et ne vend aucune donnée."
         ],
         "tableau": {
-          "colonnes": ["Traitement", "Données", "Base légale", "Conservation"],
+          "colonnes": [
+            "Traitement",
+            "Données",
+            "Base légale",
+            "Conservation"
+          ],
           "lignes": [
-            ["Compte", "Nom, prénom, adresse e-mail, téléphone (facultatif), langue, mot de passe sous forme d'empreinte", "Exécution du contrat", "Jusqu'à la suppression du compte"],
-            ["Favoris", "Biens enregistrés", "Exécution du contrat", "Effacés à la suppression du compte"],
-            ["Messages", "Texte des messages échangés avec un agent", "Exécution du contrat", "Texte effacé à la suppression du compte"],
-            ["Rendez-vous", "Bien, date, heure, motif de la visite", "Exécution du contrat", "Conservés sans identité après la suppression du compte"],
-            ["Paiements", "Montant, date, référence du paiement chez Stripe ; aucune donnée de carte", "Exécution du contrat et obligation comptable", "Conservés sans identité après la suppression du compte"],
-            ["Journal de sécurité", "Action effectuée, date, adresse IP, compte concerné", "Intérêt légitime : sécurité du service", "Conservé après la suppression du compte, adresse IP comprise, rattaché à un compte devenu anonyme"]
+            [
+              "Compte",
+              "Nom, prénom, adresse e-mail, téléphone (facultatif), langue, mot de passe sous forme d'empreinte",
+              "Exécution du contrat",
+              "Jusqu'à la suppression du compte"
+            ],
+            [
+              "Favoris",
+              "Biens enregistrés",
+              "Exécution du contrat",
+              "Effacés à la suppression du compte"
+            ],
+            [
+              "Messages",
+              "Texte des messages échangés avec un agent",
+              "Exécution du contrat",
+              "Texte effacé à la suppression du compte"
+            ],
+            [
+              "Rendez-vous",
+              "Bien, date, heure, motif de la visite",
+              "Exécution du contrat",
+              "Conservés sans identité après la suppression du compte"
+            ],
+            [
+              "Paiements",
+              "Montant, date, référence du paiement chez Stripe ; aucune donnée de carte",
+              "Exécution du contrat et obligation comptable",
+              "Conservés sans identité après la suppression du compte"
+            ],
+            [
+              "Journal de sécurité",
+              "Action effectuée, date, adresse IP, compte concerné",
+              "Intérêt légitime : sécurité du service",
+              "Conservé après la suppression du compte, adresse IP comprise, rattaché à un compte devenu anonyme"
+            ],
+            [
+              "Sessions et liens",
+              "Empreinte du cookie de session, des liens d'activation et de réinitialisation et des codes de connexion, adresse IP",
+              "Exécution du contrat et sécurité",
+              "Jetons expirés supprimés après trente jours"
+            ]
           ]
         }
       },
@@ -145,11 +201,11 @@
       {
         "titre": "Cookies et stockage local",
         "paragraphes": [
-          "Le site ne dépose aucun cookie. Il n'affiche donc pas de bandeau de consentement."
+          "Le site dépose un seul cookie, strictement nécessaire : il n'affiche donc pas de bandeau de consentement."
         ],
         "liste": [
+          "Session : après la connexion, un cookie « immoconnect_session » garde votre session ouverte quatorze jours. Il est illisible par les scripts, envoyé uniquement à ce site et fermé par la déconnexion.",
           "Langue : votre choix (français, néerlandais ou anglais) est enregistré dans le stockage local de votre navigateur, sous le nom « i18nextLng ». Il ne quitte pas votre appareil.",
-          "Connexion : votre session est gardée en mémoire, le temps que la page reste ouverte. Recharger la page vous déconnecte.",
           "Paiement : sur la page de paiement uniquement, Stripe dépose ses propres cookies pour lutter contre la fraude. Ils sont nécessaires au paiement."
         ]
       },
@@ -157,9 +213,11 @@
         "titre": "Sécurité",
         "liste": [
           "Les échanges avec le site sont chiffrés (HTTPS).",
-          "Les mots de passe sont enregistrés sous forme d'empreinte (bcrypt) : personne ne peut les lire, pas même un administrateur.",
-          "Chaque compte n'accède qu'à ses propres données ; les droits dépendent du rôle.",
-          "Les connexions et les actions sensibles sont inscrites dans un journal."
+          "Les mots de passe sont enregistrés sous forme d'empreinte (bcrypt) : personne ne peut les lire, pas même un administrateur. Un mot de passe choisi est comparé aux fuites de données connues par le service Have I Been Pwned, sans jamais lui être transmis : seuls cinq caractères de son empreinte partent.",
+          "Les agents et les administrateurs se connectent en deux étapes, avec un code envoyé par e-mail ; les membres peuvent le choisir.",
+          "Après plusieurs échecs, la connexion est bloquée quelques minutes, de plus en plus longtemps.",
+          "Chaque compte n’accède qu’à ses propres données ; les droits dépendent du rôle.",
+          "Les connexions, les échecs de connexion et les actions sensibles sont inscrits dans un journal."
         ]
       },
       {
@@ -178,12 +236,83 @@
         "paragraphes": [
           "Vous pouvez introduire une réclamation auprès de l'Autorité de protection des données, rue de la Presse 35, 1000 Bruxelles."
         ],
-        "liens": [{ "texte": "autoriteprotectiondonnees.be", "url": "https://www.autoriteprotectiondonnees.be" }]
+        "liens": [
+          {
+            "texte": "autoriteprotectiondonnees.be",
+            "url": "https://www.autoriteprotectiondonnees.be"
+          }
+        ]
       },
       {
         "titre": "Données ouvertes",
         "paragraphes": [
           "Le site publie des données sur ses annonces par une interface de programmation. Ces données ne contiennent aucune information sur les membres : ni nom, ni adresse e-mail, ni rendez-vous."
+        ]
+      }
+    ]
+  },
+  "conditions": {
+    "titre": "Conditions générales",
+    "sections": [
+      {
+        "titre": "Objet",
+        "paragraphes": [
+          "Ces conditions règlent l'utilisation du site ImmoConnect et l'achat d'un créneau de visite premium. Elles sont acceptées à la création du compte, et rappelées avant chaque paiement."
+        ]
+      },
+      {
+        "titre": "Compte",
+        "paragraphes": [
+          "Un compte est personnel. Vous choisissez un mot de passe robuste et le gardez secret ; les agents et les administrateurs s'identifient en deux étapes. Vous pouvez supprimer votre compte à tout moment depuis votre profil : vos favoris et vos messages sont effacés, vos rendez-vous et paiements conservés sans votre identité."
+        ]
+      },
+      {
+        "titre": "Visites",
+        "paragraphes": [
+          "Une demande de visite en journée, du lundi au vendredi, est gratuite ; l'agent la confirme ou la refuse. Un créneau premium, en soirée ou le week-end, est confirmé dès son paiement. L'adresse exacte du bien est communiquée une fois la visite confirmée."
+        ]
+      },
+      {
+        "titre": "Prix et paiement",
+        "paragraphes": [
+          "Le créneau premium coûte 15 €, toutes taxes comprises, prix affiché avant tout engagement. Le paiement se fait par carte, par Stripe ; le site ne reçoit ni ne conserve aucun numéro de carte. Une confirmation est envoyée par e-mail."
+        ]
+      },
+      {
+        "titre": "Annulation et remboursement",
+        "paragraphes": [
+          "Vous pouvez annuler une visite depuis votre espace. Un créneau premium annulé au plus tard 24 heures avant la visite est remboursé en totalité ; annulé plus tard, il n'est pas remboursé. Si l'agent annule, ou si le bien n'est plus disponible, le remboursement est toujours intégral.",
+          "Droit de rétractation : la visite est une prestation datée, exécutée avant la fin du délai légal de quatorze jours. En payant, vous demandez son exécution à la date choisie et acceptez que ce délai ne s'applique pas ; la règle d'annulation ci-dessus, plus généreuse, vous reste acquise."
+        ]
+      },
+      {
+        "titre": "Contenus des utilisateurs",
+        "paragraphes": [
+          "Les messages que vous écrivez aux agents n'engagent que vous. Vous garantissez avoir le droit de publier ce que vous écrivez et accordez au site la seule licence nécessaire à sa transmission. Un contenu illicite peut être retiré."
+        ]
+      },
+      {
+        "titre": "Responsabilité",
+        "paragraphes": [
+          "L'agence répond de l'exactitude de ses annonces. Le site peut être interrompu pour maintenance. Sur ce site de démonstration, aucune obligation réelle ne naît : agence, biens et paiements sont fictifs."
+        ]
+      },
+      {
+        "titre": "Données personnelles",
+        "paragraphes": [
+          "Le traitement de vos données est décrit dans la politique de confidentialité."
+        ],
+        "liens": [
+          {
+            "texte": "Politique de confidentialité",
+            "chemin": "/confidentialite"
+          }
+        ]
+      },
+      {
+        "titre": "Droit applicable",
+        "paragraphes": [
+          "Ces conditions sont soumises au droit belge."
         ]
       }
     ]

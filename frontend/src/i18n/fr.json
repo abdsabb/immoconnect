@@ -156,7 +156,8 @@
     "mentions": "Mentions légales",
     "confidentialite": "Confidentialité",
     "osm": "© les contributeurs OpenStreetMap",
-    "credits": "Crédits photos"
+    "credits": "Crédits photos",
+    "conditions": "Conditions générales"
   },
   "auth": {
     "connexionTitre": "Se connecter",
@@ -174,7 +175,41 @@
     "motDePasseCourt": "Au moins 8 caractères",
     "pasDeCompte": "Pas encore de compte ?",
     "dejaCompte": "Déjà inscrit ?",
-    "donnees": "Vos données servent uniquement à faire fonctionner votre compte. Le détail est sur la page"
+    "donnees": "Vos données servent uniquement à faire fonctionner votre compte. Le détail est sur la page",
+    "motDePasseCasse": "Mêlez minuscules et majuscules",
+    "motDePasseChiffre": "Ajoutez au moins un chiffre",
+    "motDePasseRegles": "8 caractères au moins, avec une minuscule, une majuscule et un chiffre. Un mot de passe connu des fuites de données est refusé.",
+    "motDePasseOublie": "Mot de passe oublié ?",
+    "retourConnexion": "Retour à la connexion",
+    "valider": "Valider",
+    "recommencer": "Recommencer la connexion",
+    "codeTitre": "Code de connexion",
+    "codeSousTitre": "Un code à six chiffres vient d’être envoyé à {{email}}. Il est valable dix minutes.",
+    "code": "Code reçu par e-mail",
+    "codeFormat": "Six chiffres",
+    "renvoyerActivation": "Renvoyer le lien d’activation",
+    "activationRenvoyee": "Si cette adresse correspond à un compte non activé, un nouveau lien vient de partir.",
+    "oubliTitre": "Mot de passe oublié",
+    "oubliSousTitre": "Indiquez votre adresse e-mail : vous recevrez un lien pour choisir un nouveau mot de passe.",
+    "oubliBouton": "Envoyer le lien",
+    "oubliEnvoye": "Si cette adresse correspond à un compte, un e-mail vient de partir. Le lien est valable trente minutes.",
+    "reinitialisationTitre": "Nouveau mot de passe",
+    "reinitialisationBouton": "Enregistrer le nouveau mot de passe",
+    "reinitialisationFaite": "Votre mot de passe est changé et toutes vos sessions ont été fermées. Vous pouvez vous connecter.",
+    "activationTitre": "Activation du compte",
+    "activationFaite": "Votre adresse est confirmée : votre compte est actif et vous êtes connecté.",
+    "activationLienManquant": "Ce lien est incomplet.",
+    "activationAide": "Le lien a peut-être déjà servi, ou expiré. Essayez de vous connecter : un nouveau lien pourra être renvoyé.",
+    "verifiezTitre": "Vérifiez vos e-mails",
+    "verifiezTexte": "Un e-mail vient de partir vers {{email}}. Ouvrez le lien qu’il contient pour activer votre compte ; il est valable 24 heures.",
+    "verifiezDemo": "Site de démonstration : les e-mails ne sont pas envoyés à votre adresse, ils arrivent dans la boîte de démonstration.",
+    "verifiezBoite": "Ouvrir la boîte de démonstration",
+    "cguAvant": "J’accepte les",
+    "cgu": "conditions générales",
+    "cguEntre": "et j’ai lu la",
+    "cguRequises": "Les conditions générales doivent être acceptées.",
+    "consentement": "J’accepte de recevoir des informations sur les nouveaux biens et les actualités de l’agence. Ce choix se modifie à tout moment dans le profil.",
+    "cguConfidentialite": "politique de confidentialité"
   },
   "profil": {
     "titre": "Bonjour {{prenom}}",
@@ -189,7 +224,13 @@
     "desinscription": "Supprimer mon compte",
     "desinscriptionExplication": "Conformément au RGPD, vos données personnelles seront anonymisées et vos favoris supprimés. L'historique de vos rendez-vous et paiements est conservé sans identité (obligations comptables).",
     "supprimerCompte": "Supprimer définitivement mon compte",
-    "confirmerDesinscription": "Confirmer la suppression de votre compte ? Cette action est irréversible."
+    "confirmerDesinscription": "Confirmer la suppression de votre compte ? Cette action est irréversible.",
+    "securiteEtChoix": "Sécurité et communications",
+    "doubleFacteur": "Connexion en deux étapes",
+    "doubleFacteurExplication": "À chaque connexion, un code envoyé par e-mail sera demandé en plus du mot de passe.",
+    "doubleFacteurImpose": "Obligatoire pour votre rôle : un code envoyé par e-mail est demandé à chaque connexion.",
+    "communications": "Informations de l’agence",
+    "communicationsExplication": "Recevoir des informations sur les nouveaux biens et les actualités. Retirable à tout moment."
   },
   "rdv": {
     "titre": "Prendre rendez-vous",
@@ -484,7 +525,11 @@
     "conflit-etat": "Cette action n'est plus possible pour ce rendez-vous.",
     "interdit": "Vous n'avez pas le droit d'effectuer cette action.",
     "fichier-trop-volumineux": "Une photo pèse 5 Mo au plus.",
-    "quota-depasse": "Trop d'appels : réessayez dans une minute."
+    "quota-depasse": "Trop d'appels : réessayez dans une minute.",
+    "trop-de-tentatives": "Trop de tentatives. Patientez quelques minutes avant de réessayer.",
+    "lien-invalide": "Ce lien ou ce code n’est plus valable.",
+    "code-invalide": "Code incorrect.",
+    "compte-non-active": "Confirmez d’abord votre adresse e-mail : ouvrez le lien reçu à l’inscription."
   },
   "credits": {
     "titre": "Crédits photos",

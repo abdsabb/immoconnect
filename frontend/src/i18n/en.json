@@ -156,7 +156,8 @@
     "mentions": "Legal notice",
     "confidentialite": "Privacy",
     "osm": "© OpenStreetMap contributors",
-    "credits": "Photo credits"
+    "credits": "Photo credits",
+    "conditions": "Terms and conditions"
   },
   "auth": {
     "connexionTitre": "Log in",
@@ -174,7 +175,41 @@
     "motDePasseCourt": "At least 8 characters",
     "pasDeCompte": "No account yet?",
     "dejaCompte": "Already registered?",
-    "donnees": "Your data is only used to run your account. The details are on the page"
+    "donnees": "Your data is only used to run your account. The details are on the page",
+    "motDePasseCasse": "Mix lower and upper case",
+    "motDePasseChiffre": "Add at least one digit",
+    "motDePasseRegles": "At least 8 characters, with a lower-case letter, an upper-case letter and a digit. A password found in a known data breach is refused.",
+    "motDePasseOublie": "Forgotten password?",
+    "retourConnexion": "Back to login",
+    "valider": "Confirm",
+    "recommencer": "Start the login again",
+    "codeTitre": "Login code",
+    "codeSousTitre": "A six-digit code has just been sent to {{email}}. It is valid for ten minutes.",
+    "code": "Code received by e-mail",
+    "codeFormat": "Six digits",
+    "renvoyerActivation": "Send the activation link again",
+    "activationRenvoyee": "If this address belongs to an account that is not activated yet, a new link has just been sent.",
+    "oubliTitre": "Forgotten password",
+    "oubliSousTitre": "Enter your e-mail address: you will receive a link to choose a new password.",
+    "oubliBouton": "Send the link",
+    "oubliEnvoye": "If this address belongs to an account, an e-mail has just been sent. The link is valid for thirty minutes.",
+    "reinitialisationTitre": "New password",
+    "reinitialisationBouton": "Save the new password",
+    "reinitialisationFaite": "Your password has been changed and all your sessions have been closed. You can log in.",
+    "activationTitre": "Account activation",
+    "activationFaite": "Your address is confirmed: your account is active and you are logged in.",
+    "activationLienManquant": "This link is incomplete.",
+    "activationAide": "The link may have been used already, or expired. Try to log in: a new link can be sent again.",
+    "verifiezTitre": "Check your e-mails",
+    "verifiezTexte": "An e-mail has just been sent to {{email}}. Open the link it contains to activate your account; it is valid for 24 hours.",
+    "verifiezDemo": "Demonstration site: e-mails are not sent to your address, they arrive in the demonstration mailbox.",
+    "verifiezBoite": "Open the demonstration mailbox",
+    "cguAvant": "I accept the",
+    "cgu": "terms and conditions",
+    "cguEntre": "and I have read the",
+    "cguRequises": "The terms and conditions must be accepted.",
+    "consentement": "I agree to receive information about new properties and agency news. This choice can be changed at any time in the profile.",
+    "cguConfidentialite": "privacy policy"
   },
   "profil": {
     "titre": "Hello {{prenom}}",
@@ -189,7 +224,13 @@
     "desinscription": "Delete my account",
     "desinscriptionExplication": "In line with the GDPR, your personal data will be anonymised and your favourites deleted. The history of your visits and payments is kept without identity (accounting obligations).",
     "supprimerCompte": "Permanently delete my account",
-    "confirmerDesinscription": "Confirm the deletion of your account? This cannot be undone."
+    "confirmerDesinscription": "Confirm the deletion of your account? This cannot be undone.",
+    "securiteEtChoix": "Security and communications",
+    "doubleFacteur": "Two-step login",
+    "doubleFacteurExplication": "At each login, a code sent by e-mail will be required in addition to the password.",
+    "doubleFacteurImpose": "Mandatory for your role: a code sent by e-mail is required at each login.",
+    "communications": "Agency news",
+    "communicationsExplication": "Receive information about new properties and news. Can be withdrawn at any time."
   },
   "rdv": {
     "titre": "Book a visit",
@@ -484,7 +525,11 @@
     "conflit-etat": "This action is no longer possible for this visit.",
     "interdit": "You are not allowed to perform this action.",
     "fichier-trop-volumineux": "A photo weighs 5 MB at most.",
-    "quota-depasse": "Too many calls: try again in a minute."
+    "quota-depasse": "Too many calls: try again in a minute.",
+    "trop-de-tentatives": "Too many attempts. Wait a few minutes before trying again.",
+    "lien-invalide": "This link or code is no longer valid.",
+    "code-invalide": "Incorrect code.",
+    "compte-non-active": "Confirm your e-mail address first: open the link received when you signed up."
   },
   "credits": {
     "titre": "Photo credits",
