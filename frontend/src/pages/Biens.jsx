@@ -2,6 +2,7 @@ import { Suspense, lazy, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import { useTitrePage } from '../services/titre'
 import { cheminListe, rechercherBiens, TYPES_OFFRE } from '../services/biens'
 import { chargerCategories } from '../services/annonces'
 import CarteBien from '../components/CarteBien'
@@ -77,6 +78,7 @@ export default function Biens({ typeOffre: typeImpose }) {
   const location = typeOffre === 'location'
   const champ = 'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-nuit'
   const titre = t(typeImpose ? `biens.titre_${typeImpose}` : 'biens.titre')
+  useTitrePage(titre)
   const filtresActifs = CRITERES.some((nom) => criteres[nom] !== '') || (!typeImpose && typeChoisi !== '')
 
   return (

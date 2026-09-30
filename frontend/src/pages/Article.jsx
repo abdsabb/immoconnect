@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { chargerArticle, formatDate } from '../services/admin'
 import BoutonSignaler from '../components/BoutonSignaler'
+import { useTitrePage } from '../services/titre'
 
 // Page d'un article du blog (gabarit « article »). Le contenu est affiché comme du texte :
 // React échappe tout ce qu'il affiche, aucune balise saisie par un rédacteur n'est interprétée.
@@ -10,6 +11,7 @@ export default function Article() {
   const { id } = useParams()
   const { t, i18n } = useTranslation()
   const { data: article, isPending, isError } = useQuery({ queryKey: ['article', id], queryFn: () => chargerArticle(id) })
+  useTitrePage(article?.titre)
 
   if (isPending) return <p className="mx-auto max-w-3xl px-4 py-10 text-gray-500">{t('commun.chargement')}</p>
   if (isError) {

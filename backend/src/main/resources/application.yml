@@ -59,6 +59,8 @@ immoconnect:
   demonstration:
     photos: ${DEMO_PHOTOS:true}     # crée au démarrage les photos manquantes des annonces de test
     boite-courriels: ${DEMO_BOITE_COURRIELS:}   # adresse de la boîte où arrivent les e-mails (Mailpit), vide en exploitation réelle
+  rendu:
+    coquille: ${RENDU_COQUILLE:}    # adresse interne de l'index.html construit (http://frontend/index.html) ; vide : pas de rendu serveur
   stripe:                           # sans clé secrète, les paiements passent en mode simulation (dev et tests)
     cle-secrete: ${STRIPE_SECRET_KEY:}
     cle-publique: ${STRIPE_PUBLISHABLE_KEY:}

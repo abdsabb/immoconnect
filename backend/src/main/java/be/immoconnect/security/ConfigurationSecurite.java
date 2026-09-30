@@ -44,6 +44,8 @@ public class ConfigurationSecurite {
                 // Documentation de l'API et supervision
                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                // Pages publiques rendues côté serveur et plan du site, pour les moteurs de recherche (chapitre 10)
+                .requestMatchers(HttpMethod.GET, "/rendu", "/rendu/**", "/sitemap.xml", "/robots.txt").permitAll()
                 // Rendez-vous : réserver est le fait d'un membre, confirmer et honorer celui d'un agent.
                 // Déclaré avant la règle publique des biens, qui couvrirait sinon /biens/{id}/creneaux.
                 .requestMatchers(HttpMethod.GET, "/api/v1/biens/*/creneaux").hasRole("MEMBRE")

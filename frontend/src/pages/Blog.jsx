@@ -2,12 +2,14 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import { useTitrePage } from '../services/titre'
 import { chargerArticles, chargerCategoriesBlog, formatDate } from '../services/admin'
 import LienFlux from '../components/LienFlux'
 
 // Cas V5 « Lire les articles du blog » : articles publiés, classés par date, filtrables par catégorie
 export default function Blog() {
   const { t, i18n } = useTranslation()
+  useTitrePage(t('blog.titre'))
   const [categorieId, setCategorieId] = useState('')
   const [page, setPage] = useState(0)
 

@@ -10,6 +10,7 @@ const CarteOSM = lazy(() => import('../components/CarteOSM'))
 import BoutonFavori from '../components/BoutonFavori'
 import EtiquettePeb from '../components/EtiquettePeb'
 import BoutonSignaler from '../components/BoutonSignaler'
+import { useTitrePage } from '../services/titre'
 
 // Fiche d'un bien (gabarit « article », maquette Figure 15) : galerie, caractéristiques,
 // localisation OSM et panneau d'action persistant « Prendre rendez-vous » / « Envoyer un message ».
@@ -20,6 +21,7 @@ export default function BienDetail() {
   const peutAgir = !utilisateur || utilisateur.role === 'membre'
   const [photoActive, setPhotoActive] = useState(0)
   const { data: bien, isPending, error } = useQuery({ queryKey: ['bien', id], queryFn: () => chargerBien(id) })
+  useTitrePage(bien?.titre)
 
   if (isPending) return <p className="mx-auto max-w-6xl px-4 py-10 text-gray-500">{t('commun.chargement')}</p>
   if (error) {

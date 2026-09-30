@@ -30,6 +30,8 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET manque dans .env}
       SITE_URL: https://${DOMAINE}
+      # Rendu côté serveur des pages publiques : le backend lit l'index.html construit auprès du frontend
+      RENDU_COQUILLE: http://frontend/index.html
       STORAGE_DIR: /app/stockage
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:?STRIPE_SECRET_KEY manque dans .env}
       STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:?STRIPE_PUBLISHABLE_KEY manque dans .env}

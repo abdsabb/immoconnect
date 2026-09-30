@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
@@ -98,6 +98,15 @@ export default function Layout() {
   const naviguer = useNavigate()
   // Identité de l'agence et langues actives, réglées par l'administrateur (cas A5 et A6)
   const site = useConfiguration().data?.site
+  // À chaque changement de page, l'onglet reprend le nom du site ; la page affichée pose ensuite son propre titre
+  const { pathname } = useLocation()
+  const premierRendu = useRef(true)
+  useLayoutEffect(() => {
+    // La page d'arrivée porte déjà le titre donné par le serveur : on n'y touche pas
+    if (premierRendu.current) { premierRendu.current = false; return }
+    document.title = site?.nom ?? 'ImmoConnect'
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname])
   const langues = LANGUES.filter((l) => !site?.languesActives || site.languesActives.includes(l))
   useEffect(() => {
     // Une langue désactivée par l'administrateur ne reste pas affichée : retour au français

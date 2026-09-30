@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import { useTitrePage } from '../services/titre'
 import { cheminListe, rechercherBiens, TYPES_OFFRE } from '../services/biens'
 import { chargerCategories } from '../services/annonces'
 import { chargerConfigPaiement, formatMontant } from '../services/rendezVous'
@@ -34,6 +35,7 @@ function Section({ titre, sousTitre, lien, fond = '', children }) {
 // Le titre et le sous-titre sont des textes du site : l'administrateur les modifie depuis le back-office (cas A6).
 export default function Accueil() {
   const { t, i18n } = useTranslation()
+  useTitrePage(t('contenu:accueil.titre', { defaultValue: t('accueil.titre') }))
   const naviguer = useNavigate()
   const { estConnecte } = useAuth()
   const langue = i18n.resolvedLanguage

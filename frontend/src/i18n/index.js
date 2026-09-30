@@ -27,7 +27,8 @@ i18n
     ns: ['translation', 'contenu', 'legal'],
     defaultNS: 'translation',
     interpolation: { escapeValue: false },
-    detection: { order: ['localStorage', 'navigator'], caches: ['localStorage'] },
+    // « ?lng=nl » : adresse des versions linguistiques annoncées aux moteurs (balises hreflang)
+    detection: { order: ['querystring', 'localStorage', 'navigator'], lookupQuerystring: 'lng', caches: ['localStorage'] },
   })
 
 // « accueil.titre » → { accueil: { titre } } : i18next lit les clés comme des chemins

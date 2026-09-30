@@ -160,6 +160,21 @@ annonces disponibles, à vendre, à louer ou les deux. Un flux ne montre que ce 
 ni bien retiré, ni adresse exacte, ni nom d'agent. Le document est produit par l'écrivain XML du JDK, qui échappe
 les textes. Les pages du site déclarent les flux dans leur en-tête, et les affichent par un lien « Flux RSS ».
 
+### Référencement : pages publiques rendues côté serveur
+
+Une application React renvoie par défaut une page vide que le navigateur remplit ensuite. Pour les moteurs de
+recherche, les pages publiques — accueil, `/a-vendre`, `/a-louer`, `/biens`, `/biens/{id}`, `/blog`, `/blog/{id}` —
+sont donc **rendues par le serveur** : Nginx les confie au backend (`/rendu/...`), qui complète l'`index.html` construit
+avec le titre, la description, la balise canonique, les balises `hreflang` (fr, nl, en, selon les langues actives), les
+données **Schema.org** (`RealEstateAgent`, `RealEstateListing`, `ItemList`, `Blog`, `BlogPosting`) et le contenu
+visible. Le navigateur affiche cette page tout de suite, puis l'application React prend le relais. Un bien archivé ou
+un article non publié répond `404`. Si le backend ne répond pas, Nginx sert l'application seule.
+
+- `?lng=nl` choisit la langue d'une page : c'est l'adresse des versions linguistiques annoncées par `hreflang`.
+- `/sitemap.xml` : plan du site généré depuis les données (biens disponibles, articles publiés, trois langues).
+- `/robots.txt` : pages publiques indexables ; espaces connectés, API et boîte de démonstration exclus.
+- En développement (`npm run dev`), Vite sert l'application sans rendu serveur ; `RENDU_COQUILLE` l'active.
+
 ### Photos des annonces de test
 
 Les annonces de test référencent 498 photos. Au démarrage, le backend crée celles qui manquent dans le dossier
