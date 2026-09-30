@@ -41,6 +41,25 @@ documentée ainsi qu'un volet Open Data.
 └── .env.example             Modèle du fichier .env de production
 ```
 
+## Organisation du back-end
+
+Le code Java (`backend/src/main/java/be/immoconnect`) est rangé par couche :
+
+| Paquet | Rôle |
+|---|---|
+| `entities` | Entités JPA et énumérations : les objets de la base de données |
+| `repositories` | Dépôts Spring Data JPA : l'accès à la base de données |
+| `services` | Logique métier et règles d'application (RA1 à RA13) |
+| `controllers` | Contrôleurs REST : les points d'entrée de l'API |
+| `dto` | Objets d'échange de l'API — une entité n'est jamais renvoyée telle quelle |
+| `security` | Spring Security, jetons JWT, clés API et quota |
+| `exceptions` | Exceptions métier et leur conversion en réponses problem+json |
+| `config` | Horloge et fuseau de l'agence, documentation OpenAPI |
+| `paiement` · `notification` · `stockage` | Adaptateurs vers l'extérieur : Stripe, e-mail, disque |
+
+Une requête traverse les couches dans un seul sens : contrôleur, service, dépôt. Un contrôleur ne touche jamais
+un dépôt, et un service ne connaît ni HTTP ni JSON. Les tests suivent la même organisation.
+
 ## Démarrer en développement
 
 ```bash
