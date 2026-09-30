@@ -1,0 +1,4 @@
+# Les scripts et les fichiers de configuration lus par des conteneurs Linux gardent des fins de ligne LF,
+# même quand le dépôt est cloné sous Windows.
+*.sh text eol=lf
+deploiement/** text eol=lf
