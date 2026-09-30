@@ -8,6 +8,7 @@ import { Photo } from '../components/CarteBien'
 import CarteOSM from '../components/CarteOSM'
 import BoutonFavori from '../components/BoutonFavori'
 import EtiquettePeb from '../components/EtiquettePeb'
+import BoutonSignaler from '../components/BoutonSignaler'
 
 // Fiche d'un bien (gabarit « article », maquette Figure 15) : galerie, caractéristiques,
 // localisation OSM et panneau d'action persistant « Prendre rendez-vous » / « Envoyer un message ».
@@ -103,6 +104,7 @@ export default function BienDetail() {
             <p className="font-semibold text-nuit">{bien.agent.nomComplet}</p>
             <p className="text-gray-600">{bien.agent.telephonePro}</p>
           </div>
+          <BoutonSignaler typeContenu="bien" contenuId={bien.id} discret className="pt-2" />
         </aside>
       </div>
     </section>

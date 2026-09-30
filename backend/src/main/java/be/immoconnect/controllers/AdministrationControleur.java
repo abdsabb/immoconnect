@@ -6,16 +6,23 @@ import be.immoconnect.dto.CategorieResume;
 import be.immoconnect.dto.CleApiResume;
 import be.immoconnect.dto.CompteResume;
 import be.immoconnect.dto.PageReponse;
+import be.immoconnect.dto.ParametreLigne;
 import be.immoconnect.dto.RequeteAgent;
 import be.immoconnect.dto.RequeteCategorie;
 import be.immoconnect.dto.RequeteCleApi;
+import be.immoconnect.dto.RequeteDecision;
+import be.immoconnect.dto.RequeteParametres;
+import be.immoconnect.dto.SignalementResume;
 import be.immoconnect.dto.Statistiques;
 import be.immoconnect.dto.TraceAudit;
 import be.immoconnect.dto.TraductionLigne;
+import be.immoconnect.entities.Signalement;
 import be.immoconnect.services.ServiceCategories;
 import be.immoconnect.services.ServiceClesApi;
 import be.immoconnect.services.ServiceComptes;
 import be.immoconnect.services.ServiceJournal;
+import be.immoconnect.services.ServiceParametres;
+import be.immoconnect.services.ServiceSignalements;
 import be.immoconnect.services.ServiceStatistiques;
 import be.immoconnect.services.ServiceTraductions;
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,11 +69,16 @@ public class AdministrationControleur {
     private final ServiceCategories categories;
     private final ServiceClesApi clesApi;
     private final ServiceTraductions traductions;
+    private final ServiceParametres parametres;
+    private final ServiceSignalements signalements;
 
     public AdministrationControleur(ServiceComptes comptes, ServiceJournal journal, ServiceStatistiques statistiques,
-                                    ServiceCategories categories, ServiceClesApi clesApi, ServiceTraductions traductions) {
+                                    ServiceCategories categories, ServiceClesApi clesApi, ServiceTraductions traductions,
+                                    ServiceParametres parametres, ServiceSignalements signalements) {
         this.clesApi = clesApi;
         this.traductions = traductions;
+        this.parametres = parametres;
+        this.signalements = signalements;
         this.comptes = comptes;
         this.journal = journal;
         this.statistiques = statistiques;
@@ -103,6 +115,47 @@ public class AdministrationControleur {
     @Operation(summary = "Réactiver un compte")
     public CompteResume activer(@AuthenticationPrincipal Jwt jeton, @PathVariable Integer id, HttpServletRequest http) {
         return comptes.changerActivation(identifiant(jeton), id, true, adresseIp(http));
+    }
+
+    // ---------- A5 — Paramètres du site ----------
+
+    @GetMapping("/parametres")
+    @Operation(summary = "Paramètres du site", description = "Nom, slogan, coordonnées et horaires de l'agence, langues actives (niveau 2).")
+    public List<ParametreLigne> parametres(@AuthenticationPrincipal Jwt jeton) {
+        return parametres.lister(identifiant(jeton));
+    }
+
+    @PutMapping("/parametres")
+    @Operation(summary = "Modifier des paramètres", description = "Valeurs par clé ; une clé inconnue ou une valeur invalide est refusée (422). Chaque changement est journalisé.")
+    public List<ParametreLigne> enregistrerParametres(@AuthenticationPrincipal Jwt jeton, @Valid @RequestBody RequeteParametres requete,
+                                                      HttpServletRequest http) {
+        return parametres.enregistrer(identifiant(jeton), requete, adresseIp(http));
+    }
+
+    // ---------- Signalements de contenus (chapitre 11) ----------
+
+    @GetMapping("/signalements")
+    @Operation(summary = "Signalements", description = "Du plus récent au plus ancien ; filtre : statut (ouvert, retire, conserve). Niveau 2.")
+    public PageReponse<SignalementResume> signalements(@AuthenticationPrincipal Jwt jeton,
+                                                       @RequestParam(required = false) Signalement.Statut statut,
+                                                       @RequestParam(defaultValue = "0") int page,
+                                                       @RequestParam(defaultValue = "20") int taille) {
+        var pagination = PageRequest.of(Math.max(page, 0), Math.clamp(taille, 1, TAILLE_MAX));
+        return PageReponse.depuis(signalements.lister(identifiant(jeton), statut, pagination));
+    }
+
+    @GetMapping("/signalements/ouverts")
+    @Operation(summary = "Nombre de signalements en attente")
+    public long signalementsOuverts(@AuthenticationPrincipal Jwt jeton) {
+        return signalements.ouverts(identifiant(jeton));
+    }
+
+    @PatchMapping("/signalements/{id}")
+    @Operation(summary = "Trancher un signalement",
+            description = "« retire » vide le message, met l'annonce hors ligne ou archive l'article ; « conserve » le laisse en place. La décision est motivée, définitive et journalisée.")
+    public SignalementResume trancher(@AuthenticationPrincipal Jwt jeton, @PathVariable Integer id,
+                                      @Valid @RequestBody RequeteDecision requete, HttpServletRequest http) {
+        return signalements.trancher(identifiant(jeton), id, requete, adresseIp(http));
     }
 
     // ---------- A4 — Journal d'audit ----------

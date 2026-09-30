@@ -6,6 +6,7 @@ import { useAuth } from '../auth/AuthContext'
 import { chargerConversation, envoyerMessage, marquerConversationLue, useConversations } from '../services/messages'
 import { formatHeure, formatJour } from '../services/rendezVous'
 import { erreursApi } from '../components/Formulaire'
+import BoutonSignaler from '../components/BoutonSignaler'
 
 const LONGUEUR_MAX = 5000
 
@@ -130,6 +131,7 @@ function Fil({ interlocuteurId, interlocuteur, brouillon }) {
                 {formatJour(m.envoyeLe, langue)} · {formatHeure(m.envoyeLe, langue)}
                 {m.deMoi && m.lu && ` · ${t('message.lu')}`}
               </p>
+              {!m.deMoi && <BoutonSignaler typeContenu="message" contenuId={m.id} discret className="mt-1" />}
             </div>
           </li>
         ))}

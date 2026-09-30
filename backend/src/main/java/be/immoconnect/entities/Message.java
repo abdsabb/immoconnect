@@ -78,4 +78,9 @@ public class Message {
     public void marquerLu() {
         this.lu = true;
     }
+
+    /** Retrait par la modération : le texte disparaît, la trace de l'échange reste. */
+    public void retirer(String mention) {
+        this.contenu = mention;
+    }
 }

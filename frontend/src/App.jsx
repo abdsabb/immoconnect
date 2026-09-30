@@ -28,6 +28,8 @@ import ArticleFormulaire from './pages/admin/ArticleFormulaire'
 import Categories from './pages/admin/Categories'
 import Traductions from './pages/admin/Traductions'
 import ClesApi from './pages/admin/ClesApi'
+import Signalements from './pages/admin/Signalements'
+import Parametres from './pages/admin/Parametres'
 
 // Arborescence issue de la charte (livrable 10) : pages publiques, connexion/inscription,
 // espace membre, espace agent, back-office administrateur.
@@ -77,6 +79,8 @@ export default function App() {
             <Route path="categories" element={<Categories />} />
             <Route path="traductions" element={<Traductions />} />
             <Route path="cles-api" element={<ClesApi />} />
+            <Route path="signalements" element={<Signalements />} />
+            <Route path="parametres" element={<Parametres />} />
           </Route>
         </Route>
         <Route path="*" element={<Biens />} />
