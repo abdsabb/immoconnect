@@ -69,7 +69,7 @@
       },
       "premium": {
         "titre": "’s Avonds en in het weekend: {{prix}}",
-        "texte": "Beveiligde betaling met kaart, bezoek meteen bevestigd. Terugbetaald als het bezoek geannuleerd wordt."
+        "texte": "Beveiligde betaling met kaart, bezoek meteen bevestigd. Terugbetaald als u tot 24 u vooraf annuleert."
       },
       "bouton": "Een pand vinden om te bezoeken"
     },
@@ -143,7 +143,10 @@
     "agent": "Uw makelaar",
     "introuvable": "Dit pand bestaat niet of is niet meer beschikbaar.",
     "retour": "Terug naar de panden",
-    "loyerParMois": "{{prix}} / maand"
+    "loyerParMois": "{{prix}} / maand",
+    "peb": "EPC",
+    "pebLabel": "EPC-klasse",
+    "pebTitre": "Energieprestatiecertificaat: klasse {{classe}}"
   },
   "statut": {
     "disponible": "Beschikbaar",
@@ -255,7 +258,7 @@
     "date": "Datum van het bezoek",
     "prix": "Prijs van het tijdslot",
     "explicationStandard": "Uw aanvraag wordt naar de makelaar gestuurd, die ze bevestigt of een ander moment voorstelt.",
-    "explicationPremium": "Een premium tijdslot is bevestigd zodra het betaald is. Bij annulering wordt u terugbetaald.",
+    "explicationPremium": "Een premium tijdslot is bevestigd zodra het betaald is. U wordt terugbetaald als u tot 24 uur vóór het bezoek annuleert.",
     "envoyerDemande": "Mijn aanvraag versturen",
     "passerAuPaiement": "Naar de betaling",
     "changerCreneau": "Een ander tijdslot kiezen",
@@ -298,7 +301,11 @@
       "honorer": "Bezoek afgelegd"
     },
     "confirmerAnnulation": "Deze afspraak annuleren?",
-    "confirmerAnnulationPayee": "Deze afspraak annuleren? De betaling van het premium tijdslot wordt terugbetaald."
+    "confirmerAnnulationPayee": "Deze afspraak annuleren? De betaling van het premium tijdslot wordt terugbetaald.",
+    "annulationGratuite": "Terugbetaalde annulering",
+    "remboursableJusquA": "tot {{date}}",
+    "annulationSansRemboursement": "niet meer mogelijk: minder dan 24 u vóór het bezoek wordt het tijdstip niet terugbetaald",
+    "confirmerAnnulationTardive": "Deze afspraak annuleren? Minder dan 24 uur vóór het bezoek wordt het premium tijdstip niet terugbetaald."
   },
   "favori": {
     "titre": "Mijn favorieten",
@@ -380,7 +387,11 @@
     "photoFormat": "Alleen JPEG- en PNG-foto's worden aanvaard.",
     "photoTropLourde": "Een foto weegt hoogstens 5 MB.",
     "typeOffre": "Type aanbod",
-    "loyer": "Maandelijkse huur (€)"
+    "loyer": "Maandelijkse huur (€)",
+    "peb": "EPC-klasse",
+    "pebChoisir": "Kiezen…",
+    "pebAide": "De energieklasse van het EPC is verplicht in elke vastgoedadvertentie.",
+    "vues": "Weergaven"
   },
   "blog": {
     "titre": "Blog",

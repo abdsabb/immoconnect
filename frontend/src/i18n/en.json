@@ -69,7 +69,7 @@
       },
       "premium": {
         "titre": "Evenings and weekends: {{prix}}",
-        "texte": "Secure card payment, viewing confirmed at once. Refunded if the viewing is cancelled."
+        "texte": "Secure card payment, viewing confirmed at once. Refunded if you cancel up to 24 h before."
       },
       "bouton": "Find a property to visit"
     },
@@ -143,7 +143,10 @@
     "agent": "Your agent",
     "introuvable": "This property does not exist or is no longer available.",
     "retour": "Back to properties",
-    "loyerParMois": "{{prix}} / month"
+    "loyerParMois": "{{prix}} / month",
+    "peb": "EPC",
+    "pebLabel": "EPC rating",
+    "pebTitre": "Energy performance certificate: rating {{classe}}"
   },
   "statut": {
     "disponible": "Available",
@@ -255,7 +258,7 @@
     "date": "Date of the visit",
     "prix": "Slot price",
     "explicationStandard": "Your request is sent to the agent, who confirms it or suggests another time.",
-    "explicationPremium": "A premium slot is confirmed as soon as it is paid. If the visit is cancelled, you are refunded.",
+    "explicationPremium": "A premium slot is confirmed as soon as it is paid. You are refunded if you cancel up to 24 hours before the viewing.",
     "envoyerDemande": "Send my request",
     "passerAuPaiement": "Go to payment",
     "changerCreneau": "Choose another slot",
@@ -298,7 +301,11 @@
       "honorer": "Visit completed"
     },
     "confirmerAnnulation": "Cancel this visit?",
-    "confirmerAnnulationPayee": "Cancel this visit? The premium slot payment will be refunded."
+    "confirmerAnnulationPayee": "Cancel this visit? The premium slot payment will be refunded.",
+    "annulationGratuite": "Refunded cancellation",
+    "remboursableJusquA": "until {{date}}",
+    "annulationSansRemboursement": "no longer possible: less than 24 h before the viewing, the slot is not refunded",
+    "confirmerAnnulationTardive": "Cancel this viewing? Less than 24 hours before the viewing, the premium slot is not refunded."
   },
   "favori": {
     "titre": "My favourites",
@@ -380,7 +387,11 @@
     "photoFormat": "Only JPEG and PNG photos are accepted.",
     "photoTropLourde": "A photo weighs 5 MB at most.",
     "typeOffre": "Offer type",
-    "loyer": "Monthly rent (€)"
+    "loyer": "Monthly rent (€)",
+    "peb": "EPC rating",
+    "pebChoisir": "Choose…",
+    "pebAide": "The EPC energy rating is mandatory in every property advertisement.",
+    "vues": "Views"
   },
   "blog": {
     "titre": "Blog",

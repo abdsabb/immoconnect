@@ -69,7 +69,7 @@
       },
       "premium": {
         "titre": "En soirée et le week-end : {{prix}}",
-        "texte": "Paiement sécurisé par carte, visite confirmée aussitôt. Remboursé si la visite est annulée."
+        "texte": "Paiement sécurisé par carte, visite confirmée aussitôt. Remboursé si vous annulez jusqu’à 24 h avant."
       },
       "bouton": "Trouver un bien à visiter"
     },
@@ -143,7 +143,10 @@
     "agent": "Votre agent",
     "introuvable": "Ce bien n'existe pas ou n'est plus disponible.",
     "retour": "Retour aux biens",
-    "loyerParMois": "{{prix}} / mois"
+    "loyerParMois": "{{prix}} / mois",
+    "peb": "PEB",
+    "pebLabel": "Classe PEB",
+    "pebTitre": "Certificat de performance énergétique : classe {{classe}}"
   },
   "statut": {
     "disponible": "Disponible",
@@ -255,7 +258,7 @@
     "date": "Date de la visite",
     "prix": "Prix du créneau",
     "explicationStandard": "Votre demande est envoyée à l'agent, qui la confirme ou vous propose un autre moment.",
-    "explicationPremium": "Un créneau premium est confirmé dès le paiement. En cas d'annulation, vous êtes remboursé.",
+    "explicationPremium": "Un créneau premium est confirmé dès le paiement. Vous êtes remboursé si vous annulez jusqu’à 24 heures avant la visite.",
     "envoyerDemande": "Envoyer ma demande",
     "passerAuPaiement": "Passer au paiement",
     "changerCreneau": "Choisir un autre créneau",
@@ -298,7 +301,11 @@
       "honorer": "Visite effectuée"
     },
     "confirmerAnnulation": "Annuler ce rendez-vous ?",
-    "confirmerAnnulationPayee": "Annuler ce rendez-vous ? Le paiement du créneau premium sera remboursé."
+    "confirmerAnnulationPayee": "Annuler ce rendez-vous ? Le paiement du créneau premium sera remboursé.",
+    "annulationGratuite": "Annulation remboursée",
+    "remboursableJusquA": "jusqu’au {{date}}",
+    "annulationSansRemboursement": "plus possible : moins de 24 h avant la visite, le créneau n’est pas remboursé",
+    "confirmerAnnulationTardive": "Annuler ce rendez-vous ? Moins de 24 heures avant la visite, le créneau premium n’est pas remboursé."
   },
   "favori": {
     "titre": "Mes favoris",
@@ -380,7 +387,11 @@
     "photoFormat": "Seules les photos JPEG et PNG sont acceptées.",
     "photoTropLourde": "Une photo pèse 5 Mo au plus.",
     "typeOffre": "Type d'offre",
-    "loyer": "Loyer mensuel (€)"
+    "loyer": "Loyer mensuel (€)",
+    "peb": "Classe PEB",
+    "pebChoisir": "Choisir…",
+    "pebAide": "La classe énergétique du certificat PEB est obligatoire dans toute publicité immobilière.",
+    "vues": "Vues"
   },
   "blog": {
     "titre": "Blog",

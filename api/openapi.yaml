@@ -1076,6 +1076,10 @@ components:
       type: string
       enum: [vente, location]
       description: Nature de l'offre ; elle donne son sens au prix
+    Peb:
+      type: string
+      enum: ['A++', 'A+', A, B, C, D, E, F, G]
+      description: Classe énergétique du certificat PEB, obligatoire dans toute publicité immobilière
     StatutRendezVous:
       type: string
       enum: [demande, confirme, annule, honore]
@@ -1128,6 +1132,7 @@ components:
         prix: { type: number, example: 285000, description: Prix de vente, ou loyer mensuel d'une location }
         superficie: { type: number, example: 95 }
         nbChambres: { type: integer, example: 3 }
+        peb: { $ref: '#/components/schemas/Peb' }
         adresse: { type: string, example: Rue du Bailli 27 }
         ville: { type: string, example: Ixelles }
         codePostal: { type: string, example: '1050' }
@@ -1145,7 +1150,7 @@ components:
           items: { $ref: '#/components/schemas/Photo' }
     BienCreation:
       type: object
-      required: [categorieId, titre, description, prix, superficie, nbChambres, adresse, ville, codePostal, latitude, longitude]
+      required: [categorieId, titre, description, prix, superficie, nbChambres, peb, adresse, ville, codePostal, latitude, longitude]
       properties:
         categorieId: { type: integer }
         typeOffre:
@@ -1156,6 +1161,7 @@ components:
         prix: { type: number, minimum: 0, exclusiveMinimum: true, description: Prix de vente, ou loyer mensuel d'une location }
         superficie: { type: number, minimum: 0, exclusiveMinimum: true }
         nbChambres: { type: integer, minimum: 0, maximum: 20 }
+        peb: { $ref: '#/components/schemas/Peb' }
         adresse: { type: string }
         ville: { type: string }
         codePostal: { type: string, pattern: '^[1-9][0-9]{3}$' }
@@ -1202,6 +1208,11 @@ components:
             montant: { type: number, example: 15.00 }
             statut: { type: string, enum: [initie, reussi, echoue, rembourse] }
             payeLe: { type: string, format: date-time, nullable: true }
+        remboursableJusquA:
+          type: string
+          format: date-time
+          nullable: true
+          description: Créneau premium — dernier instant où le membre peut annuler en étant remboursé (24 h avant la visite, RA14) ; null pour un créneau standard
     Article:
       type: object
       properties:
@@ -1252,6 +1263,7 @@ components:
         prix: { type: number, example: 285000, description: Prix de vente, ou loyer mensuel d'une location }
         superficie: { type: number, example: 95 }
         nbChambres: { type: integer, example: 3 }
+        peb: { $ref: '#/components/schemas/Peb' }
         adresse: { type: string, example: Rue du Bailli 27 }
         ville: { type: string, example: Ixelles }
         codePostal: { type: string, example: '1050' }
@@ -1265,6 +1277,7 @@ components:
         indicateurs:
           type: object
           properties:
+            vues: { type: integer, example: 143, description: Consultations de la fiche publique par les visiteurs et les membres }
             favoris: { type: integer, example: 6 }
             demandesEnAttente: { type: integer, example: 1 }
             visitesAVenir: { type: integer, example: 2 }
@@ -1382,6 +1395,7 @@ components:
         prix: { type: number, example: 285000, description: Prix de vente, ou loyer mensuel d'une location }
         superficie: { type: number, example: 95 }
         nbChambres: { type: integer, example: 3 }
+        peb: { $ref: '#/components/schemas/Peb' }
         latitude: { type: number, example: 50.8275 }
         longitude: { type: number, example: 4.3720 }
         publieLe: { type: string, format: date }
