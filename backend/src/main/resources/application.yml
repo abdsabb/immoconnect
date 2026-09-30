@@ -63,6 +63,7 @@ immoconnect:
     cle-secrete: ${STRIPE_SECRET_KEY:}
     cle-publique: ${STRIPE_PUBLISHABLE_KEY:}
     secret-webhook: ${STRIPE_WEBHOOK_SECRET:}
+    moyens: ${STRIPE_MOYENS:card,bancontact}   # moyens proposés : carte et Bancontact (repli sur la carte si Stripe refuse)
   jwt:
     secret: ${JWT_SECRET}           # clé HS256 (>= 32 octets) — fournie par l'environnement
     duree-secondes: 900             # jeton d'accès valable 15 min, renouvelé par le cookie de session (livrable 16, §2.1)

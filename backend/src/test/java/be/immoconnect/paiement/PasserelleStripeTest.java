@@ -21,7 +21,7 @@ class PasserelleStripeTest {
     private static final String SECRET = "whsec_test_immoconnect";
 
     private final PasserelleStripe passerelle = new PasserelleStripe(
-            new ProprietesStripe("sk_test_immoconnect", "pk_test_immoconnect", SECRET), new ObjectMapper());
+            new ProprietesStripe("sk_test_immoconnect", "pk_test_immoconnect", SECRET, null), new ObjectMapper());
 
     @Test
     void uneNotificationSigneeDePaiementReussiEstTraduite() {

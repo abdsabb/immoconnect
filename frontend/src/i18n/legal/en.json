@@ -58,7 +58,7 @@
         "titre": "Paid viewings",
         "paragraphes": [
           "A daytime viewing, Monday to Friday, is free. A viewing in the evening or at the weekend costs €15, all taxes included. The price is shown before payment.",
-          "Payment is made by card, through Stripe. The site neither receives nor stores any card number.",
+          "Payment is made by card or Bancontact, through Stripe. The site neither receives nor stores any card number.",
           "A member who cancels at least 24 hours before the viewing is refunded in full; after that, the amount remains due. If the agent cancels, the refund is always in full.",
           "On this demonstration site, Stripe runs in test mode: use the card 4242 4242 4242 4242, a future date and any three digits. A real card would be declined."
         ]
@@ -194,7 +194,7 @@
         ],
         "liste": [
           "Contabo GmbH (Germany): hosting of the server and the database.",
-          "Stripe Payments Europe Ltd (Ireland): card payment. Stripe may transfer data to the United States, under the Data Privacy Framework and standard contractual clauses.",
+          "Stripe Payments Europe Ltd (Ireland): payment by card or Bancontact. Stripe may transfer data to the United States, under the Data Privacy Framework and standard contractual clauses.",
           "OpenStreetMap Foundation (United Kingdom): map tiles are loaded from its servers, which receive your IP address when a map is displayed."
         ]
       },
@@ -275,7 +275,7 @@
       {
         "titre": "Price and payment",
         "paragraphes": [
-          "The premium slot costs €15, all taxes included, a price shown before any commitment. Payment is made by card, through Stripe; the site neither receives nor stores any card number. A confirmation is sent by e-mail."
+          "The premium slot costs €15, all taxes included, a price shown before any commitment. Payment is made by card or Bancontact, through Stripe; the site neither receives nor stores any card number. A confirmation is sent by e-mail."
         ]
       },
       {

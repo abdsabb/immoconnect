@@ -197,7 +197,7 @@ page `/credits-photos`.
 | GET | `/api/v1/messages/conversations/{interlocuteurId}` — messages échangés avec un interlocuteur | JWT membre ou agent |
 | PATCH | `/api/v1/messages/conversations/{interlocuteurId}/lu` — marquer les messages reçus comme lus | JWT membre ou agent |
 | GET | `/api/v1/paiements/config` — mode de paiement, clé publiable, prix du créneau premium | public |
-| POST | `/api/v1/paiements/intent` — préparer le paiement Stripe d'un créneau premium | JWT membre |
+| POST | `/api/v1/paiements/intent` — préparer le paiement Stripe d'un créneau premium (carte ou Bancontact, `STRIPE_MOYENS`) | JWT membre |
 | POST | `/api/v1/webhooks/stripe` — notifications de paiement | signature Stripe |
 | GET | `/api/v1/categories` — catégories de biens | public |
 | GET | `/api/v1/articles` · `/articles/{id}` · `/articles/categories` — blog, articles publiés uniquement (RA4) | public |

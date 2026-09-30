@@ -8,6 +8,7 @@ import com.stripe.model.Event;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.RefundCreateParams;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -20,7 +21,6 @@ public class PasserelleStripe implements PasserellePaiement {
 
     private static final Logger journal = LoggerFactory.getLogger(PasserelleStripe.class);
     private static final String DEVISE = "eur";
-    private static final String CARTE = "card";
 
     private final StripeClient stripe;
     private final ProprietesStripe proprietes;
@@ -42,24 +42,49 @@ public class PasserelleStripe implements PasserellePaiement {
         return proprietes.clePublique();
     }
 
+    /**
+     * Les moyens de paiement sont fixés ici, pas déduits du compte Stripe : carte (sans quitter la page,
+     * 3-D Secure dans une fenêtre de Stripe) et Bancontact (redirection vers la banque, retour sur le site).
+     * Si le compte Stripe n'a pas activé Bancontact, la carte seule est proposée et l'exploitant prévenu.
+     */
     @Override
     public IntentionPaiement creerIntention(long montantCentimes, String description, String emailRecu,
                                             Map<String, String> metadonnees) {
-        PaymentIntentCreateParams parametres = PaymentIntentCreateParams.builder()
+        try {
+            return traduire(stripe.v1().paymentIntents().create(parametres(montantCentimes, description, emailRecu, metadonnees,
+                    proprietes.moyens())));
+        } catch (InvalidRequestException e) {
+            if (!proprietes.moyens().equals(List.of(ProprietesStripe.CARTE)) && e.getMessage() != null
+                    && e.getMessage().contains("payment method type")) {
+                journal.warn("Moyens de paiement {} refusés par Stripe ({}) : carte seule proposée", proprietes.moyens(), e.getMessage());
+                return creerAvecCarteSeule(montantCentimes, description, emailRecu, metadonnees);
+            }
+            throw indisponible("création du paiement", e);
+        } catch (StripeException e) {
+            throw indisponible("création du paiement", e);
+        }
+    }
+
+    private IntentionPaiement creerAvecCarteSeule(long montantCentimes, String description, String emailRecu,
+                                                  Map<String, String> metadonnees) {
+        try {
+            return traduire(stripe.v1().paymentIntents().create(parametres(montantCentimes, description, emailRecu, metadonnees,
+                    List.of(ProprietesStripe.CARTE))));
+        } catch (StripeException e) {
+            throw indisponible("création du paiement", e);
+        }
+    }
+
+    private static PaymentIntentCreateParams parametres(long montantCentimes, String description, String emailRecu,
+                                                        Map<String, String> metadonnees, List<String> moyens) {
+        return PaymentIntentCreateParams.builder()
                 .setAmount(montantCentimes)
                 .setCurrency(DEVISE)
                 .setDescription(description)
                 .setReceiptEmail(emailRecu)
                 .putAllMetadata(metadonnees)
-                // Carte bancaire uniquement : le formulaire ne dépend pas des moyens de paiement
-                // activés sur le compte Stripe, et le paiement se fait sans quitter la page.
-                .addPaymentMethodType(CARTE)
+                .addAllPaymentMethodType(moyens)
                 .build();
-        try {
-            return traduire(stripe.v1().paymentIntents().create(parametres));
-        } catch (StripeException e) {
-            throw indisponible("création du paiement", e);
-        }
     }
 
     @Override

@@ -34,6 +34,7 @@ services:
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:?STRIPE_SECRET_KEY manque dans .env}
       STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:?STRIPE_PUBLISHABLE_KEY manque dans .env}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      STRIPE_MOYENS: ${STRIPE_MOYENS:-card,bancontact}
       MAIL_FROM: ${MAIL_FROM:-no-reply@immoconnect.be}
       # Les e-mails arrivent dans Mailpit : le site le dit aux personnes qui s'inscrivent
       DEMO_BOITE_COURRIELS: ${DEMO_BOITE_COURRIELS:-/courriels/}

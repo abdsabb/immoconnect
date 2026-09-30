@@ -12,10 +12,11 @@ const chargements = {}
 const stripePour = (clePublique) => (chargements[clePublique] ??= loadStripe(clePublique))
 
 /**
- * Formulaire de carte Stripe Elements (livrable 16) : les champs sont des iframes hébergées par
- * Stripe, le numéro de carte ne transite donc ni par cette page ni par notre serveur.
+ * Formulaire de paiement Stripe Elements (livrable 16) : carte ou Bancontact. Les champs sont des
+ * iframes hébergées par Stripe, le numéro de carte ne transite donc ni par cette page ni par notre
+ * serveur. Bancontact redirige vers la banque puis revient sur « retour », avec l'identifiant du paiement.
  */
-export default function PaiementStripe({ clePublique, intention, onPaye }) {
+export default function PaiementStripe({ clePublique, intention, onPaye, retour, avantRedirection }) {
   const { i18n } = useTranslation()
   const options = {
     clientSecret: intention.clientSecret,
@@ -24,12 +25,12 @@ export default function PaiementStripe({ clePublique, intention, onPaye }) {
   }
   return (
     <Elements stripe={stripePour(clePublique)} options={options}>
-      <FormulaireCarte intention={intention} onPaye={onPaye} />
+      <FormulaireCarte intention={intention} onPaye={onPaye} retour={retour} avantRedirection={avantRedirection} />
     </Elements>
   )
 }
 
-function FormulaireCarte({ intention, onPaye }) {
+function FormulaireCarte({ intention, onPaye, retour, avantRedirection }) {
   const { t, i18n } = useTranslation()
   const stripe = useStripe()
   const elements = useElements()
@@ -41,8 +42,14 @@ function FormulaireCarte({ intention, onPaye }) {
     if (!stripe || !elements) return
     setErreur(null)
     setEnCours(true)
-    // L'authentification forte (3-D Secure) s'ouvre dans une fenêtre de Stripe, sans quitter la page
-    const { error, paymentIntent } = await stripe.confirmPayment({ elements, redirect: 'if_required' })
+    // Carte : l'authentification forte (3-D Secure) s'ouvre dans une fenêtre de Stripe, sans quitter la page.
+    // Bancontact : Stripe redirige vers la banque, puis revient sur « retour » ; la demande est mise de côté avant
+    avantRedirection?.()
+    const { error, paymentIntent } = await stripe.confirmPayment({
+      elements,
+      confirmParams: { return_url: retour ?? window.location.href },
+      redirect: 'if_required',
+    })
     if (error || paymentIntent?.status !== 'succeeded') {
       // E1 — paiement refusé : rien n'est réservé, le membre peut réessayer
       setErreur(error?.message ?? t('rdv.paiementRefuse'))

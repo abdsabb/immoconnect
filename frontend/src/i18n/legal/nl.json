@@ -58,7 +58,7 @@
         "titre": "Betalende bezoeken",
         "paragraphes": [
           "Een bezoek overdag, van maandag tot vrijdag, is gratis. Een bezoek 's avonds of in het weekend kost 15 €, alle taksen inbegrepen. De prijs wordt getoond vóór de betaling.",
-          "De betaling gebeurt met een kaart, via Stripe. De site ontvangt en bewaart geen enkel kaartnummer.",
+          "De betaling gebeurt met kaart of Bancontact, via Stripe. De site ontvangt en bewaart geen enkel kaartnummer.",
           "Het lid dat uiterlijk 24 uur vóór het bezoek annuleert, wordt volledig terugbetaald; daarna blijft het bedrag verschuldigd. Annuleert de makelaar, dan is de terugbetaling altijd volledig.",
           "Op deze demonstratiesite werkt Stripe in testmodus: gebruik de kaart 4242 4242 4242 4242, een datum in de toekomst en drie willekeurige cijfers. Een echte kaart zou geweigerd worden."
         ]
@@ -194,7 +194,7 @@
         ],
         "liste": [
           "Contabo GmbH (Duitsland): hosting van de server en de databank.",
-          "Stripe Payments Europe Ltd (Ierland): betaling met kaart. Stripe kan gegevens doorgeven aan de Verenigde Staten, binnen het Data Privacy Framework en met modelcontractbepalingen.",
+          "Stripe Payments Europe Ltd (Ierland): betaling met kaart of Bancontact. Stripe kan gegevens doorgeven aan de Verenigde Staten, binnen het Data Privacy Framework en met modelcontractbepalingen.",
           "OpenStreetMap Foundation (Verenigd Koninkrijk): de kaartachtergronden worden van haar servers geladen, die uw IP-adres ontvangen wanneer een kaart getoond wordt."
         ]
       },
@@ -275,7 +275,7 @@
       {
         "titre": "Prijs en betaling",
         "paragraphes": [
-          "Het premium tijdstip kost 15 €, alle taksen inbegrepen, prijs getoond vóór elke verbintenis. De betaling gebeurt met kaart, via Stripe; de site ontvangt en bewaart geen kaartnummer. Een bevestiging wordt per e-mail gestuurd."
+          "Het premium tijdstip kost 15 €, alle taksen inbegrepen, prijs getoond vóór elke verbintenis. De betaling gebeurt met kaart of Bancontact, via Stripe; de site ontvangt en bewaart geen kaartnummer. Een bevestiging wordt per e-mail gestuurd."
         ]
       },
       {

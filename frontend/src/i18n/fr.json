@@ -69,7 +69,7 @@
       },
       "premium": {
         "titre": "En soirée et le week-end : {{prix}}",
-        "texte": "Paiement sécurisé par carte, visite confirmée aussitôt. Remboursé si vous annulez jusqu’à 24 h avant."
+        "texte": "Paiement sécurisé par carte ou Bancontact, visite confirmée aussitôt. Remboursé si vous annulez jusqu’à 24 h avant."
       },
       "bouton": "Trouver un bien à visiter"
     },
