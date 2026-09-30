@@ -1,6 +1,7 @@
 package be.immoconnect.dto;
 
 import be.immoconnect.entities.Bien;
+import be.immoconnect.entities.Peb;
 import be.immoconnect.entities.Photo;
 import be.immoconnect.entities.StatutBien;
 import be.immoconnect.entities.TypeOffre;
@@ -14,6 +15,7 @@ public record BienResume(
         BigDecimal prix,
         BigDecimal superficie,
         Integer nbChambres,
+        Peb peb,
         String ville,
         String codePostal,
         BigDecimal latitude,
@@ -31,7 +33,7 @@ public record BienResume(
                 .filter(Photo::estCouverture).map(Photo::getUrl).findFirst()
                 .orElseGet(() -> bien.getPhotos().isEmpty() ? null : bien.getPhotos().getFirst().getUrl());
         return new BienResume(bien.getId(), bien.getTitre(), bien.getTypeOffre(), bien.getPrix(), bien.getSuperficie(),
-                bien.getNbChambres(), bien.getVille(), bien.getCodePostal(), bien.getLatitude(), bien.getLongitude(),
+                bien.getNbChambres(), bien.getPeb(), bien.getVille(), bien.getCodePostal(), bien.getLatitude(), bien.getLongitude(),
                 bien.getStatut(), bien.getCategorie().getNom(),
                 new AgentResume(bien.getAgent().getId(), bien.getAgent().getNomComplet()), couverture);
     }

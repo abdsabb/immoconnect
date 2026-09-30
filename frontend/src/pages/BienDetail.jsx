@@ -7,6 +7,7 @@ import { chargerBien, cheminListe, formatPrixBien } from '../services/biens'
 import { Photo } from '../components/CarteBien'
 import CarteOSM from '../components/CarteOSM'
 import BoutonFavori from '../components/BoutonFavori'
+import EtiquettePeb from '../components/EtiquettePeb'
 
 // Fiche d'un bien (gabarit « article », maquette Figure 15) : galerie, caractéristiques,
 // localisation OSM et panneau d'action persistant « Prendre rendez-vous » / « Envoyer un message ».
@@ -59,9 +60,10 @@ export default function BienDetail() {
             <BoutonFavori bien={bien} className="shrink-0 border border-gray-200" />
           </div>
 
-          <dl className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-perle rounded-xl p-4">
+          <dl className="grid grid-cols-2 sm:grid-cols-5 gap-4 bg-perle rounded-xl p-4">
             <div><dt className="text-xs uppercase text-gray-500">{t('bien.superficie')}</dt><dd className="font-semibold">{bien.superficie} m²</dd></div>
             <div><dt className="text-xs uppercase text-gray-500">{t('bien.chambresLabel')}</dt><dd className="font-semibold">{bien.nbChambres}</dd></div>
+            <div><dt className="text-xs uppercase text-gray-500">{t('bien.pebLabel')}</dt><dd><EtiquettePeb classe={bien.peb} grande /></dd></div>
             <div><dt className="text-xs uppercase text-gray-500">{t('bien.statutLabel')}</dt><dd className="font-semibold">{t(`statut.${bien.statut}`)}</dd></div>
             <div><dt className="text-xs uppercase text-gray-500">{t('bien.publieLe')}</dt><dd className="font-semibold">{new Date(bien.publieLe).toLocaleDateString('fr-BE')}</dd></div>
           </dl>

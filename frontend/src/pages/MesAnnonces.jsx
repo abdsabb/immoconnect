@@ -54,8 +54,9 @@ export default function MesAnnonces() {
 
       {annonces && (
         <>
-          <dl className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+          <dl className="mt-6 grid grid-cols-2 md:grid-cols-5 gap-4">
             <Indicateur titre={t('annonce.enLigne')} valeur={`${enLigne} / ${annonces.length}`} />
+            <Indicateur titre={t('annonce.vues')} valeur={total('vues')} />
             <Indicateur titre={t('annonce.favoris')} valeur={total('favoris')} />
             <Indicateur titre={t('annonce.demandes')} valeur={total('demandesEnAttente')} accent={total('demandesEnAttente') > 0} />
             <Indicateur titre={t('annonce.visites')} valeur={total('visitesAVenir')} />
@@ -72,6 +73,7 @@ export default function MesAnnonces() {
                   <p className="font-titre font-extrabold text-corail">{formatPrixBien(a, t)}</p>
                 </div>
                 <ul className="text-sm text-gray-700 min-w-40">
+                  <li>{t('annonce.vues')} : <strong>{a.indicateurs.vues}</strong></li>
                   <li>{t('annonce.favoris')} : <strong>{a.indicateurs.favoris}</strong></li>
                   <li>{t('annonce.demandes')} : <strong>{a.indicateurs.demandesEnAttente}</strong></li>
                   <li>{t('annonce.visites')} : <strong>{a.indicateurs.visitesAVenir}</strong></li>

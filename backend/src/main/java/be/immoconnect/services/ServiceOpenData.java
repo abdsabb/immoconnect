@@ -37,7 +37,7 @@ public class ServiceOpenData {
 
     public List<BienOuvert> biens() {
         return disponibles().stream().map(b -> new BienOuvert(b.getTypeOffre(), b.getCategorie().getNom(), b.getVille(),
-                b.getCodePostal(), b.getPrix(), b.getSuperficie(), b.getNbChambres(),
+                b.getCodePostal(), b.getPrix(), b.getSuperficie(), b.getNbChambres(), b.getPeb(),
                 b.getLatitude().setScale(DECIMALES_POSITION, RoundingMode.HALF_UP),
                 b.getLongitude().setScale(DECIMALES_POSITION, RoundingMode.HALF_UP), b.getPublieLe())).toList();
     }

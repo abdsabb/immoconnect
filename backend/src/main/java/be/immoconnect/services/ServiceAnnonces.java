@@ -73,7 +73,7 @@ public class ServiceAnnonces {
     public List<BienGestion> mesAnnonces(Integer agentId) {
         Map<Integer, Indicateurs> indicateurs = indicateurs(agentId);
         return biens.findByAgentIdOrderByPublieLeDescIdDesc(agentId).stream()
-                .map(bien -> BienGestion.depuis(bien, indicateurs.getOrDefault(bien.getId(), Indicateurs.AUCUN)))
+                .map(bien -> BienGestion.depuis(bien, indicateurs.getOrDefault(bien.getId(), Indicateurs.sansActivite(bien))))
                 .toList();
     }
 
@@ -207,6 +207,7 @@ public class ServiceAnnonces {
         bien.setPrix(requete.prix());
         bien.setSuperficie(requete.superficie());
         bien.setNbChambres(requete.nbChambres());
+        bien.setPeb(requete.peb());
         bien.setAdresse(requete.adresse().trim());
         bien.setVille(requete.ville().trim());
         bien.setCodePostal(requete.codePostal());
@@ -239,21 +240,27 @@ public class ServiceAnnonces {
     }
 
     private BienGestion vue(Bien bien) {
-        return BienGestion.depuis(bien, indicateurs(bien.getAgent().getId()).getOrDefault(bien.getId(), Indicateurs.AUCUN));
+        return BienGestion.depuis(bien, indicateurs(bien.getAgent().getId()).getOrDefault(bien.getId(), Indicateurs.sansActivite(bien)));
     }
 
-    /** Indicateurs du tableau de bord, par bien : deux requêtes groupées pour toutes les annonces de l'agent. */
+    /**
+     * Indicateurs du tableau de bord, par bien : les vues sont portées par le bien lui-même, favoris et
+     * rendez-vous viennent de deux requêtes groupées pour toutes les annonces de l'agent.
+     */
     private Map<Integer, Indicateurs> indicateurs(Integer agentId) {
         Map<Integer, long[]> compteurs = new HashMap<>();
+        for (Bien bien : biens.findByAgentIdOrderByPublieLeDescIdDesc(agentId)) {
+            compteurs.computeIfAbsent(bien.getId(), id -> new long[4])[0] = bien.getNbVues();
+        }
         for (Object[] ligne : favoris.compterParBien(agentId)) {
-            compteurs.computeIfAbsent((Integer) ligne[0], id -> new long[3])[0] = (Long) ligne[1];
+            compteurs.computeIfAbsent((Integer) ligne[0], id -> new long[4])[1] = (Long) ligne[1];
         }
         for (Object[] ligne : rendezVous.compterAVenirParBien(agentId, RendezVousRepository.ACTIFS, maintenant())) {
-            int rang = ligne[1] == StatutRendezVous.demande ? 1 : 2;
-            compteurs.computeIfAbsent((Integer) ligne[0], id -> new long[3])[rang] = (Long) ligne[2];
+            int rang = ligne[1] == StatutRendezVous.demande ? 2 : 3;
+            compteurs.computeIfAbsent((Integer) ligne[0], id -> new long[4])[rang] = (Long) ligne[2];
         }
         Map<Integer, Indicateurs> indicateurs = new HashMap<>();
-        compteurs.forEach((bienId, c) -> indicateurs.put(bienId, new Indicateurs(c[0], c[1], c[2])));
+        compteurs.forEach((bienId, c) -> indicateurs.put(bienId, new Indicateurs(c[0], c[1], c[2], c[3])));
         return indicateurs;
     }
 

@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { cheminListe, formatPrixBien } from '../services/biens'
 import BoutonFavori from './BoutonFavori'
+import EtiquettePeb from './EtiquettePeb'
 
 // Badges de statut : couleurs sémantiques de la charte, alignées sur l'énumération StatutBien
 const BADGES = {
@@ -48,8 +49,9 @@ export default function CarteBien({ bien, niveau: Titre = 'h2' }) {
         <Titre className="font-titre font-bold text-nuit leading-snug">
           <Link to={`/biens/${bien.id}`} className="hover:text-turquoise">{bien.titre}</Link>
         </Titre>
-        <p className="text-sm text-gray-600">
-          {bien.superficie} m² · {bien.nbChambres} {t('bien.chambres', { count: bien.nbChambres })}
+        <p className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
+          <span>{bien.superficie} m² · {bien.nbChambres} {t('bien.chambres', { count: bien.nbChambres })}</span>
+          <EtiquettePeb classe={bien.peb} />
         </p>
         <p className="mt-auto font-titre text-xl font-extrabold text-corail">{formatPrixBien(bien, t)}</p>
       </div>
