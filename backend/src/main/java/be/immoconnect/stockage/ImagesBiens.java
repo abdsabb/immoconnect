@@ -1,6 +1,6 @@
 package be.immoconnect.stockage;
 
-import be.immoconnect.service.DonneeInvalideException;
+import be.immoconnect.exceptions.DonneeInvalideException;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
