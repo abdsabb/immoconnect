@@ -36,15 +36,21 @@ public class GardeConnexion {
     private final ConcurrentHashMap<String, Fenetre> parAdresseIp = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Echecs> adressesInconnues = new ConcurrentHashMap<>();
     private final ProprietesSecurite proprietes;
+    private final DetectionIntrusion detection;
     private final Clock horloge;
 
-    public GardeConnexion(ProprietesSecurite proprietes, Clock horloge) {
+    public GardeConnexion(ProprietesSecurite proprietes, DetectionIntrusion detection, Clock horloge) {
         this.proprietes = proprietes;
+        this.detection = detection;
         this.horloge = horloge;
     }
 
-    /** Refuse la tentative (429) si l'adresse IP a épuisé son quota de la minute. */
+    /** Refuse la tentative (429) si l'adresse IP est bannie par la détection d'intrusion ou a épuisé son quota de la minute. */
     public void admettre(String ip) {
+        long bannissement = detection.secondesDeBannissement(ip);
+        if (bannissement > 0) {
+            throw new TropDeTentativesException(bannissement);
+        }
         long minute = horloge.millis() / 60_000;
         if (parAdresseIp.size() > ENTREES_MAX) {
             parAdresseIp.values().removeIf(fenetre -> fenetre.minute() < minute);
@@ -66,8 +72,9 @@ public class GardeConnexion {
         }
     }
 
-    /** Un échec de plus : à partir du seuil, le compte se verrouille. */
-    public void noterEchec(String email, Utilisateur compte) {
+    /** Un échec de plus : à partir du seuil, le compte se verrouille ; la détection d'intrusion compte aussi par adresse IP. */
+    public void noterEchec(String ip, String email, Utilisateur compte) {
+        detection.echecConnexion(ip, email);
         if (compte != null) {
             int echecs = Math.min(compte.getEchecsConnexion() + 1, 100);
             compte.setEchecsConnexion(echecs);

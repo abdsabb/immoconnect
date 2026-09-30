@@ -6,6 +6,7 @@ import be.immoconnect.entities.Administrateur;
 import be.immoconnect.entities.CleApi;
 import be.immoconnect.exceptions.RessourceIntrouvableException;
 import be.immoconnect.repositories.CleApiRepository;
+import be.immoconnect.security.DetectionIntrusion;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -40,9 +41,12 @@ public class ServiceClesApi {
     private final AccesAdministrateur acces;
     private final ServiceAudit audit;
     private final Clock horloge;
+    private final DetectionIntrusion detection;
     private final SecureRandom hasard = new SecureRandom();
 
-    public ServiceClesApi(CleApiRepository cles, AccesAdministrateur acces, ServiceAudit audit, Clock horloge) {
+    public ServiceClesApi(CleApiRepository cles, AccesAdministrateur acces, ServiceAudit audit, Clock horloge,
+                          DetectionIntrusion detection) {
+        this.detection = detection;
         this.cles = cles;
         this.acces = acces;
         this.audit = audit;
@@ -84,11 +88,14 @@ public class ServiceClesApi {
      * @return l'identifiant de la clé si elle existe et n'est pas révoquée
      */
     @Transactional
-    public Optional<Integer> verifier(String valeur) {
+    public Optional<Integer> verifier(String valeur, String ip) {
         if (valeur == null || valeur.isBlank() || valeur.length() > 200) {
             return Optional.empty();
         }
-        return cles.findByEmpreinte(empreinte(valeur.trim())).filter(CleApi::isActive).map(cle -> {
+        Optional<CleApi> trouvee = cles.findByEmpreinte(empreinte(valeur.trim()));
+        // Une clé révoquée encore présentée a peut-être fuité : la détection d'intrusion en est avertie
+        trouvee.filter(cle -> !cle.isActive()).ifPresent(cle -> detection.cleRevoquee(ip, cle.getLibelle()));
+        return trouvee.filter(CleApi::isActive).map(cle -> {
             LocalDateTime maintenant = LocalDateTime.now(horloge);
             LocalDateTime derniere = cle.getDerniereUtilisation();
             if (derniere == null || Duration.between(derniere, maintenant).compareTo(PRECISION_UTILISATION) >= 0) {

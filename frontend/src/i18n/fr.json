@@ -425,7 +425,8 @@
       "traductions": "Langues",
       "clesApi": "Clés API",
       "signalements": "Signalements",
-      "parametres": "Paramètres"
+      "parametres": "Paramètres",
+      "securite": "Sécurité"
     },
     "role": {
       "membre": "Membre",
@@ -578,6 +579,20 @@
       "enregistrer": "Enregistrer",
       "enregistre": "Paramètres enregistrés.",
       "derniereModification": "Dernière modification par {{qui}}, le {{quand}}"
+    },
+    "alerte": {
+      "explication": "Alertes de la détection d’intrusion. Une adresse qui enchaîne les échecs de connexion ou essaie de nombreux comptes est bannie de la connexion pendant quinze minutes ; une clé API révoquée encore présentée est signalée.",
+      "aucune": "Aucune alerte.",
+      "date": "Date",
+      "type": "Type",
+      "ip": "Adresse IP",
+      "detail": "Détail",
+      "types": {
+        "rafale_echecs": "Rafale d’échecs de connexion",
+        "enumeration": "Énumération d’identifiants",
+        "cle_revoquee": "Clé API révoquée présentée"
+      },
+      "procedure": "Procédure : vérifier le journal d’audit, bloquer l’adresse ou révoquer la clé, évaluer l’impact, documenter. Si des données personnelles sont concernées : notification à l’Autorité de protection des données sous 72 heures."
     }
   },
   "erreur": {

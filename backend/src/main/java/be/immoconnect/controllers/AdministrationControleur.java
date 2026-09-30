@@ -2,6 +2,7 @@ package be.immoconnect.controllers;
 
 import static be.immoconnect.controllers.RequeteHttp.adresseIp;
 
+import be.immoconnect.dto.AlerteResume;
 import be.immoconnect.dto.CategorieResume;
 import be.immoconnect.dto.CleApiResume;
 import be.immoconnect.dto.CompteResume;
@@ -17,6 +18,7 @@ import be.immoconnect.dto.Statistiques;
 import be.immoconnect.dto.TraceAudit;
 import be.immoconnect.dto.TraductionLigne;
 import be.immoconnect.entities.Signalement;
+import be.immoconnect.services.ServiceAlertesSecurite;
 import be.immoconnect.services.ServiceCategories;
 import be.immoconnect.services.ServiceClesApi;
 import be.immoconnect.services.ServiceComptes;
@@ -71,10 +73,13 @@ public class AdministrationControleur {
     private final ServiceTraductions traductions;
     private final ServiceParametres parametres;
     private final ServiceSignalements signalements;
+    private final ServiceAlertesSecurite alertes;
 
     public AdministrationControleur(ServiceComptes comptes, ServiceJournal journal, ServiceStatistiques statistiques,
                                     ServiceCategories categories, ServiceClesApi clesApi, ServiceTraductions traductions,
-                                    ServiceParametres parametres, ServiceSignalements signalements) {
+                                    ServiceParametres parametres, ServiceSignalements signalements,
+                                    ServiceAlertesSecurite alertes) {
+        this.alertes = alertes;
         this.clesApi = clesApi;
         this.traductions = traductions;
         this.parametres = parametres;
@@ -172,6 +177,15 @@ public class AdministrationControleur {
         var pagination = PageRequest.of(Math.max(page, 0), Math.clamp(taille, 1, TAILLE_MAX),
                 Sort.by(Sort.Direction.DESC, "horodatage", "id"));
         return PageReponse.depuis(journal.consulter(identifiant(jeton), action, utilisateurId, du, au, pagination));
+    }
+
+    @GetMapping("/alertes")
+    @Operation(summary = "Alertes de sécurité",
+            description = "Détection d'intrusion : rafales d'échecs de connexion, énumération d'identifiants, clés API révoquées présentées. Niveau 2.")
+    public PageReponse<AlerteResume> alertes(@AuthenticationPrincipal Jwt jeton,
+                                             @RequestParam(defaultValue = "0") int page,
+                                             @RequestParam(defaultValue = "20") int taille) {
+        return PageReponse.depuis(alertes.lister(identifiant(jeton), PageRequest.of(Math.max(page, 0), Math.clamp(taille, 1, TAILLE_MAX))));
     }
 
     @GetMapping("/journal/actions")

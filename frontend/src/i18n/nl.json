@@ -425,7 +425,8 @@
       "traductions": "Talen",
       "clesApi": "API-sleutels",
       "signalements": "Meldingen",
-      "parametres": "Instellingen"
+      "parametres": "Instellingen",
+      "securite": "Beveiliging"
     },
     "role": {
       "membre": "Lid",
@@ -578,6 +579,20 @@
       "enregistrer": "Opslaan",
       "enregistre": "Instellingen opgeslagen.",
       "derniereModification": "Laatst gewijzigd door {{qui}} op {{quand}}"
+    },
+    "alerte": {
+      "explication": "Waarschuwingen van de inbraakdetectie. Een adres dat mislukte aanmeldingen opstapelt of veel accounts probeert, wordt vijftien minuten uitgesloten van het aanmelden; een ingetrokken API-sleutel die nog gebruikt wordt, wordt gemeld.",
+      "aucune": "Geen waarschuwingen.",
+      "date": "Datum",
+      "type": "Type",
+      "ip": "IP-adres",
+      "detail": "Detail",
+      "types": {
+        "rafale_echecs": "Reeks mislukte aanmeldingen",
+        "enumeration": "Opsomming van accounts",
+        "cle_revoquee": "Ingetrokken API-sleutel gebruikt"
+      },
+      "procedure": "Procedure: het auditlogboek nakijken, het adres blokkeren of de sleutel intrekken, de impact inschatten, documenteren. Gaat het om persoonsgegevens: melding aan de Gegevensbeschermingsautoriteit binnen 72 uur."
     }
   },
   "erreur": {

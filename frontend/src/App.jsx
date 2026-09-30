@@ -35,6 +35,7 @@ const Traductions = lazy(() => import('./pages/admin/Traductions'))
 const ClesApi = lazy(() => import('./pages/admin/ClesApi'))
 const Signalements = lazy(() => import('./pages/admin/Signalements'))
 const Parametres = lazy(() => import('./pages/admin/Parametres'))
+const Alertes = lazy(() => import('./pages/admin/Alertes'))
 
 // Arborescence issue de la charte (livrable 10) : pages publiques, connexion/inscription,
 // espace membre, espace agent, back-office administrateur.
@@ -92,6 +93,7 @@ export default function App() {
             <Route path="cles-api" element={<ClesApi />} />
             <Route path="signalements" element={<Signalements />} />
             <Route path="parametres" element={<Parametres />} />
+            <Route path="securite" element={<Alertes />} />
           </Route>
         </Route>
         <Route path="*" element={<Biens />} />

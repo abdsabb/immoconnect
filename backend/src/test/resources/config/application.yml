@@ -10,3 +10,6 @@ immoconnect:
     double-facteur: false              # idem : un test dédié l'active
     mots-de-passe-compromis: local     # jamais d'appel réseau pendant les tests
     connexions-par-minute: 1000        # les tests se connectent des dizaines de fois par minute ; un test dédié abaisse le seuil
+    intrusion:
+      echecs: 100000                   # les tests échouent exprès à se connecter, tous depuis 127.0.0.1 ; un test dédié abaisse les seuils
+      comptes: 100000

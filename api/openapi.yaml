@@ -1109,6 +1109,31 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/CleApi' }
+  /admin/alertes:
+    get:
+      tags: [Administration]
+      summary: Alertes de sécurité (gestionnaire)
+      description: >
+        Détection d'intrusion : rafale d'échecs de connexion, énumération d'identifiants (l'adresse est alors
+        bannie de la connexion pendant quinze minutes), clé API révoquée présentée. Chaque alerte est aussi
+        envoyée par e-mail aux super-administrateurs.
+      parameters:
+        - { name: page, in: query, schema: { type: integer, default: 0 } }
+        - { name: taille, in: query, schema: { type: integer, default: 20, maximum: 100 } }
+      responses:
+        '200':
+          description: De la plus récente à la plus ancienne
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contenu: { type: array, items: { $ref: '#/components/schemas/AlerteSecurite' } }
+                  page: { type: integer }
+                  taille: { type: integer }
+                  totalElements: { type: integer }
+                  totalPages: { type: integer }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
   /admin/parametres:
     get:
       tags: [Administration]
@@ -1431,6 +1456,14 @@ components:
             email: { type: string, format: email }
             horaires: { type: string }
             languesActives: { type: array, items: { type: string, enum: [fr, nl, en] } }
+    AlerteSecurite:
+      type: object
+      properties:
+        id: { type: integer }
+        type: { type: string, enum: [rafale_echecs, enumeration, cle_revoquee] }
+        ip: { type: string, example: 203.0.113.9 }
+        detail: { type: string, example: 7 comptes différents essayés en 10 min }
+        creeLe: { type: string, format: date-time }
     Parametre:
       type: object
       properties:

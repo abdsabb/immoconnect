@@ -130,7 +130,7 @@ public class ServiceAuthentification {
         try {
             gestionnaire.authenticate(new UsernamePasswordAuthenticationToken(email, requete.motDePasse()));
         } catch (BadCredentialsException e) {
-            garde.noterEchec(email, compte);
+            garde.noterEchec(ip, email, compte);
             if (compte != null) {
                 audit.enregistrer(compte, "echec_connexion", "utilisateur#" + compte.getId(), ip);
             }

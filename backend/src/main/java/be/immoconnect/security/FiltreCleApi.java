@@ -48,7 +48,9 @@ public class FiltreCleApi extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest requete, HttpServletResponse reponse, FilterChain chaine)
             throws ServletException, IOException {
-        Optional<Integer> cle = cles.verifier(requete.getHeader(EN_TETE));
+        String transmise = requete.getHeader("X-Forwarded-For");
+        String ip = transmise != null && !transmise.isBlank() ? transmise.split(",")[0].trim() : requete.getRemoteAddr();
+        Optional<Integer> cle = cles.verifier(requete.getHeader(EN_TETE), ip);
         if (cle.isEmpty()) {
             refuser(reponse, HttpStatus.UNAUTHORIZED, "Non authentifié", "Clé API manquante, invalide ou révoquée", "non-authentifie");
             return;

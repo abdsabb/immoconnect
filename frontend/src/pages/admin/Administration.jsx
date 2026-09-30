@@ -11,6 +11,7 @@ const RUBRIQUES = [
   { chemin: '/admin/cles-api', cle: 'clesApi' },
   { chemin: '/admin/signalements', cle: 'signalements' },
   { chemin: '/admin/parametres', cle: 'parametres' },
+  { chemin: '/admin/securite', cle: 'securite' },
 ]
 
 // Gabarit du back-office de l'administrateur (contrainte de l'épreuve) : une rubrique par cas d'utilisation A1 à A8

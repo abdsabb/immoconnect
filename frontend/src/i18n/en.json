@@ -425,7 +425,8 @@
       "traductions": "Languages",
       "clesApi": "API keys",
       "signalements": "Reports",
-      "parametres": "Settings"
+      "parametres": "Settings",
+      "securite": "Security"
     },
     "role": {
       "membre": "Member",
@@ -578,6 +579,20 @@
       "enregistrer": "Save",
       "enregistre": "Settings saved.",
       "derniereModification": "Last changed by {{qui}} on {{quand}}"
+    },
+    "alerte": {
+      "explication": "Intrusion detection alerts. An address that piles up failed logins or tries many accounts is banned from logging in for fifteen minutes; a revoked API key that is still presented is reported.",
+      "aucune": "No alerts.",
+      "date": "Date",
+      "type": "Type",
+      "ip": "IP address",
+      "detail": "Detail",
+      "types": {
+        "rafale_echecs": "Burst of failed logins",
+        "enumeration": "Account enumeration",
+        "cle_revoquee": "Revoked API key presented"
+      },
+      "procedure": "Procedure: check the audit log, block the address or revoke the key, assess the impact, document. If personal data is involved: notify the Data Protection Authority within 72 hours."
     }
   },
   "erreur": {
