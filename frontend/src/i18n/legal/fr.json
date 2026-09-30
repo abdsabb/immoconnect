@@ -79,7 +79,7 @@
         "titre": "Contenus des utilisateurs",
         "paragraphes": [
           "Les messages échangés entre un membre et un agent n'engagent que leur auteur. Le site n'exerce pas de surveillance générale de ces messages.",
-          "Pour signaler un contenu illicite, utilisez le point de contact indiqué plus haut. Un contenu signalé est examiné et, s'il est illicite, retiré."
+          "Pour signaler un contenu illicite, utilisez le lien « Signaler ce contenu » présent sous chaque message reçu, chaque annonce et chaque article. Le signalement est examiné par un administrateur, qui retire le contenu ou le conserve et motive sa décision ; celle-ci est conservée avec le signalement."
         ]
       },
       {
@@ -228,7 +228,7 @@
         "liste": [
           "Accès et rectification : consultez et modifiez vos données dans « Mon profil ».",
           "Effacement : le bouton « Supprimer mon compte » de votre profil efface vos favoris et le texte de vos messages, et remplace votre nom, votre adresse e-mail et votre téléphone par des valeurs anonymes. L'opération est immédiate et irréversible.",
-          "Portabilité, opposition et limitation : adressez votre demande au point de contact ; une réponse vous est donnée dans les 30 jours."
+          "Portabilité : le bouton « Télécharger mes données » de votre profil vous remet, en JSON, une copie de tout ce que le site détient sur vous. Opposition et limitation : adressez votre demande au point de contact ; vous recevrez une réponse sous 30 jours."
         ]
       },
       {

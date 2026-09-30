@@ -79,7 +79,7 @@
         "titre": "Inhoud van gebruikers",
         "paragraphes": [
           "De berichten tussen een lid en een makelaar verbinden alleen hun auteur. De site oefent geen algemeen toezicht op deze berichten uit.",
-          "Gebruik het contactpunt hierboven om onwettige inhoud te melden. Gemelde inhoud wordt onderzocht en, als ze onwettig is, verwijderd."
+          "Om onwettige inhoud te melden, gebruikt u de link 'Deze inhoud melden' onder elk ontvangen bericht, elke advertentie en elk artikel. De melding wordt onderzocht door een beheerder, die de inhoud verwijdert of behoudt en zijn beslissing motiveert; die wordt bij de melding bewaard."
         ]
       },
       {
@@ -228,7 +228,7 @@
         "liste": [
           "Inzage en verbetering: raadpleeg en wijzig uw gegevens in 'Mijn profiel'.",
           "Wissing: de knop 'Mijn account verwijderen' in uw profiel wist uw favorieten en de tekst van uw berichten, en vervangt uw naam, uw e-mailadres en uw telefoonnummer door anonieme waarden. De bewerking is onmiddellijk en onomkeerbaar.",
-          "Overdraagbaarheid, bezwaar en beperking: richt uw verzoek aan het contactpunt; u krijgt binnen 30 dagen een antwoord."
+          "Overdraagbaarheid: de knop 'Mijn gegevens downloaden' in uw profiel geeft u, in JSON, een kopie van alles wat de site over u bewaart. Bezwaar en beperking: richt uw verzoek aan het contactpunt; u krijgt binnen 30 dagen antwoord."
         ]
       },
       {

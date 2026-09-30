@@ -233,7 +233,10 @@
     "doubleFacteurExplication": "À chaque connexion, un code envoyé par e-mail sera demandé en plus du mot de passe.",
     "doubleFacteurImpose": "Obligatoire pour votre rôle : un code envoyé par e-mail est demandé à chaque connexion.",
     "communications": "Informations de l’agence",
-    "communicationsExplication": "Recevoir des informations sur les nouveaux biens et les actualités. Retirable à tout moment."
+    "communicationsExplication": "Recevoir des informations sur les nouveaux biens et les actualités. Retirable à tout moment.",
+    "mesDonnees": "Mes données",
+    "telechargerMesDonnees": "Télécharger mes données (JSON)",
+    "mesDonneesExplication": "Recevez une copie de toutes les données que le site détient sur vous : compte, favoris, visites, paiements, messages et historique (droit à la portabilité, RGPD)."
   },
   "rdv": {
     "titre": "Prendre rendez-vous",
@@ -415,7 +418,9 @@
       "articles": "Blog",
       "categories": "Catégories",
       "traductions": "Langues",
-      "clesApi": "Clés API"
+      "clesApi": "Clés API",
+      "signalements": "Signalements",
+      "parametres": "Paramètres"
     },
     "role": {
       "membre": "Membre",
@@ -527,6 +532,47 @@
       "archive": "Article archivé.",
       "supprime": "Article supprimé.",
       "confirmerSuppression": "Supprimer définitivement « {{titre}} » ?"
+    },
+    "signalement": {
+      "explication": "Contenus signalés par les utilisateurs. Retirer un contenu vide le message, met l’annonce hors ligne ou archive l’article ; conserver le laisse en place. Chaque décision est motivée, définitive et journalisée.",
+      "statuts": {
+        "ouvert": "À traiter",
+        "retire": "Retirés",
+        "conserve": "Conservés"
+      },
+      "aucun": "Aucun signalement dans cette liste.",
+      "date": "Date",
+      "contenu": "Contenu",
+      "motif": "Motif",
+      "auteur": "Signalé par",
+      "decision": "Décision",
+      "motivation": "Motivation de la décision (obligatoire)",
+      "motivationRequise": "Motivez la décision avant de trancher.",
+      "retirer": "Retirer",
+      "conserver": "Conserver",
+      "retireFait": "Contenu retiré et décision enregistrée.",
+      "conserveFait": "Contenu conservé et décision enregistrée.",
+      "types": {
+        "message": "Message",
+        "bien": "Annonce",
+        "article": "Article"
+      }
+    },
+    "parametre": {
+      "explication": "Identité de l’agence affichée sur le site et langues proposées aux visiteurs. Les clés de paiement et de courriel ne se règlent pas ici : elles restent sur le serveur.",
+      "cles": {
+        "agence.nom": "Nom de l’agence",
+        "agence.slogan": "Slogan",
+        "agence.adresse": "Adresse",
+        "agence.telephone": "Téléphone",
+        "agence.email": "Adresse e-mail",
+        "agence.horaires": "Horaires",
+        "langues.actives": "Langues actives"
+      },
+      "languesExplication": "Une langue désactivée disparaît du sélecteur ; le français, langue des textes de référence, reste toujours actif.",
+      "enregistrer": "Enregistrer",
+      "enregistre": "Paramètres enregistrés.",
+      "derniereModification": "Dernière modification par {{qui}}, le {{quand}}"
     }
   },
   "erreur": {
@@ -565,5 +611,24 @@
   "offre": {
     "vente": "À vendre",
     "location": "À louer"
+  },
+  "langue": {
+    "fr": "Français",
+    "nl": "Nederlands",
+    "en": "English"
+  },
+  "signalement": {
+    "bouton": "Signaler ce contenu",
+    "titre": "Signaler un contenu",
+    "motif": "Motif",
+    "description": "Expliquez le problème",
+    "envoyer": "Envoyer le signalement",
+    "merci": "Merci, votre signalement sera examiné par l’équipe du site.",
+    "motifs": {
+      "illicite": "Contenu illicite",
+      "arnaque": "Arnaque ou tromperie",
+      "indesirable": "Publicité ou contenu indésirable",
+      "autre": "Autre"
+    }
   }
 }

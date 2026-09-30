@@ -79,7 +79,7 @@
         "titre": "User content",
         "paragraphes": [
           "Messages exchanged between a member and an agent are the sole responsibility of their author. The site does not carry out general monitoring of these messages.",
-          "To report unlawful content, use the point of contact given above. Reported content is reviewed and, if unlawful, removed."
+          "To report unlawful content, use the 'Report this content' link under every message received, every listing and every article. The report is reviewed by an administrator, who removes the content or keeps it and gives the reason for the decision; that decision is kept with the report."
         ]
       },
       {
@@ -228,7 +228,7 @@
         "liste": [
           "Access and rectification: view and change your data in 'My profile'.",
           "Erasure: the 'Delete my account' button in your profile erases your favourites and the text of your messages, and replaces your name, e-mail address and phone number with anonymous values. The operation is immediate and irreversible.",
-          "Portability, objection and restriction: send your request to the point of contact; you will receive an answer within 30 days."
+          "Portability: the 'Download my data' button in your profile gives you, in JSON, a copy of everything the site holds about you. Objection and restriction: send your request to the point of contact; you will receive an answer within 30 days."
         ]
       },
       {

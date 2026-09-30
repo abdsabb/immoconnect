@@ -34,6 +34,10 @@ tags:
     description: >
       Back-office de l'administrateur. Rôle « admin » exigé, puis niveau d'accès : éditeur (1),
       gestionnaire (2) ou super-administrateur (3).
+  - name: Configuration
+    description: Réglages publics du site
+  - name: Signalements
+    description: Signalement de contenus par les utilisateurs
 security:
   - bearerAuth: []
 paths:
@@ -49,7 +53,14 @@ paths:
             schema: { $ref: '#/components/schemas/InscriptionRequete' }
       responses:
         '201':
-          description: Compte créé
+          description: Compte créé et session ouverte (activation par e-mail désactivée)
+          headers:
+            Set-Cookie: { description: Cookie de session immoconnect_session (HttpOnly, Secure, SameSite=Strict, chemin /api/v1/auth), schema: { type: string } }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/JetonReponse' }
+        '202':
+          description: Compte créé, en attente du lien d'activation reçu par e-mail (valable 24 heures)
           content:
             application/json:
               schema: { $ref: '#/components/schemas/JetonReponse' }
@@ -66,11 +77,141 @@ paths:
             schema: { $ref: '#/components/schemas/ConnexionRequete' }
       responses:
         '200':
-          description: Jeton délivré
+          description: Jeton d'accès délivré (15 minutes) et cookie de session posé
+          headers:
+            Set-Cookie: { description: Cookie de session immoconnect_session, 14 jours, tourné à chaque renouvellement, schema: { type: string } }
           content:
             application/json:
               schema: { $ref: '#/components/schemas/JetonReponse' }
+        '202':
+          description: Second facteur exigé — un code à six chiffres est envoyé par e-mail ; le défi s'échange contre la session sur /auth/login/code
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Defi' }
         '401': { $ref: '#/components/responses/ErreurAuthentification' }
+        '403':
+          description: Compte non activé (type compte-non-active) ou désactivé
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Erreur' }
+        '429': { $ref: '#/components/responses/ErreurTentatives' }
+  /auth/login/code:
+    post:
+      tags: [Authentification]
+      summary: Second facteur — valider le code reçu par e-mail
+      description: Le code vaut dix minutes et cinq essais ; au-delà, le défi est perdu (400) et la connexion recommence.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [defi, code]
+              properties:
+                defi: { type: string, description: Valeur reçue avec la réponse 202 de /auth/login }
+                code: { type: string, pattern: '^[0-9]{6}$', example: '482913' }
+      responses:
+        '200':
+          description: Session ouverte
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/JetonReponse' }
+        '400': { $ref: '#/components/responses/ErreurLien' }
+        '401':
+          description: Code incorrect (type code-invalide, propriété essaisRestants)
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Erreur' }
+  /auth/refresh:
+    post:
+      tags: [Authentification]
+      summary: Renouveler le jeton d'accès
+      description: Le navigateur envoie seul le cookie de session ; le cookie est remplacé (rotation). Un cookie déjà utilisé ferme toutes les sessions du compte.
+      security: []
+      responses:
+        '200':
+          description: Nouveau jeton d'accès et nouveau cookie
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/JetonReponse' }
+        '400': { $ref: '#/components/responses/ErreurLien' }
+  /auth/logout:
+    post:
+      tags: [Authentification]
+      summary: Se déconnecter
+      description: Ferme la session du cookie et l'efface.
+      security: []
+      responses:
+        '204': { description: Session fermée }
+  /auth/mot-de-passe-oublie:
+    post:
+      tags: [Authentification]
+      summary: Mot de passe oublié
+      description: Envoie un lien de réinitialisation (30 minutes, usage unique). La réponse est la même que l'adresse soit connue ou non.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AdresseCourriel' }
+      responses:
+        '202': { description: Demande enregistrée }
+        '429': { $ref: '#/components/responses/ErreurTentatives' }
+  /auth/reinitialisation:
+    post:
+      tags: [Authentification]
+      summary: Choisir un nouveau mot de passe
+      description: Avec le jeton reçu par e-mail ; toutes les sessions sont fermées et le titulaire prévenu.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [jeton, motDePasse]
+              properties:
+                jeton: { type: string }
+                motDePasse: { $ref: '#/components/schemas/MotDePasse' }
+      responses:
+        '204': { description: Mot de passe remplacé }
+        '400': { $ref: '#/components/responses/ErreurLien' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+  /auth/activation:
+    post:
+      tags: [Authentification]
+      summary: Activer un compte
+      description: Confirme l'adresse e-mail avec le jeton reçu et ouvre la session.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [jeton]
+              properties:
+                jeton: { type: string }
+      responses:
+        '200':
+          description: Compte activé, session ouverte
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/JetonReponse' }
+        '400': { $ref: '#/components/responses/ErreurLien' }
+  /auth/activation/renvoi:
+    post:
+      tags: [Authentification]
+      summary: Renvoyer le lien d'activation
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AdresseCourriel' }
+      responses:
+        '202': { description: Demande enregistrée, réponse identique que l'adresse soit connue ou non }
   /auth/me:
     get:
       tags: [Authentification]
@@ -81,6 +222,50 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Utilisateur' }
+  /auth/me/export:
+    get:
+      tags: [Authentification]
+      summary: Exporter mes données (portabilité, article 20 du RGPD)
+      description: Toutes les données personnelles du compte, en JSON à télécharger (Content-Disposition attachment). La demande est journalisée.
+      responses:
+        '200':
+          description: Fichier immoconnect-mes-donnees.json
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExportDonnees' }
+        '401': { $ref: '#/components/responses/ErreurAuthentification' }
+  /configuration:
+    get:
+      tags: [Configuration]
+      summary: Réglages publics du site
+      description: Options de sécurité, boîte de démonstration éventuelle, identité de l'agence et langues actives (cas A5). Rien de secret.
+      security: []
+      responses:
+        '200':
+          description: Réglages
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConfigurationPublique' }
+  /signalements:
+    post:
+      tags: [Signalements]
+      summary: Signaler un contenu
+      description: Un message reçu, une annonce ou un article (règlement européen sur les services numériques). Un seul signalement ouvert par contenu et par personne ; l'administrateur tranche et motive sa décision.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SignalementRequete' }
+      responses:
+        '201':
+          description: Signalement enregistré
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Signalement' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+
   /biens:
     get:
       tags: [Biens]
@@ -924,6 +1109,101 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/CleApi' }
+  /admin/parametres:
+    get:
+      tags: [Administration]
+      summary: Paramètres du site (gestionnaire, cas A5)
+      responses:
+        '200':
+          description: Nom, slogan, coordonnées et horaires de l'agence, langues actives
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Parametre' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+    put:
+      tags: [Administration]
+      summary: Modifier des paramètres (gestionnaire)
+      description: Valeurs par clé ; une clé inconnue ou une valeur invalide est refusée. Le français reste toujours actif. Chaque changement est journalisé.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [valeurs]
+              properties:
+                valeurs:
+                  type: object
+                  additionalProperties: { type: string }
+                  example: { agence.nom: ImmoConnect Bruxelles, langues.actives: 'fr,nl' }
+      responses:
+        '200':
+          description: Paramètres après modification
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Parametre' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+  /admin/signalements:
+    get:
+      tags: [Administration]
+      summary: Signalements de contenus (gestionnaire)
+      parameters:
+        - { name: statut, in: query, schema: { type: string, enum: [ouvert, retire, conserve] } }
+        - { name: page, in: query, schema: { type: integer, default: 0 } }
+        - { name: taille, in: query, schema: { type: integer, default: 20, maximum: 100 } }
+      responses:
+        '200':
+          description: Du plus récent au plus ancien
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contenu: { type: array, items: { $ref: '#/components/schemas/Signalement' } }
+                  page: { type: integer }
+                  taille: { type: integer }
+                  totalElements: { type: integer }
+                  totalPages: { type: integer }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+  /admin/signalements/ouverts:
+    get:
+      tags: [Administration]
+      summary: Nombre de signalements à traiter (gestionnaire)
+      responses:
+        '200':
+          description: Nombre
+          content:
+            application/json:
+              schema: { type: integer, example: 2 }
+  /admin/signalements/{id}:
+    patch:
+      tags: [Administration]
+      summary: Trancher un signalement (gestionnaire)
+      description: « retire » vide le message, met l'annonce hors ligne ou archive l'article ; « conserve » le laisse en place. La décision est motivée, définitive et journalisée (RA13).
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [statut, decision]
+              properties:
+                statut: { type: string, enum: [retire, conserve] }
+                decision: { type: string, maxLength: 500, example: Annonce dupliquée, retirée en attendant les explications de l'agent. }
+      responses:
+        '200':
+          description: Signalement tranché
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Signalement' }
+        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
   /traductions/{codeLangue}:
     get:
       tags: [Traductions]
@@ -1047,6 +1327,18 @@ components:
       content:
         application/problem+json:
           schema: { $ref: '#/components/schemas/Erreur' }
+    ErreurLien:
+      description: Lien, jeton ou défi expiré ou déjà utilisé (type lien-invalide)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Erreur' }
+    ErreurTentatives:
+      description: Trop de tentatives — compte verrouillé ou plus de dix connexions par minute depuis cette adresse ; en-tête Retry-After
+      headers:
+        Retry-After: { schema: { type: integer }, description: Secondes à attendre }
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Erreur' }
     ErreurIntrouvable:
       description: Ressource inexistante
       content:
@@ -1092,15 +1384,108 @@ components:
         email: { type: string, format: email, example: sarah.dubois@mail.be }
         langue: { type: string, example: fr }
         role: { type: string, enum: [membre, agent, admin] }
+        doubleFacteur: { type: boolean, description: Code par e-mail à chaque connexion }
+        doubleFacteurImpose: { type: boolean, description: Vrai pour les agents et les administrateurs, qui ne peuvent pas le désactiver }
+        consentementCommunications: { type: boolean }
+    MotDePasse:
+      type: string
+      format: password
+      minLength: 8
+      maxLength: 72
+      description: Minuscules, majuscules et un chiffre ; refusé s'il figure dans une fuite de données connue (Have I Been Pwned, par k-anonymat)
     InscriptionRequete:
       type: object
-      required: [nom, prenom, email, motDePasse]
+      required: [nom, prenom, email, motDePasse, cguAcceptees]
       properties:
         nom: { type: string, maxLength: 80 }
         prenom: { type: string, maxLength: 80 }
         email: { type: string, format: email }
-        motDePasse: { type: string, format: password, minLength: 8 }
+        motDePasse: { $ref: '#/components/schemas/MotDePasse' }
         langue: { type: string, enum: [fr, nl, en], default: fr }
+        telephone: { type: string, nullable: true }
+        cguAcceptees: { type: boolean, description: Doit valoir true ; l'acceptation est horodatée }
+        consentementCommunications: { type: boolean, default: false }
+    AdresseCourriel:
+      type: object
+      required: [email]
+      properties:
+        email: { type: string, format: email }
+    Defi:
+      type: object
+      properties:
+        defi: { type: string, description: À renvoyer avec le code sur /auth/login/code }
+        expireDans: { type: integer, example: 600, description: Secondes }
+    ConfigurationPublique:
+      type: object
+      properties:
+        activationParCourriel: { type: boolean }
+        doubleFacteur: { type: boolean }
+        boiteDeDemonstration: { type: string, nullable: true, example: /courriels/ }
+        site:
+          type: object
+          properties:
+            nom: { type: string, example: ImmoConnect }
+            slogan: { type: string }
+            adresse: { type: string }
+            telephone: { type: string }
+            email: { type: string, format: email }
+            horaires: { type: string }
+            languesActives: { type: array, items: { type: string, enum: [fr, nl, en] } }
+    Parametre:
+      type: object
+      properties:
+        cle: { type: string, enum: [agence.nom, agence.slogan, agence.adresse, agence.telephone, agence.email, agence.horaires, langues.actives] }
+        valeur: { type: string, maxLength: 1000 }
+        modifieLe: { type: string, format: date-time }
+        modifiePar: { type: string, nullable: true, example: Lotte Goossens }
+    SignalementRequete:
+      type: object
+      required: [typeContenu, contenuId, motif, description]
+      properties:
+        typeContenu: { type: string, enum: [message, bien, article] }
+        contenuId: { type: integer }
+        motif: { type: string, enum: [illicite, arnaque, indesirable, autre] }
+        description: { type: string, maxLength: 1000 }
+    Signalement:
+      type: object
+      properties:
+        id: { type: integer }
+        typeContenu: { type: string, enum: [message, bien, article] }
+        contenuId: { type: integer }
+        apercu: { type: string, nullable: true, description: Début du contenu visé }
+        motif: { type: string, enum: [illicite, arnaque, indesirable, autre] }
+        description: { type: string }
+        statut: { type: string, enum: [ouvert, retire, conserve] }
+        creeLe: { type: string, format: date-time }
+        auteur: { type: string }
+        auteurRole: { type: string, enum: [membre, agent, admin] }
+        traiteLe: { type: string, format: date-time, nullable: true }
+        traitePar: { type: string, nullable: true }
+        decision: { type: string, nullable: true }
+    ExportDonnees:
+      type: object
+      description: Aucun identifiant interne — les données sont exprimées avec les titres des biens et les noms des interlocuteurs
+      properties:
+        exporteLe: { type: string, format: date-time }
+        compte:
+          type: object
+          properties:
+            prenom: { type: string }
+            nom: { type: string }
+            email: { type: string }
+            telephone: { type: string, nullable: true }
+            role: { type: string }
+            langue: { type: string }
+            inscritLe: { type: string, format: date }
+            cguAccepteesLe: { type: string, format: date-time, nullable: true }
+            consentementCommunications: { type: boolean }
+            doubleFacteur: { type: boolean }
+        favoris: { type: array, items: { type: object, properties: { bien: { type: string }, ville: { type: string }, ajouteLe: { type: string, format: date-time } } } }
+        visites: { type: array, items: { type: object, properties: { bien: { type: string }, ville: { type: string }, agent: { type: string }, dateHeure: { type: string, format: date-time }, statut: { type: string }, motif: { type: string, nullable: true }, premium: { type: boolean } } } }
+        paiements: { type: array, items: { type: object, properties: { bien: { type: string }, visite: { type: string, format: date-time }, montant: { type: number }, statut: { type: string }, payeLe: { type: string, format: date-time, nullable: true }, reference: { type: string } } } }
+        messages: { type: array, items: { type: object, properties: { interlocuteur: { type: string }, envoye: { type: boolean }, contenu: { type: string }, envoyeLe: { type: string, format: date-time }, lu: { type: boolean } } } }
+        signalements: { type: array, items: { type: object, properties: { typeContenu: { type: string }, motif: { type: string }, description: { type: string }, statut: { type: string }, creeLe: { type: string, format: date-time }, traiteLe: { type: string, format: date-time, nullable: true }, decision: { type: string, nullable: true } } } }
+        historique: { type: array, items: { type: object, properties: { action: { type: string }, entite: { type: string }, horodatage: { type: string, format: date-time }, ip: { type: string } } } }
     ConnexionRequete:
       type: object
       required: [email, motDePasse]
@@ -1112,8 +1497,9 @@ components:
       properties:
         jeton: { type: string, example: eyJhbGciOiJIUzI1NiJ9... }
         type: { type: string, example: Bearer }
-        expireDans: { type: integer, example: 3600, description: Durée de vie en secondes }
+        expireDans: { type: integer, example: 900, description: Durée de vie en secondes ; le cookie de session renouvelle le jeton }
         utilisateur: { $ref: '#/components/schemas/Utilisateur' }
+        activationRequise: { type: boolean, description: Vrai avec la réponse 202 de /auth/register — pas de jeton tant que l'adresse n'est pas confirmée }
     Photo:
       type: object
       properties:

@@ -2,6 +2,7 @@ package be.immoconnect.controllers;
 
 import static be.immoconnect.controllers.RequeteHttp.adresseIp;
 
+import be.immoconnect.dto.ExportDonnees;
 import be.immoconnect.dto.ReponseDefi;
 import be.immoconnect.dto.ReponseJeton;
 import be.immoconnect.dto.RequeteAdresseCourriel;
@@ -15,6 +16,7 @@ import be.immoconnect.dto.RequeteReinitialisation;
 import be.immoconnect.dto.UtilisateurResume;
 import be.immoconnect.security.ProprietesSecurite;
 import be.immoconnect.services.ServiceAuthentification;
+import be.immoconnect.services.ServiceExportDonnees;
 import be.immoconnect.services.ServiceAuthentification.Defi;
 import be.immoconnect.services.ServiceAuthentification.Session;
 import be.immoconnect.services.ServiceProfil;
@@ -59,11 +61,14 @@ public class AuthControleur {
 
     private final ServiceAuthentification service;
     private final ServiceProfil profil;
+    private final ServiceExportDonnees export;
     private final ProprietesSecurite proprietes;
 
-    public AuthControleur(ServiceAuthentification service, ServiceProfil profil, ProprietesSecurite proprietes) {
+    public AuthControleur(ServiceAuthentification service, ServiceProfil profil, ServiceExportDonnees export,
+                          ProprietesSecurite proprietes) {
         this.service = service;
         this.profil = profil;
+        this.export = export;
         this.proprietes = proprietes;
     }
 
@@ -161,6 +166,17 @@ public class AuthControleur {
     public void changerMotDePasse(@AuthenticationPrincipal Jwt jeton, @Valid @RequestBody RequeteChangementMotDePasse requete,
                                   HttpServletRequest http) {
         profil.changerMotDePasse(Integer.valueOf(jeton.getSubject()), requete, adresseIp(http));
+    }
+
+    @GetMapping("/me/export")
+    @SecurityRequirement(name = "jwt")
+    @Operation(summary = "Exporter mes données (portabilité)",
+            description = "Toutes les données personnelles du compte en JSON, à télécharger (article 20 du RGPD). La demande est journalisée.")
+    public ResponseEntity<ExportDonnees> exporter(@AuthenticationPrincipal Jwt jeton, HttpServletRequest http) {
+        ExportDonnees donnees = export.exporter(Integer.valueOf(jeton.getSubject()), adresseIp(http));
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"immoconnect-mes-donnees.json\"")
+                .body(donnees);
     }
 
     @DeleteMapping("/me")

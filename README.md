@@ -134,6 +134,10 @@ Les photos téléversées sont enregistrées dans `backend/stockage/` (variable 
   usage unique ; la réinitialisation ferme toutes les sessions et prévient par e-mail.
 - **Inscription** : acceptation des conditions générales obligatoire et horodatée (`cgu_acceptees_le`), consentement
   aux communications distinct.
+- **Droits RGPD** : accès et rectification (profil), portabilité (`GET /auth/me/export`, fichier JSON), effacement
+  (désinscription RA11). **Signalement de contenus** (DSA) : lien « Signaler ce contenu » sous chaque message reçu,
+  annonce et article ; un gestionnaire retire (message vidé, annonce hors ligne, article archivé) ou conserve, avec
+  une décision motivée, définitive et journalisée.
 
 Ces mécanismes se règlent dans `application.yml` (`immoconnect.securite.*`) et par les variables
 `ACTIVATION_PAR_COURRIEL`, `DOUBLE_FACTEUR`, `MOTS_DE_PASSE_COMPROMIS` et `COOKIE_SECURE` (voir `.env.example`).
@@ -173,7 +177,9 @@ page `/credits-photos`.
 | POST | `/api/v1/auth/register` · `/api/v1/auth/login` — inscription (202 si activation par e-mail), connexion (202 et défi si second facteur) | public |
 | POST | `/api/v1/auth/login/code` · `/auth/refresh` · `/auth/logout` — code du second facteur, renouvellement par le cookie de session, déconnexion | public |
 | POST | `/api/v1/auth/mot-de-passe-oublie` · `/auth/reinitialisation` · `/auth/activation` · `/auth/activation/renvoi` — liens à usage unique reçus par e-mail | public |
-| GET | `/api/v1/configuration` — options publiques : activation, double facteur, boîte de démonstration | public |
+| GET | `/api/v1/configuration` — options publiques : activation, double facteur, boîte de démonstration, identité de l'agence et langues actives (A5) | public |
+| GET | `/api/v1/auth/me/export` — toutes mes données en JSON (portabilité, RGPD) | JWT |
+| POST | `/api/v1/signalements` — signaler un message reçu, une annonce ou un article (DSA) | JWT |
 | GET / PATCH / DELETE | `/api/v1/auth/me` — profil, modification, désinscription (soft delete RA11) | JWT |
 | PUT | `/api/v1/auth/me/mot-de-passe` | JWT |
 | GET | `/api/v1/biens/{id}/creneaux` — créneaux de visite libres, standard et premium | JWT membre |
@@ -197,6 +203,8 @@ page `/credits-photos`.
 | GET / POST / PATCH | `/api/v1/admin/utilisateurs` · `/admin/agents` · `/utilisateurs/{id}/activer` · `/desactiver` | JWT admin, niveau 2 |
 | GET | `/api/v1/admin/journal` · `/admin/statistiques` — journal d'audit filtrable, statistiques | JWT admin, niveau 2 |
 | GET / POST / PATCH | `/api/v1/admin/cles-api` · `/cles-api/{id}/revoquer` — clés API (RA12) | JWT admin, niveau 2 |
+| GET / PATCH | `/api/v1/admin/signalements` · `/signalements/{id}` — signalements à trancher : retirer ou conserver, décision motivée | JWT admin, niveau 2 |
+| GET / PUT | `/api/v1/admin/parametres` — nom, coordonnées, horaires de l'agence, langues actives (A5, A6) | JWT admin, niveau 2 |
 | POST / PUT / DELETE | `/api/v1/admin/categories` · `/admin/articles` · `/admin/traductions/{cle}` | JWT admin, niveau 1 |
 | GET | `/api/v1/flux/articles` · `/flux/biens?typeOffre=` — flux RSS 2.0 des derniers articles et des dernières annonces | public |
 | GET | `/api/v1/open-data/biens` · `/open-data/statistiques` — données anonymisées, CC BY 4.0, 60 appels/min | clé API (`X-API-Key`) |

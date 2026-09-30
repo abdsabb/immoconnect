@@ -233,7 +233,10 @@
     "doubleFacteurExplication": "At each login, a code sent by e-mail will be required in addition to the password.",
     "doubleFacteurImpose": "Mandatory for your role: a code sent by e-mail is required at each login.",
     "communications": "Agency news",
-    "communicationsExplication": "Receive information about new properties and news. Can be withdrawn at any time."
+    "communicationsExplication": "Receive information about new properties and news. Can be withdrawn at any time.",
+    "mesDonnees": "My data",
+    "telechargerMesDonnees": "Download my data (JSON)",
+    "mesDonneesExplication": "Receive a copy of all the data the site holds about you: account, favourites, viewings, payments, messages and history (right to data portability, GDPR)."
   },
   "rdv": {
     "titre": "Book a visit",
@@ -415,7 +418,9 @@
       "articles": "Blog",
       "categories": "Categories",
       "traductions": "Languages",
-      "clesApi": "API keys"
+      "clesApi": "API keys",
+      "signalements": "Reports",
+      "parametres": "Settings"
     },
     "role": {
       "membre": "Member",
@@ -527,6 +532,47 @@
       "archive": "Article archived.",
       "supprime": "Article deleted.",
       "confirmerSuppression": "Permanently delete “{{titre}}”?"
+    },
+    "signalement": {
+      "explication": "Content reported by users. Removing wipes the message, takes the listing offline or archives the article; keeping leaves it in place. Every decision is motivated, final and logged.",
+      "statuts": {
+        "ouvert": "To review",
+        "retire": "Removed",
+        "conserve": "Kept"
+      },
+      "aucun": "No reports in this list.",
+      "date": "Date",
+      "contenu": "Content",
+      "motif": "Reason",
+      "auteur": "Reported by",
+      "decision": "Decision",
+      "motivation": "Reason for the decision (required)",
+      "motivationRequise": "Give a reason before deciding.",
+      "retirer": "Remove",
+      "conserver": "Keep",
+      "retireFait": "Content removed and decision saved.",
+      "conserveFait": "Content kept and decision saved.",
+      "types": {
+        "message": "Message",
+        "bien": "Listing",
+        "article": "Article"
+      }
+    },
+    "parametre": {
+      "explication": "Agency identity shown on the site and languages offered to visitors. Payment and e-mail keys are not set here: they stay on the server.",
+      "cles": {
+        "agence.nom": "Agency name",
+        "agence.slogan": "Tagline",
+        "agence.adresse": "Address",
+        "agence.telephone": "Phone",
+        "agence.email": "E-mail address",
+        "agence.horaires": "Opening hours",
+        "langues.actives": "Active languages"
+      },
+      "languesExplication": "A disabled language disappears from the selector; French, the language of the reference texts, always stays active.",
+      "enregistrer": "Save",
+      "enregistre": "Settings saved.",
+      "derniereModification": "Last changed by {{qui}} on {{quand}}"
     }
   },
   "erreur": {
@@ -565,5 +611,24 @@
   "offre": {
     "vente": "For sale",
     "location": "To rent"
+  },
+  "langue": {
+    "fr": "Français",
+    "nl": "Nederlands",
+    "en": "English"
+  },
+  "signalement": {
+    "bouton": "Report this content",
+    "titre": "Report content",
+    "motif": "Reason",
+    "description": "Explain the problem",
+    "envoyer": "Send the report",
+    "merci": "Thank you, your report will be reviewed by the site team.",
+    "motifs": {
+      "illicite": "Unlawful content",
+      "arnaque": "Scam or deception",
+      "indesirable": "Advertising or unwanted content",
+      "autre": "Other"
+    }
   }
 }
