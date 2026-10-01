@@ -36,8 +36,6 @@ tags:
       gestionnaire (2) ou super-administrateur (3).
   - name: Configuration
     description: Réglages publics du site
-  - name: Signalements
-    description: Signalement de contenus par les utilisateurs
 security:
   - bearerAuth: []
 paths:
@@ -246,26 +244,6 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ConfigurationPublique' }
-  /signalements:
-    post:
-      tags: [Signalements]
-      summary: Signaler un contenu
-      description: Un message reçu, une annonce ou un article (règlement européen sur les services numériques). Un seul signalement ouvert par contenu et par personne ; l'administrateur tranche et motive sa décision.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema: { $ref: '#/components/schemas/SignalementRequete' }
-      responses:
-        '201':
-          description: Signalement enregistré
-          content:
-            application/json:
-              schema: { $ref: '#/components/schemas/Signalement' }
-        '403': { $ref: '#/components/responses/ErreurDroits' }
-        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
-        '422': { $ref: '#/components/responses/ErreurValidation' }
-
   /biens:
     get:
       tags: [Biens]
@@ -1134,6 +1112,71 @@ paths:
                   totalElements: { type: integer }
                   totalPages: { type: integer }
         '403': { $ref: '#/components/responses/ErreurDroits' }
+  /admin/biens:
+    get:
+      tags: [Administration]
+      summary: Annonces de tous les agents (gestionnaire)
+      description: >
+        Supervision : hors ligne comprises, avec leurs indicateurs. La modification passe par PUT /biens/{id} et
+        les photos par /biens/{id}/photos, ouverts à l'administrateur gestionnaire ; le journal retient son nom.
+      parameters:
+        - { name: agentId, in: query, schema: { type: integer }, description: Limiter aux annonces d'un agent }
+      responses:
+        '200':
+          description: Annonces
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/BienGestion' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+  /admin/biens/{id}:
+    get:
+      tags: [Administration]
+      summary: Une annonce, adresse exacte comprise (gestionnaire)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Annonce
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BienGestion' }
+        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
+  /admin/agents/{agentId}/conversations:
+    get:
+      tags: [Administration]
+      summary: Conversations d'un agent (gestionnaire)
+      description: Lecture seule — la direction de l'agence consulte les échanges de ses agents avec les clients.
+      parameters:
+        - { name: agentId, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Conversations, la plus récemment active en premier
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Conversation' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
+  /admin/agents/{agentId}/conversations/{membreId}:
+    get:
+      tags: [Administration]
+      summary: Messages échangés entre un agent et un membre (gestionnaire)
+      description: Lecture seule — rien n'est marqué comme lu. La consultation est inscrite au journal d'audit.
+      parameters:
+        - { name: agentId, in: path, required: true, schema: { type: integer } }
+        - { name: membreId, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Messages, du plus ancien au plus récent
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Message' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
   /admin/parametres:
     get:
       tags: [Administration]
@@ -1171,63 +1214,6 @@ paths:
               schema:
                 type: array
                 items: { $ref: '#/components/schemas/Parametre' }
-        '422': { $ref: '#/components/responses/ErreurValidation' }
-  /admin/signalements:
-    get:
-      tags: [Administration]
-      summary: Signalements de contenus (gestionnaire)
-      parameters:
-        - { name: statut, in: query, schema: { type: string, enum: [ouvert, retire, conserve] } }
-        - { name: page, in: query, schema: { type: integer, default: 0 } }
-        - { name: taille, in: query, schema: { type: integer, default: 20, maximum: 100 } }
-      responses:
-        '200':
-          description: Du plus récent au plus ancien
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  contenu: { type: array, items: { $ref: '#/components/schemas/Signalement' } }
-                  page: { type: integer }
-                  taille: { type: integer }
-                  totalElements: { type: integer }
-                  totalPages: { type: integer }
-        '403': { $ref: '#/components/responses/ErreurDroits' }
-  /admin/signalements/ouverts:
-    get:
-      tags: [Administration]
-      summary: Nombre de signalements à traiter (gestionnaire)
-      responses:
-        '200':
-          description: Nombre
-          content:
-            application/json:
-              schema: { type: integer, example: 2 }
-  /admin/signalements/{id}:
-    patch:
-      tags: [Administration]
-      summary: Trancher un signalement (gestionnaire)
-      description: « retire » vide le message, met l'annonce hors ligne ou archive l'article ; « conserve » le laisse en place. La décision est motivée, définitive et journalisée (RA13).
-      parameters:
-        - { name: id, in: path, required: true, schema: { type: integer } }
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [statut, decision]
-              properties:
-                statut: { type: string, enum: [retire, conserve] }
-                decision: { type: string, maxLength: 500, example: Annonce dupliquée, retirée en attendant les explications de l'agent. }
-      responses:
-        '200':
-          description: Signalement tranché
-          content:
-            application/json:
-              schema: { $ref: '#/components/schemas/Signalement' }
-        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
         '422': { $ref: '#/components/responses/ErreurValidation' }
   /traductions/{codeLangue}:
     get:
@@ -1409,8 +1395,7 @@ components:
         email: { type: string, format: email, example: sarah.dubois@mail.be }
         langue: { type: string, example: fr }
         role: { type: string, enum: [membre, agent, admin] }
-        doubleFacteur: { type: boolean, description: Code par e-mail à chaque connexion }
-        doubleFacteurImpose: { type: boolean, description: Vrai pour les agents et les administrateurs, qui ne peuvent pas le désactiver }
+        doubleFacteur: { type: boolean, description: Connexion en deux étapes — au choix de chacun, quel que soit son rôle (PATCH /auth/me) }
         consentementCommunications: { type: boolean }
     MotDePasse:
       type: string
@@ -1471,30 +1456,6 @@ components:
         valeur: { type: string, maxLength: 1000 }
         modifieLe: { type: string, format: date-time }
         modifiePar: { type: string, nullable: true, example: Lotte Goossens }
-    SignalementRequete:
-      type: object
-      required: [typeContenu, contenuId, motif, description]
-      properties:
-        typeContenu: { type: string, enum: [message, bien, article] }
-        contenuId: { type: integer }
-        motif: { type: string, enum: [illicite, arnaque, indesirable, autre] }
-        description: { type: string, maxLength: 1000 }
-    Signalement:
-      type: object
-      properties:
-        id: { type: integer }
-        typeContenu: { type: string, enum: [message, bien, article] }
-        contenuId: { type: integer }
-        apercu: { type: string, nullable: true, description: Début du contenu visé }
-        motif: { type: string, enum: [illicite, arnaque, indesirable, autre] }
-        description: { type: string }
-        statut: { type: string, enum: [ouvert, retire, conserve] }
-        creeLe: { type: string, format: date-time }
-        auteur: { type: string }
-        auteurRole: { type: string, enum: [membre, agent, admin] }
-        traiteLe: { type: string, format: date-time, nullable: true }
-        traitePar: { type: string, nullable: true }
-        decision: { type: string, nullable: true }
     ExportDonnees:
       type: object
       description: Aucun identifiant interne — les données sont exprimées avec les titres des biens et les noms des interlocuteurs
@@ -1517,7 +1478,6 @@ components:
         visites: { type: array, items: { type: object, properties: { bien: { type: string }, ville: { type: string }, agent: { type: string }, dateHeure: { type: string, format: date-time }, statut: { type: string }, motif: { type: string, nullable: true }, premium: { type: boolean } } } }
         paiements: { type: array, items: { type: object, properties: { bien: { type: string }, visite: { type: string, format: date-time }, montant: { type: number }, statut: { type: string }, payeLe: { type: string, format: date-time, nullable: true }, reference: { type: string } } } }
         messages: { type: array, items: { type: object, properties: { interlocuteur: { type: string }, envoye: { type: boolean }, contenu: { type: string }, envoyeLe: { type: string, format: date-time }, lu: { type: boolean } } } }
-        signalements: { type: array, items: { type: object, properties: { typeContenu: { type: string }, motif: { type: string }, description: { type: string }, statut: { type: string }, creeLe: { type: string, format: date-time }, traiteLe: { type: string, format: date-time, nullable: true }, decision: { type: string, nullable: true } } } }
         historique: { type: array, items: { type: object, properties: { action: { type: string }, entite: { type: string }, horodatage: { type: string, format: date-time }, ip: { type: string } } } }
     ConnexionRequete:
       type: object

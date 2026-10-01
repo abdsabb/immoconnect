@@ -104,6 +104,8 @@ class RenduPublicTest {
                 .andExpect(content().string(Matchers.containsString("\"@type\":\"RealEstateListing\"")))
                 .andExpect(content().string(Matchers.containsString("\"priceCurrency\":\"EUR\"")))
                 .andExpect(content().string(Matchers.containsString("PEB ")))
+                // Aperçu lors d'un partage sur un réseau social : la photo de couverture, en adresse absolue
+                .andExpect(content().string(Matchers.containsString("<meta property=\"og:image\" content=\"https://www.immoconnect.test/storage/")))
                 .andExpect(content().string(Matchers.containsString("<meta property=\"og:url\" content=\"https://www.immoconnect.test/biens/" + bien + "\">")))
                 .andExpect(content().string(Matchers.containsString("À vendre")));
         mvc.perform(get("/rendu/biens/" + bien).param("lng", "nl"))

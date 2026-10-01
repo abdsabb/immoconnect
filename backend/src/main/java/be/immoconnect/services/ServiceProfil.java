@@ -49,8 +49,8 @@ public class ServiceProfil {
         if (utilisateur instanceof Membre membre) {
             membre.setTelephone(requete.telephone() == null || requete.telephone().isBlank() ? null : requete.telephone().trim());
         }
-        // Un membre choisit son double facteur ; un agent ou un administrateur ne peut pas y renoncer
-        if (requete.doubleFacteur() != null && utilisateur instanceof Membre) {
+        // Chacun choisit sa connexion en deux étapes, quel que soit son rôle
+        if (requete.doubleFacteur() != null) {
             utilisateur.setDoubleFacteur(requete.doubleFacteur());
         }
         if (requete.consentementCommunications() != null) {

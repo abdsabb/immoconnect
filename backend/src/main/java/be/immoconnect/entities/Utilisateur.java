@@ -103,9 +103,9 @@ public abstract class Utilisateur {
     /** Rôle applicatif, tel que stocké dans la colonne discriminante (membre, agent, admin). */
     public abstract String getRole();
 
-    /** Un compte qui donne accès à des données de tiers exige toujours un second facteur. */
+    /** La connexion en deux étapes est au choix de chacun, quel que soit son rôle : elle se règle dans le profil. */
     public boolean exigeDoubleFacteur() {
-        return doubleFacteur || !"membre".equals(getRole());
+        return doubleFacteur;
     }
 
     public boolean estVerrouille(LocalDateTime maintenant) {

@@ -45,10 +45,10 @@ services:
       # Mesure d'audience Matomo : vide tant que le site n'est pas déclaré dans Matomo (voir le README)
       MATOMO_SITE_ID: ${MATOMO_SITE_ID:-}
       COOKIE_SECURE: "true"
-      # Site de démonstration : pas de lien d'activation ni de code de connexion par e-mail (le jury se connecte
-      # directement) ; mettre true dans .env pour les activer
+      # Site de démonstration : pas de lien d'activation à l'inscription (mettre true dans .env pour l'exiger).
+      # La connexion en deux étapes est proposée à tous et imposée à personne : chacun l'active dans son profil.
       ACTIVATION_PAR_COURRIEL: ${ACTIVATION_PAR_COURRIEL:-false}
-      DOUBLE_FACTEUR: ${DOUBLE_FACTEUR:-false}
+      DOUBLE_FACTEUR: ${DOUBLE_FACTEUR:-true}
       # Par défaut, les e-mails sont remis à Mailpit : voir le service ci-dessous
       SMTP_HOST: ${SMTP_HOST:-mailpit}
       SMTP_PORT: ${SMTP_PORT:-1025}

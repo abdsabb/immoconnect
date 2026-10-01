@@ -60,9 +60,12 @@ public class ConfigurationSecurite {
                 // Back-office de l'agent : ses annonces et leurs photos. Toute écriture sur un bien est le fait
                 // d'un agent — les favoris, déclarés plus haut, sont déjà attribués au membre.
                 .requestMatchers("/api/v1/agents/moi/**").hasRole("AGENT")
-                .requestMatchers(HttpMethod.POST, "/api/v1/biens", "/api/v1/biens/**").hasRole("AGENT")
-                .requestMatchers(HttpMethod.PUT, "/api/v1/biens/**").hasRole("AGENT")
-                .requestMatchers(HttpMethod.DELETE, "/api/v1/biens/**").hasRole("AGENT")
+                // Créer une annonce est le fait d'un agent ; la modifier, celui de son agent ou d'un administrateur
+                // gestionnaire (le service vérifie à qui appartient l'annonce et le niveau d'accès)
+                .requestMatchers(HttpMethod.POST, "/api/v1/biens").hasRole("AGENT")
+                .requestMatchers(HttpMethod.POST, "/api/v1/biens/**").hasAnyRole("AGENT", "ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/biens/**").hasAnyRole("AGENT", "ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/biens/**").hasAnyRole("AGENT", "ADMIN")
                 // Back-office de l'administrateur
                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 // API ouverte : pas de jeton d'utilisateur, l'accès est décidé par le filtre de clé API

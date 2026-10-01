@@ -231,6 +231,75 @@ class AdministrationControleurTest {
         return json.readTree(reponse.andReturn().getResponse().getContentAsString());
     }
 
+    /** L'agence est privée : le gestionnaire voit et corrige les annonces de tous les agents. */
+    @Test
+    void leGestionnaireVoitEtModifieLesAnnoncesDeTousLesAgents() throws Exception {
+        String gestionnaire = connecter("lotte.goossens@mail.be", "password");
+        JsonNode toutes = corps(mvc.perform(get("/api/v1/admin/biens").header("Authorization", "Bearer " + gestionnaire))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].agent").isNotEmpty())
+                .andExpect(jsonPath("$[0].indicateurs.vues").isNumber()));
+        assertThat(toutes.size()).isEqualTo(jdbc.queryForObject("SELECT COUNT(*) FROM bien", Integer.class));
+
+        JsonNode annonce = toutes.valueStream().filter(b -> "disponible".equals(b.get("statut").asString())).findFirst().orElseThrow();
+        int id = annonce.get("id").asInt();
+        int agent = annonce.get("agentId").asInt();
+        mvc.perform(get("/api/v1/admin/biens").param("agentId", String.valueOf(agent)).header("Authorization", "Bearer " + gestionnaire))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[*].agentId", Matchers.everyItem(Matchers.is(agent))));
+        mvc.perform(get("/api/v1/admin/biens/" + id).header("Authorization", "Bearer " + gestionnaire))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.adresse").isNotEmpty());
+
+        // Il modifie l'annonce d'un agent : le journal retient que c'est lui, pas l'agent
+        String requete = "{\"categorieId\":" + annonce.get("categorieId").asInt() + ",\"titre\":\"Titre corrigé par la direction\","
+                + "\"description\":\"Description relue.\",\"prix\":" + annonce.get("prix").asString() + ",\"superficie\":" + annonce.get("superficie").asString()
+                + ",\"nbChambres\":" + annonce.get("nbChambres").asInt() + ",\"peb\":\"" + annonce.get("peb").asString() + "\",\"adresse\":\"Rue Corrigée 1\","
+                + "\"ville\":\"" + annonce.get("ville").asString() + "\",\"codePostal\":\"" + annonce.get("codePostal").asString() + "\",\"latitude\":"
+                + annonce.get("latitude").asString() + ",\"longitude\":" + annonce.get("longitude").asString() + "}";
+        mvc.perform(put("/api/v1/biens/" + id).header("Authorization", "Bearer " + gestionnaire)
+                        .contentType(MediaType.APPLICATION_JSON).content(requete))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.titre").value("Titre corrigé par la direction"))
+                .andExpect(jsonPath("$.agentId").value(agent));
+        assertThat(jdbc.queryForObject("SELECT u.email FROM journal_audit j JOIN utilisateur u ON u.id = j.utilisateur_id "
+                + "WHERE j.action = 'modification_bien' AND j.entite = ? ORDER BY j.id DESC LIMIT 1", String.class, "bien#" + id))
+                .isEqualTo("lotte.goossens@mail.be");
+
+        // L'éditeur (niveau 1) n'a pas cet accès, ni en lecture ni en écriture
+        String editeur = connecter("yasmine.benali@mail.be", "password");
+        mvc.perform(get("/api/v1/admin/biens").header("Authorization", "Bearer " + editeur)).andExpect(status().isForbidden());
+        mvc.perform(put("/api/v1/biens/" + id).header("Authorization", "Bearer " + editeur)
+                        .contentType(MediaType.APPLICATION_JSON).content(requete))
+                .andExpect(status().isForbidden());
+    }
+
+    /** Messagerie des agents : lecture seule, journalisée, et rien n'est marqué comme lu. */
+    @Test
+    void leGestionnaireLitLaMessagerieDUnAgentSansRienModifier() throws Exception {
+        String gestionnaire = connecter("lotte.goossens@mail.be", "password");
+        Integer agent = jdbc.queryForObject("SELECT agent_id FROM message GROUP BY agent_id ORDER BY COUNT(*) DESC LIMIT 1", Integer.class);
+        Integer membre = jdbc.queryForObject("SELECT MIN(membre_id) FROM message WHERE agent_id = ?", Integer.class, agent);
+        int nonLus = jdbc.queryForObject("SELECT COUNT(*) FROM message WHERE agent_id = ? AND lu = 0", Integer.class, agent);
+        int messages = jdbc.queryForObject("SELECT COUNT(*) FROM message WHERE agent_id = ? AND membre_id = ?", Integer.class, agent, membre);
+
+        mvc.perform(get("/api/v1/admin/agents/" + agent + "/conversations").header("Authorization", "Bearer " + gestionnaire))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.interlocuteurId == " + membre + ")].interlocuteur").isNotEmpty());
+        mvc.perform(get("/api/v1/admin/agents/" + agent + "/conversations/" + membre).header("Authorization", "Bearer " + gestionnaire))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.hasSize(messages)))
+                .andExpect(jsonPath("$[0].contenu").isNotEmpty());
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM message WHERE agent_id = ? AND lu = 0", Integer.class, agent)).isEqualTo(nonLus);
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM journal_audit WHERE action = 'consultation_messagerie' AND entite = ?",
+                Integer.class, "agent#" + agent + "/membre#" + membre)).isEqualTo(1);
+
+        mvc.perform(get("/api/v1/admin/agents/" + agent + "/conversations").header("Authorization", "Bearer " + connecter("yasmine.benali@mail.be", "password")))
+                .andExpect(status().isForbidden());
+        mvc.perform(get("/api/v1/admin/agents/999999/conversations").header("Authorization", "Bearer " + gestionnaire))
+                .andExpect(status().isNotFound());
+    }
+
     private String connecter(String email, String motDePasse) throws Exception {
         return corps(mvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"email\":\"" + email + "\",\"motDePasse\":\"" + motDePasse + "\"}"))
