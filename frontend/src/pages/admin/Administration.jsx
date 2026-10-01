@@ -4,12 +4,13 @@ import { useTranslation } from 'react-i18next'
 const RUBRIQUES = [
   { chemin: '/admin', cle: 'statistiques', fin: true },
   { chemin: '/admin/utilisateurs', cle: 'comptes' },
+  { chemin: '/admin/annonces', cle: 'annonces' },
+  { chemin: '/admin/messagerie', cle: 'messagerie' },
   { chemin: '/admin/journal', cle: 'journal' },
   { chemin: '/admin/articles', cle: 'articles' },
   { chemin: '/admin/categories', cle: 'categories' },
   { chemin: '/admin/traductions', cle: 'traductions' },
   { chemin: '/admin/cles-api', cle: 'clesApi' },
-  { chemin: '/admin/signalements', cle: 'signalements' },
   { chemin: '/admin/parametres', cle: 'parametres' },
   { chemin: '/admin/securite', cle: 'securite' },
 ]

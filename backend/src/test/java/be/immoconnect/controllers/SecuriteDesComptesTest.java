@@ -100,8 +100,18 @@ class SecuriteDesComptesTest {
         mvc.perform(connexion(email, MOT_DE_PASSE)).andExpect(status().isOk());
     }
 
+    /** La connexion en deux étapes n'est imposée à aucun rôle : un agent qui l'a activée reçoit un code. */
     @Test
-    void unAgentEntreLeCodeRecuParCourriel() throws Exception {
+    void unAgentQuiAActiveLeDoubleFacteurEntreLeCodeRecuParCourriel() throws Exception {
+        // Par défaut, un agent se connecte en une étape
+        String jeton = corps(mvc.perform(connexion(AGENT, "password"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.utilisateur.doubleFacteur").value(false))).get("jeton").asString();
+        mvc.perform(patch("/api/v1/auth/me").header("Authorization", "Bearer " + jeton).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"nom\":\"Dubois\",\"prenom\":\"Sarah\",\"langue\":\"fr\",\"doubleFacteur\":true}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.doubleFacteur").value(true));
+
         int avant = courriels(AGENT).size();
         String defi = corps(mvc.perform(connexion(AGENT, "password"))
                 .andExpect(status().isAccepted())
@@ -199,7 +209,7 @@ class SecuriteDesComptesTest {
     }
 
     @Test
-    void unMembreChoisitSonDoubleFacteurUnAgentNePeutPasYRenoncer() throws Exception {
+    void chacunChoisitSonDoubleFacteurEtPeutYRenoncer() throws Exception {
         String email = "choix2fa@test.immoconnect.be";
         String jeton = corps(inscriptionActivee(email)).get("jeton").asString();
         mvc.perform(patch("/api/v1/auth/me").header("Authorization", "Bearer " + jeton).contentType(MediaType.APPLICATION_JSON)
@@ -209,15 +219,19 @@ class SecuriteDesComptesTest {
                 .andExpect(jsonPath("$.consentementCommunications").value(true));
         mvc.perform(connexion(email, MOT_DE_PASSE)).andExpect(status().isAccepted());
 
-        int avant = courriels(AGENT).size();
-        String defi = corps(mvc.perform(connexion(AGENT, "password")).andExpect(status().isAccepted())).get("defi").asString();
-        String code = extraire(courrielSuivant(AGENT, avant), CODE);
-        String jetonAgent = corps(mvc.perform(code(defi, code)).andExpect(status().isOk())).get("jeton").asString();
-        mvc.perform(patch("/api/v1/auth/me").header("Authorization", "Bearer " + jetonAgent).contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"nom\":\"Dubois\",\"prenom\":\"Sarah\",\"langue\":\"fr\",\"doubleFacteur\":false}"))
+        // Un administrateur l'active, puis y renonce : rien ne lui est imposé
+        String administrateur = "lotte.goossens@mail.be";
+        String jetonAdmin = corps(mvc.perform(connexion(administrateur, "password")).andExpect(status().isOk())).get("jeton").asString();
+        mvc.perform(patch("/api/v1/auth/me").header("Authorization", "Bearer " + jetonAdmin).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"nom\":\"Goossens\",\"prenom\":\"Lotte\",\"langue\":\"fr\",\"doubleFacteur\":true}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.doubleFacteur").value(true))
-                .andExpect(jsonPath("$.doubleFacteurImpose").value(true));
+                .andExpect(jsonPath("$.doubleFacteur").value(true));
+        mvc.perform(connexion(administrateur, "password")).andExpect(status().isAccepted());
+        mvc.perform(patch("/api/v1/auth/me").header("Authorization", "Bearer " + jetonAdmin).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"nom\":\"Goossens\",\"prenom\":\"Lotte\",\"langue\":\"fr\",\"doubleFacteur\":false}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.doubleFacteur").value(false));
+        mvc.perform(connexion(administrateur, "password")).andExpect(status().isOk());
     }
 
     // ---------- aides ----------

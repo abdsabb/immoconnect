@@ -114,11 +114,11 @@ Le niveau d'accès d'un administrateur limite ce qu'il peut faire dans le back-o
 les catégories et les traductions ; le gestionnaire gère en plus les comptes, le journal d'audit, les statistiques
 et les clés API ; le super-administrateur agit aussi sur les comptes des administrateurs.
 
-Avec `DOUBLE_FACTEUR=true`, les agents et les administrateurs se connectent en deux étapes : après le mot de passe, un
-code à six chiffres est envoyé par e-mail. En développement, il se lit dans Mailpit (http://localhost:8025) ; en
-production, dans la boîte de démonstration `/courriels/`. Avec `ACTIVATION_PAR_COURRIEL=true`, les comptes créés
-depuis le site reçoivent un lien d'activation au même endroit. Les deux sont coupés par défaut en production
-(`docker-compose.prod.yml`), pour que le jury se connecte directement.
+Tous les comptes de test se connectent directement, avec l'e-mail et le mot de passe. La connexion en deux étapes
+est facultative : celui qui l'active dans son profil reçoit ensuite un code à six chiffres par e-mail à chaque
+connexion — en développement dans Mailpit (http://localhost:8025), en production dans la boîte de démonstration
+`/courriels/`. Avec `ACTIVATION_PAR_COURRIEL=true` (coupé par défaut en production), les comptes créés depuis le site
+reçoivent un lien d'activation au même endroit.
 
 Les photos téléversées sont enregistrées dans `backend/stockage/` (variable `STORAGE_DIR`), hors du dépôt.
 
@@ -131,8 +131,8 @@ Les photos téléversées sont enregistrées dans `backend/stockage/` (variable 
 - **Mots de passe** : 8 à 72 caractères, minuscules, majuscules et un chiffre, refusés s'ils figurent dans une fuite
   connue (Have I Been Pwned, par k-anonymat : cinq caractères de l'empreinte SHA-1 partent, jamais le mot de passe ;
   repli sur une liste embarquée si le service est injoignable). Hachage bcrypt.
-- **Double facteur** : code à six chiffres par e-mail, valable 10 minutes, cinq essais ; imposé aux agents et aux
-  administrateurs, au choix pour les membres (profil).
+- **Double facteur** : code à six chiffres par e-mail, valable 10 minutes, cinq essais ; proposé à tous les comptes,
+  imposé à aucun — chacun l'active dans son profil.
 - **Blocage** : après 5 échecs, le compte est verrouillé 1 minute, puis le double à chaque série, jusqu'à 15 minutes ;
   une adresse inconnue est bloquée de la même façon, sans révéler qu'elle est inconnue ; 10 connexions par minute et
   par adresse IP, au-delà `429` avec `Retry-After`.
@@ -141,9 +141,9 @@ Les photos téléversées sont enregistrées dans `backend/stockage/` (variable 
 - **Inscription** : acceptation des conditions générales obligatoire et horodatée (`cgu_acceptees_le`), consentement
   aux communications distinct.
 - **Droits RGPD** : accès et rectification (profil), portabilité (`GET /auth/me/export`, fichier JSON), effacement
-  (désinscription RA11). **Signalement de contenus** (DSA) : lien « Signaler ce contenu » sous chaque message reçu,
-  annonce et article ; un gestionnaire retire (message vidé, annonce hors ligne, article archivé) ou conserve, avec
-  une décision motivée, définitive et journalisée.
+  (désinscription RA11).
+- **Supervision** : l'agence est une structure privée ; l'administrateur gestionnaire voit et modifie les annonces de
+  tous les agents et lit leur messagerie (lecture seule, consultation journalisée).
 
 Ces mécanismes se règlent dans `application.yml` (`immoconnect.securite.*`) et par les variables
 `ACTIVATION_PAR_COURRIEL`, `DOUBLE_FACTEUR`, `MOTS_DE_PASSE_COMPROMIS` et `COOKIE_SECURE` (voir `.env.example`).
@@ -200,7 +200,6 @@ page `/credits-photos`.
 | POST | `/api/v1/auth/mot-de-passe-oublie` · `/auth/reinitialisation` · `/auth/activation` · `/auth/activation/renvoi` — liens à usage unique reçus par e-mail | public |
 | GET | `/api/v1/configuration` — options publiques : activation, double facteur, boîte de démonstration, identité de l'agence et langues actives (A5) | public |
 | GET | `/api/v1/auth/me/export` — toutes mes données en JSON (portabilité, RGPD) | JWT |
-| POST | `/api/v1/signalements` — signaler un message reçu, une annonce ou un article (DSA) | JWT |
 | GET / PATCH / DELETE | `/api/v1/auth/me` — profil, modification, désinscription (soft delete RA11) | JWT |
 | PUT | `/api/v1/auth/me/mot-de-passe` | JWT |
 | GET | `/api/v1/biens/{id}/creneaux` — créneaux de visite libres, standard et premium | JWT membre |
@@ -224,7 +223,8 @@ page `/credits-photos`.
 | GET / POST / PATCH | `/api/v1/admin/utilisateurs` · `/admin/agents` · `/utilisateurs/{id}/activer` · `/desactiver` | JWT admin, niveau 2 |
 | GET | `/api/v1/admin/journal` · `/admin/statistiques` — journal d'audit filtrable, statistiques | JWT admin, niveau 2 |
 | GET / POST / PATCH | `/api/v1/admin/cles-api` · `/cles-api/{id}/revoquer` — clés API (RA12) | JWT admin, niveau 2 |
-| GET / PATCH | `/api/v1/admin/signalements` · `/signalements/{id}` — signalements à trancher : retirer ou conserver, décision motivée | JWT admin, niveau 2 |
+| GET | `/api/v1/admin/biens` · `/admin/biens/{id}` — annonces de tous les agents ; modification par `PUT /biens/{id}` | JWT admin, niveau 2 |
+| GET | `/api/v1/admin/agents/{agentId}/conversations` · `/conversations/{membreId}` — messagerie d'un agent, en lecture seule, consultation journalisée | JWT admin, niveau 2 |
 | GET / PUT | `/api/v1/admin/parametres` — nom, coordonnées, horaires de l'agence, langues actives (A5, A6) | JWT admin, niveau 2 |
 | POST / PUT / DELETE | `/api/v1/admin/categories` · `/admin/articles` · `/admin/traductions/{cle}` | JWT admin, niveau 1 |
 | GET | `/api/v1/flux/articles` · `/flux/biens?typeOffre=` — flux RSS 2.0 des derniers articles et des dernières annonces | public |

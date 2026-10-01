@@ -108,10 +108,10 @@ export default function Profil() {
         <fieldset className="space-y-3 rounded-lg bg-perle p-4">
           <legend className="px-1 text-sm font-semibold text-nuit">{t('profil.securiteEtChoix')}</legend>
           <label className="flex items-start gap-3 text-sm text-gray-700">
-            <input type="checkbox" className="mt-1" disabled={utilisateur.doubleFacteurImpose} {...profil.register('doubleFacteur')} />
+            <input type="checkbox" className="mt-1" {...profil.register('doubleFacteur')} />
             <span>
               <strong className="block text-nuit">{t('profil.doubleFacteur')}</strong>
-              {utilisateur.doubleFacteurImpose ? t('profil.doubleFacteurImpose') : t('profil.doubleFacteurExplication')}
+              {t('profil.doubleFacteurExplication')}
             </span>
           </label>
           <label className="flex items-start gap-3 text-sm text-gray-700">

@@ -3,28 +3,29 @@ package be.immoconnect.controllers;
 import static be.immoconnect.controllers.RequeteHttp.adresseIp;
 
 import be.immoconnect.dto.AlerteResume;
+import be.immoconnect.dto.BienGestion;
 import be.immoconnect.dto.CategorieResume;
 import be.immoconnect.dto.CleApiResume;
 import be.immoconnect.dto.CompteResume;
+import be.immoconnect.dto.ConversationResume;
+import be.immoconnect.dto.MessageResume;
 import be.immoconnect.dto.PageReponse;
 import be.immoconnect.dto.ParametreLigne;
 import be.immoconnect.dto.RequeteAgent;
 import be.immoconnect.dto.RequeteCategorie;
 import be.immoconnect.dto.RequeteCleApi;
-import be.immoconnect.dto.RequeteDecision;
 import be.immoconnect.dto.RequeteParametres;
-import be.immoconnect.dto.SignalementResume;
 import be.immoconnect.dto.Statistiques;
 import be.immoconnect.dto.TraceAudit;
 import be.immoconnect.dto.TraductionLigne;
-import be.immoconnect.entities.Signalement;
 import be.immoconnect.services.ServiceAlertesSecurite;
+import be.immoconnect.services.ServiceAnnonces;
 import be.immoconnect.services.ServiceCategories;
 import be.immoconnect.services.ServiceClesApi;
 import be.immoconnect.services.ServiceComptes;
 import be.immoconnect.services.ServiceJournal;
+import be.immoconnect.services.ServiceMessagerie;
 import be.immoconnect.services.ServiceParametres;
-import be.immoconnect.services.ServiceSignalements;
 import be.immoconnect.services.ServiceStatistiques;
 import be.immoconnect.services.ServiceTraductions;
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,18 +73,20 @@ public class AdministrationControleur {
     private final ServiceClesApi clesApi;
     private final ServiceTraductions traductions;
     private final ServiceParametres parametres;
-    private final ServiceSignalements signalements;
     private final ServiceAlertesSecurite alertes;
+    private final ServiceAnnonces annonces;
+    private final ServiceMessagerie messagerie;
 
     public AdministrationControleur(ServiceComptes comptes, ServiceJournal journal, ServiceStatistiques statistiques,
                                     ServiceCategories categories, ServiceClesApi clesApi, ServiceTraductions traductions,
-                                    ServiceParametres parametres, ServiceSignalements signalements,
-                                    ServiceAlertesSecurite alertes) {
+                                    ServiceParametres parametres,
+                                    ServiceAlertesSecurite alertes, ServiceAnnonces annonces, ServiceMessagerie messagerie) {
         this.alertes = alertes;
+        this.annonces = annonces;
+        this.messagerie = messagerie;
         this.clesApi = clesApi;
         this.traductions = traductions;
         this.parametres = parametres;
-        this.signalements = signalements;
         this.comptes = comptes;
         this.journal = journal;
         this.statistiques = statistiques;
@@ -137,30 +140,33 @@ public class AdministrationControleur {
         return parametres.enregistrer(identifiant(jeton), requete, adresseIp(http));
     }
 
-    // ---------- Signalements de contenus (chapitre 11) ----------
+    // ---------- Supervision des agents : annonces et messagerie ----------
 
-    @GetMapping("/signalements")
-    @Operation(summary = "Signalements", description = "Du plus récent au plus ancien ; filtre : statut (ouvert, retire, conserve). Niveau 2.")
-    public PageReponse<SignalementResume> signalements(@AuthenticationPrincipal Jwt jeton,
-                                                       @RequestParam(required = false) Signalement.Statut statut,
-                                                       @RequestParam(defaultValue = "0") int page,
-                                                       @RequestParam(defaultValue = "20") int taille) {
-        var pagination = PageRequest.of(Math.max(page, 0), Math.clamp(taille, 1, TAILLE_MAX));
-        return PageReponse.depuis(signalements.lister(identifiant(jeton), statut, pagination));
+    @GetMapping("/biens")
+    @Operation(summary = "Annonces de tous les agents",
+            description = "Hors ligne comprises, avec leurs indicateurs ; filtre : agentId. La modification passe par PUT /biens/{id}, ouvert à l'administrateur gestionnaire. Niveau 2.")
+    public List<BienGestion> annonces(@AuthenticationPrincipal Jwt jeton, @RequestParam(required = false) Integer agentId) {
+        return annonces.toutes(identifiant(jeton), agentId);
     }
 
-    @GetMapping("/signalements/ouverts")
-    @Operation(summary = "Nombre de signalements en attente")
-    public long signalementsOuverts(@AuthenticationPrincipal Jwt jeton) {
-        return signalements.ouverts(identifiant(jeton));
+    @GetMapping("/biens/{id}")
+    @Operation(summary = "Une annonce, adresse exacte comprise", description = "Niveau 2.")
+    public BienGestion annonce(@AuthenticationPrincipal Jwt jeton, @PathVariable Integer id) {
+        return annonces.annonce(identifiant(jeton), id);
     }
 
-    @PatchMapping("/signalements/{id}")
-    @Operation(summary = "Trancher un signalement",
-            description = "« retire » vide le message, met l'annonce hors ligne ou archive l'article ; « conserve » le laisse en place. La décision est motivée, définitive et journalisée.")
-    public SignalementResume trancher(@AuthenticationPrincipal Jwt jeton, @PathVariable Integer id,
-                                      @Valid @RequestBody RequeteDecision requete, HttpServletRequest http) {
-        return signalements.trancher(identifiant(jeton), id, requete, adresseIp(http));
+    @GetMapping("/agents/{agentId}/conversations")
+    @Operation(summary = "Conversations d'un agent", description = "Lecture seule. Niveau 2.")
+    public List<ConversationResume> conversations(@AuthenticationPrincipal Jwt jeton, @PathVariable Integer agentId) {
+        return messagerie.conversationsDeLAgent(identifiant(jeton), agentId);
+    }
+
+    @GetMapping("/agents/{agentId}/conversations/{membreId}")
+    @Operation(summary = "Messages échangés entre un agent et un membre",
+            description = "Lecture seule : rien n'est marqué comme lu. La consultation est journalisée. Niveau 2.")
+    public List<MessageResume> conversation(@AuthenticationPrincipal Jwt jeton, @PathVariable Integer agentId,
+                                            @PathVariable Integer membreId, HttpServletRequest http) {
+        return messagerie.conversationDeLAgent(identifiant(jeton), agentId, membreId, adresseIp(http));
     }
 
     // ---------- A4 — Journal d'audit ----------

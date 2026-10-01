@@ -59,6 +59,7 @@ export function versRequete(valeurs) {
     prix: Number(valeurs.prix),
     superficie: Number(valeurs.superficie),
     nbChambres: Number(valeurs.nbChambres),
+    peb: valeurs.peb,
     adresse: valeurs.adresse,
     ville: valeurs.ville,
     codePostal: valeurs.codePostal,

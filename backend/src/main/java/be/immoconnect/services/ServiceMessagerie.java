@@ -3,6 +3,7 @@ package be.immoconnect.services;
 import be.immoconnect.dto.ConversationResume;
 import be.immoconnect.dto.MessageResume;
 import be.immoconnect.dto.RequeteMessage;
+import be.immoconnect.entities.Administrateur;
 import be.immoconnect.entities.AgentImmobilier;
 import be.immoconnect.entities.Membre;
 import be.immoconnect.entities.Message;
@@ -36,9 +37,11 @@ public class ServiceMessagerie {
     private final AgentImmobilierRepository agents;
     private final ServiceAudit audit;
     private final Clock horloge;
+    private final AccesAdministrateur acces;
 
     public ServiceMessagerie(MessageRepository messages, MembreRepository membres, AgentImmobilierRepository agents,
-                             ServiceAudit audit, Clock horloge) {
+                             ServiceAudit audit, Clock horloge, AccesAdministrateur acces) {
+        this.acces = acces;
         this.messages = messages;
         this.membres = membres;
         this.agents = agents;
@@ -77,6 +80,28 @@ public class ServiceMessagerie {
         return messages.findByMembreIdAndAgentIdOrderByEnvoyeLeAscIdAsc(membreId, agentId).stream()
                 .map(message -> MessageResume.depuis(message, utilisateurId))
                 .toList();
+    }
+
+    /**
+     * Supervision : les conversations d'un agent, lues par un administrateur gestionnaire. L'agence est une
+     * structure privée : sa direction a accès aux échanges de ses agents avec les clients.
+     */
+    @Transactional(readOnly = true)
+    public List<ConversationResume> conversationsDeLAgent(Integer administrateurId, Integer agentId) {
+        acces.exiger(administrateurId, AccesAdministrateur.GESTIONNAIRE);
+        agents.findById(agentId).orElseThrow(() -> new RessourceIntrouvableException("Agent", agentId));
+        return conversations(agentId, "agent");
+    }
+
+    /**
+     * Supervision : une conversation d'un agent, en lecture seule — rien n'est marqué comme lu, l'administrateur
+     * n'écrit pas à la place de l'agent. La consultation est journalisée (RA13).
+     */
+    @Transactional
+    public List<MessageResume> conversationDeLAgent(Integer administrateurId, Integer agentId, Integer membreId, String ip) {
+        Administrateur administrateur = acces.exiger(administrateurId, AccesAdministrateur.GESTIONNAIRE);
+        audit.enregistrer(administrateur, "consultation_messagerie", "agent#" + agentId + "/membre#" + membreId, ip);
+        return conversation(agentId, "agent", membreId);
     }
 
     /**

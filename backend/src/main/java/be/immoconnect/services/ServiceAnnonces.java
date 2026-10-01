@@ -3,16 +3,19 @@ package be.immoconnect.services;
 import be.immoconnect.dto.BienGestion;
 import be.immoconnect.dto.BienGestion.Indicateurs;
 import be.immoconnect.dto.RequeteBien;
+import be.immoconnect.entities.Administrateur;
 import be.immoconnect.entities.AgentImmobilier;
 import be.immoconnect.entities.Bien;
 import be.immoconnect.entities.Photo;
 import be.immoconnect.entities.StatutBien;
 import be.immoconnect.entities.StatutRendezVous;
 import be.immoconnect.entities.TypeOffre;
+import be.immoconnect.entities.Utilisateur;
 import be.immoconnect.exceptions.DonneeInvalideException;
 import be.immoconnect.exceptions.OperationInterditeException;
 import be.immoconnect.exceptions.RegleAnnonceException;
 import be.immoconnect.exceptions.RessourceIntrouvableException;
+import be.immoconnect.repositories.AdministrateurRepository;
 import be.immoconnect.repositories.AgentImmobilierRepository;
 import be.immoconnect.repositories.BienRepository;
 import be.immoconnect.repositories.CategorieRepository;
@@ -52,10 +55,15 @@ public class ServiceAnnonces {
     private final StockagePhotos stockage;
     private final ServiceAudit audit;
     private final Clock horloge;
+    private final AdministrateurRepository administrateurs;
+    private final AccesAdministrateur acces;
 
     public ServiceAnnonces(BienRepository biens, PhotoRepository photos, CategorieRepository categories,
                            AgentImmobilierRepository agents, FavoriRepository favoris, RendezVousRepository rendezVous,
-                           ImagesBiens images, StockagePhotos stockage, ServiceAudit audit, Clock horloge) {
+                           ImagesBiens images, StockagePhotos stockage, ServiceAudit audit, Clock horloge,
+                           AdministrateurRepository administrateurs, AccesAdministrateur acces) {
+        this.administrateurs = administrateurs;
+        this.acces = acces;
         this.biens = biens;
         this.photos = photos;
         this.categories = categories;
@@ -75,6 +83,18 @@ public class ServiceAnnonces {
         return biens.findByAgentIdOrderByPublieLeDescIdDesc(agentId).stream()
                 .map(bien -> BienGestion.depuis(bien, indicateurs.getOrDefault(bien.getId(), Indicateurs.sansActivite(bien))))
                 .toList();
+    }
+
+    /**
+     * Supervision : les annonces de tous les agents, ou d'un seul, pour l'administrateur gestionnaire — l'agence
+     * est une structure privée, sa direction voit et corrige tout ce que publient ses agents.
+     */
+    @Transactional(readOnly = true)
+    public List<BienGestion> toutes(Integer administrateurId, Integer agentId) {
+        acces.exiger(administrateurId, AccesAdministrateur.GESTIONNAIRE);
+        List<AgentImmobilier> concernes = agentId == null ? agents.findAll()
+                : List.of(agents.findById(agentId).orElseThrow(() -> new RessourceIntrouvableException("Agent", agentId)));
+        return concernes.stream().flatMap(agent -> mesAnnonces(agent.getId()).stream()).toList();
     }
 
     @Transactional(readOnly = true)
@@ -101,7 +121,7 @@ public class ServiceAnnonces {
             changerStatut(bien, requete.statut());
         }
         verifierOffre(bien);
-        audit.enregistrer(bien.getAgent(), "modification_bien", "bien#" + bienId, ip);
+        audit.enregistrer(auteur(agentId, bien), "modification_bien", "bien#" + bienId, ip);
         return vue(bien);
     }
 
@@ -111,7 +131,7 @@ public class ServiceAnnonces {
         Bien bien = monAnnonce(agentId, bienId);
         if (bien.getStatut() != StatutBien.archive) {
             changerStatut(bien, StatutBien.archive);
-            audit.enregistrer(bien.getAgent(), "archivage_bien", "bien#" + bienId, ip);
+            audit.enregistrer(auteur(agentId, bien), "archivage_bien", "bien#" + bienId, ip);
         }
     }
 
@@ -130,7 +150,7 @@ public class ServiceAnnonces {
         // Composition : la photo est enregistrée avec son bien (cascade)
         bien.getPhotos().add(new Photo(bien, url, bien.getPhotos().size() + 1, legendeNettoyee));
         biens.flush();
-        audit.enregistrer(bien.getAgent(), "ajout_photo", "bien#" + bienId, ip);
+        audit.enregistrer(auteur(agentId, bien), "ajout_photo", "bien#" + bienId, ip);
         return vue(bien);
     }
 
@@ -149,7 +169,7 @@ public class ServiceAnnonces {
         biens.flush();
         renumeroter(bienId, restantes);
         stockage.supprimer(url);
-        audit.enregistrer(bien.getAgent(), "suppression_photo", "bien#" + bienId, ip);
+        audit.enregistrer(auteur(agentId, bien), "suppression_photo", "bien#" + bienId, ip);
         return vue(monAnnonce(agentId, bienId));
     }
 
@@ -162,7 +182,7 @@ public class ServiceAnnonces {
         ordre.add(photoId);
         bien.getPhotos().stream().map(Photo::getId).filter(id -> !id.equals(photoId)).forEach(ordre::add);
         renumeroter(bienId, ordre);
-        audit.enregistrer(bien.getAgent(), "modification_bien", "bien#" + bienId, ip);
+        audit.enregistrer(auteur(agentId, bien), "modification_bien", "bien#" + bienId, ip);
         return vue(monAnnonce(agentId, bienId));
     }
 
@@ -226,12 +246,24 @@ public class ServiceAnnonces {
     }
 
     /** Contrôle de propriété : l'annonce d'un autre agent est refusée (403), pas seulement masquée. */
+    /** L'annonce, pour son agent responsable ou pour un administrateur gestionnaire ; tout autre compte est refusé. */
     private Bien monAnnonce(Integer agentId, Integer bienId) {
         Bien bien = biens.findWithDetailsById(bienId).orElseThrow(() -> new RessourceIntrouvableException("Bien", bienId));
-        if (!bien.getAgent().getId().equals(agentId)) {
+        if (!bien.getAgent().getId().equals(agentId) && gestionnaire(agentId) == null) {
             throw new OperationInterditeException("Cette annonce appartient à un autre agent");
         }
         return bien;
+    }
+
+    private Administrateur gestionnaire(Integer utilisateurId) {
+        return administrateurs.findById(utilisateurId)
+                .filter(a -> a.isActif() && a.getNiveauAcces() >= AccesAdministrateur.GESTIONNAIRE).orElse(null);
+    }
+
+    /** Qui a agi, pour le journal d'audit (RA13) : l'agent responsable, ou l'administrateur qui est intervenu. */
+    private Utilisateur auteur(Integer utilisateurId, Bien bien) {
+        Administrateur administrateur = bien.getAgent().getId().equals(utilisateurId) ? null : gestionnaire(utilisateurId);
+        return administrateur != null ? administrateur : bien.getAgent();
     }
 
     private static Photo photoDe(Bien bien, Integer photoId) {

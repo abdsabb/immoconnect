@@ -123,8 +123,7 @@
       "gratuit": "Daytime slots are free",
       "paiement": "Secure payment by Stripe",
       "adresse": "Address given once the viewing is confirmed"
-    },
-    "flux": "RSS feed — {{titre}}"
+    }
   },
   "bien": {
     "chambres_one": "bedroom",
@@ -160,7 +159,9 @@
     "confidentialite": "Privacy",
     "osm": "© OpenStreetMap contributors",
     "credits": "Photo credits",
-    "conditions": "Terms and conditions"
+    "conditions": "Terms and conditions",
+    "fluxBiens": "Listings RSS feed",
+    "fluxBlog": "Blog RSS feed"
   },
   "auth": {
     "connexionTitre": "Log in",
@@ -230,8 +231,7 @@
     "confirmerDesinscription": "Confirm the deletion of your account? This cannot be undone.",
     "securiteEtChoix": "Security and communications",
     "doubleFacteur": "Two-step login",
-    "doubleFacteurExplication": "At each login, a code sent by e-mail will be required in addition to the password.",
-    "doubleFacteurImpose": "Mandatory for your role: a code sent by e-mail is required at each login.",
+    "doubleFacteurExplication": "Optional. If you turn it on, a code sent by e-mail will be asked at every login, in addition to the password.",
     "communications": "Agency news",
     "communicationsExplication": "Receive information about new properties and news. Can be withdrawn at any time.",
     "mesDonnees": "My data",
@@ -399,7 +399,10 @@
     "peb": "EPC rating",
     "pebChoisir": "Choose…",
     "pebAide": "The EPC energy rating is mandatory in every property advertisement.",
-    "vues": "Views"
+    "vues": "Views",
+    "photosInitiales": "Listing photos (optional)",
+    "photosInitialesAide": "JPEG or PNG, 5 MB at most per photo; the first becomes the cover. More photos can be added later.",
+    "publierAussitot": "Publish the listing as soon as it is created (at least one photo needed). Otherwise it stays offline until you publish it."
   },
   "blog": {
     "titre": "Blog",
@@ -408,8 +411,7 @@
     "toutes": "All",
     "vide": "No article in this category yet.",
     "introuvable": "This article does not exist or is no longer published.",
-    "retour": "Back to the blog",
-    "flux": "RSS feed of the blog"
+    "retour": "Back to the blog"
   },
   "admin": {
     "titre": "Administration",
@@ -424,9 +426,10 @@
       "categories": "Categories",
       "traductions": "Languages",
       "clesApi": "API keys",
-      "signalements": "Reports",
       "parametres": "Settings",
-      "securite": "Security"
+      "securite": "Security",
+      "annonces": "Listings",
+      "messagerie": "Messages"
     },
     "role": {
       "membre": "Member",
@@ -539,31 +542,6 @@
       "supprime": "Article deleted.",
       "confirmerSuppression": "Permanently delete “{{titre}}”?"
     },
-    "signalement": {
-      "explication": "Content reported by users. Removing wipes the message, takes the listing offline or archives the article; keeping leaves it in place. Every decision is motivated, final and logged.",
-      "statuts": {
-        "ouvert": "To review",
-        "retire": "Removed",
-        "conserve": "Kept"
-      },
-      "aucun": "No reports in this list.",
-      "date": "Date",
-      "contenu": "Content",
-      "motif": "Reason",
-      "auteur": "Reported by",
-      "decision": "Decision",
-      "motivation": "Reason for the decision (required)",
-      "motivationRequise": "Give a reason before deciding.",
-      "retirer": "Remove",
-      "conserver": "Keep",
-      "retireFait": "Content removed and decision saved.",
-      "conserveFait": "Content kept and decision saved.",
-      "types": {
-        "message": "Message",
-        "bien": "Listing",
-        "article": "Article"
-      }
-    },
     "parametre": {
       "explication": "Agency identity shown on the site and languages offered to visitors. Payment and e-mail keys are not set here: they stay on the server.",
       "cles": {
@@ -593,6 +571,22 @@
         "cle_revoquee": "Revoked API key presented"
       },
       "procedure": "Procedure: check the audit log, block the address or revoke the key, assess the impact, document. If personal data is involved: notify the Data Protection Authority within 72 hours."
+    },
+    "annonces": {
+      "explication": "The listings of all agents, offline ones included. You can view and edit them; every change is logged under your name.",
+      "agent": "Agent",
+      "tousLesAgents": "All agents",
+      "annonce": "Listing",
+      "voir": "View listing",
+      "nombre_one": "{{count}} listing",
+      "nombre_other": "{{count}} listings",
+      "supervision": "Listing of {{agent}}, opened as administrator."
+    },
+    "messagerie": {
+      "explication": "Each agent’s exchanges with clients, read-only: you do not write on behalf of the agent and nothing is marked as read. Every consultation is recorded in the audit log.",
+      "choisirAgent": "Choose an agent…",
+      "aucune": "This agent has no conversations.",
+      "choisirConversation": "Choose a conversation to read the messages."
     }
   },
   "erreur": {
@@ -637,18 +631,12 @@
     "nl": "Nederlands",
     "en": "English"
   },
-  "signalement": {
-    "bouton": "Report this content",
-    "titre": "Report content",
-    "motif": "Reason",
-    "description": "Explain the problem",
-    "envoyer": "Send the report",
-    "merci": "Thank you, your report will be reviewed by the site team.",
-    "motifs": {
-      "illicite": "Unlawful content",
-      "arnaque": "Scam or deception",
-      "indesirable": "Advertising or unwanted content",
-      "autre": "Other"
-    }
+  "partage": {
+    "titre": "Share this listing",
+    "sur": "Share on {{reseau}}",
+    "courriel": "E-mail",
+    "copier": "Copy link",
+    "copie": "Link copied",
+    "copierManuel": "Copy the address of the listing:"
   }
 }

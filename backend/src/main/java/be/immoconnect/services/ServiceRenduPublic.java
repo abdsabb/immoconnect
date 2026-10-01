@@ -34,8 +34,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class ServiceRenduPublic {
 
+    /** @param image photo qui illustre la page quand elle est partagée (aperçu des réseaux sociaux), ou null */
     public record Page_(String titre, String description, String chemin, String langue, String jsonLd, String corps,
-                        boolean indexable) {
+                        boolean indexable, String image) {
     }
 
     public static final List<String> LANGUES = List.of("fr", "nl", "en");
@@ -129,7 +130,7 @@ public class ServiceRenduPublic {
         String jsonLd = "{\"@context\":\"https://schema.org\",\"@type\":\"RealEstateAgent\",\"name\":" + j(site.nom())
                 + ",\"description\":" + j(site.slogan()) + ",\"address\":" + j(site.adresse()) + ",\"telephone\":" + j(site.telephone())
                 + ",\"email\":" + j(site.email()) + ",\"openingHours\":" + j(site.horaires()) + ",\"areaServed\":\"Bruxelles\"}";
-        return new Page_(site.nom() + " — " + t.get("accueilTitre"), t.get("accueilSousTitre") + ". " + site.slogan() + ".", "/", l, jsonLd, corps.toString(), true);
+        return new Page_(site.nom() + " — " + t.get("accueilTitre"), t.get("accueilSousTitre") + ". " + site.slogan() + ".", "/", l, jsonLd, corps.toString(), true, null);
     }
 
     private Page_ liste(String l, TypeOffre type, String chemin) {
@@ -141,7 +142,7 @@ public class ServiceRenduPublic {
         String jsonLd = "{\"@context\":\"https://schema.org\",\"@type\":\"ItemList\",\"name\":" + j(titre) + ",\"numberOfItems\":" + page.getTotalElements()
                 + ",\"itemListElement\":[" + String.join(",", page.getContent().stream().map(b -> "{\"@type\":\"ListItem\",\"position\":"
                 + (page.getContent().indexOf(b) + 1) + ",\"url\":\"/biens/" + b.id() + "\",\"name\":" + j(b.titre()) + "}").toList()) + "]}";
-        return new Page_(titre + " — " + parametres.site().nom(), page.getTotalElements() + " " + t.get("listeDesc"), chemin, l, jsonLd, corps, true);
+        return new Page_(titre + " — " + parametres.site().nom(), page.getTotalElements() + " " + t.get("listeDesc"), chemin, l, jsonLd, corps, true, null);
     }
 
     private Page_ bien(String l, Integer id) {
@@ -179,7 +180,8 @@ public class ServiceRenduPublic {
         String description = b.typeOffre() == TypeOffre.vente ? t.get("vente") : t.get("location");
         description += " — " + b.categorie().nom() + " " + b.superficie().stripTrailingZeros().toPlainString() + " m², " + b.nbChambres() + " " + t.get("chambres")
                 + ", PEB " + b.peb().etiquette() + ", " + b.ville() + ". " + prix(b.typeOffre(), b.prix(), t, l) + ".";
-        return new Page_(b.titre() + " — " + parametres.site().nom(), description, "/biens/" + b.id(), l, jsonLd, corps.toString(), true);
+        return new Page_(b.titre() + " — " + parametres.site().nom(), description, "/biens/" + b.id(), l, jsonLd, corps.toString(), true,
+                b.photos().isEmpty() ? null : b.photos().getFirst().url());
     }
 
     private Page_ articles(String l) {
@@ -194,7 +196,7 @@ public class ServiceRenduPublic {
         String jsonLd = "{\"@context\":\"https://schema.org\",\"@type\":\"Blog\",\"name\":" + j(parametres.site().nom() + " — " + t.get("blog"))
                 + ",\"blogPost\":[" + String.join(",", page.getContent().stream().map(a -> "{\"@type\":\"BlogPosting\",\"headline\":" + j(a.titre())
                 + ",\"url\":\"/blog/" + a.id() + "\",\"datePublished\":\"" + a.publieLe() + "\"}").toList()) + "]}";
-        return new Page_(t.get("blog") + " — " + parametres.site().nom(), t.get("blogDesc"), "/blog", l, jsonLd, corps.toString(), true);
+        return new Page_(t.get("blog") + " — " + parametres.site().nom(), t.get("blogDesc"), "/blog", l, jsonLd, corps.toString(), true, null);
     }
 
     private Page_ article(String l, Integer id) {
@@ -210,7 +212,7 @@ public class ServiceRenduPublic {
         String jsonLd = "{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":" + j(a.titre()) + ",\"description\":" + j(a.extrait())
                 + ",\"datePublished\":\"" + a.publieLe() + "\",\"author\":{\"@type\":\"Person\",\"name\":" + j(a.auteur()) + "},\"publisher\":{\"@type\":\"Organization\",\"name\":"
                 + j(parametres.site().nom()) + "},\"articleSection\":" + j(a.categorie()) + ",\"inLanguage\":\"fr\"}";
-        return new Page_(a.titre() + " — " + parametres.site().nom(), a.extrait(), "/blog/" + a.id(), l, jsonLd, corps, true);
+        return new Page_(a.titre() + " — " + parametres.site().nom(), a.extrait(), "/blog/" + a.id(), l, jsonLd, corps, true, null);
     }
 
     private static String cartes(List<BienResume> liste, Map<String, String> t) {

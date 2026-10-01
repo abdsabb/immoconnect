@@ -78,8 +78,8 @@
       {
         "titre": "Inhoud van gebruikers",
         "paragraphes": [
-          "De berichten tussen een lid en een makelaar verbinden alleen hun auteur. De site oefent geen algemeen toezicht op deze berichten uit.",
-          "Om onwettige inhoud te melden, gebruikt u de link 'Deze inhoud melden' onder elk ontvangen bericht, elke advertentie en elk artikel. De melding wordt onderzocht door een beheerder, die de inhoud verwijdert of behoudt en zijn beslissing motiveert; die wordt bij de melding bewaard."
+          "De berichten tussen een lid en een makelaar verbinden alleen hun auteur. De directie van het kantoor kan ze raadplegen.",
+          "Gebruik het contactpunt hierboven om onwettige inhoud te melden. Gemelde inhoud wordt onderzocht en, als ze onwettig is, verwijderd."
         ]
       },
       {
@@ -221,7 +221,7 @@
         "liste": [
           "De uitwisselingen met de site zijn versleuteld (HTTPS).",
           "De wachtwoorden worden bewaard in de vorm van een hash (bcrypt): niemand kan ze lezen, ook een beheerder niet. Een gekozen wachtwoord wordt vergeleken met bekende datalekken via de dienst Have I Been Pwned, zonder ooit doorgegeven te worden: alleen vijf tekens van zijn hash vertrekken.",
-          "Makelaars en beheerders melden zich in twee stappen aan, met een per e-mail gestuurde code; leden kunnen dat kiezen.",
+          "Aanmelden in twee stappen, met een per e-mail gestuurde code, wordt aan elk account aangeboden, dat het in zijn profiel inschakelt.",
           "Na meerdere mislukkingen wordt het aanmelden enkele minuten geblokkeerd, steeds langer.",
           "Elk account heeft alleen toegang tot zijn eigen gegevens; de rechten hangen af van de rol.",
           "Aanmeldingen, mislukte aanmeldingen en gevoelige acties worden in een logboek genoteerd."
@@ -270,7 +270,7 @@
       {
         "titre": "Account",
         "paragraphes": [
-          "Een account is persoonlijk. U kiest een sterk wachtwoord en houdt het geheim; makelaars en beheerders melden zich in twee stappen aan. U kunt uw account altijd verwijderen vanuit uw profiel: uw favorieten en berichten worden gewist, uw afspraken en betalingen bewaard zonder uw identiteit."
+          "Een account is persoonlijk. U kiest een sterk wachtwoord en houdt het geheim; u kunt het aanmelden in twee stappen in uw profiel inschakelen. U kunt uw account altijd verwijderen vanuit uw profiel: uw favorieten en berichten worden gewist, uw afspraken en betalingen bewaard zonder uw identiteit."
         ]
       },
       {

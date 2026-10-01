@@ -30,6 +30,8 @@ public record BienGestion(
         LocalDate publieLe,
         Integer categorieId,
         String categorie,
+        Integer agentId,
+        String agent,
         List<PhotoGestion> photos,
         Indicateurs indicateurs) {
 
@@ -50,7 +52,7 @@ public record BienGestion(
                 bien.getSuperficie(),
                 bien.getNbChambres(), bien.getPeb(), bien.getAdresse(), bien.getVille(), bien.getCodePostal(), bien.getLatitude(),
                 bien.getLongitude(), bien.getStatut(), bien.getPublieLe(), bien.getCategorie().getId(),
-                bien.getCategorie().getNom(),
+                bien.getCategorie().getNom(), bien.getAgent().getId(), bien.getAgent().getNomComplet(),
                 bien.getPhotos().stream().map(p -> new PhotoGestion(p.getId(), p.getUrl(), p.getOrdre(), p.getLegende())).toList(),
                 indicateurs);
     }

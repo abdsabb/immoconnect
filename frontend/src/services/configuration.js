@@ -9,5 +9,3 @@ export const useConfiguration = () =>
   useQuery({ queryKey: ['configuration'], queryFn: chargerConfiguration, staleTime: Infinity })
 
 export const exporterMesDonnees = () => api.get('/auth/me/export', { responseType: 'blob' }).then((r) => r.data)
-
-export const signaler = (signalement) => api.post('/signalements', signalement).then((r) => r.data)

@@ -9,7 +9,7 @@ import { Photo } from '../components/CarteBien'
 const CarteOSM = lazy(() => import('../components/CarteOSM'))
 import BoutonFavori from '../components/BoutonFavori'
 import EtiquettePeb from '../components/EtiquettePeb'
-import BoutonSignaler from '../components/BoutonSignaler'
+import Partage from '../components/Partage'
 import { useTitrePage } from '../services/titre'
 
 // Fiche d'un bien (gabarit « article », maquette Figure 15) : galerie, caractéristiques,
@@ -109,7 +109,7 @@ export default function BienDetail() {
             <p className="font-semibold text-nuit">{bien.agent.nomComplet}</p>
             <p className="text-gray-600">{bien.agent.telephonePro}</p>
           </div>
-          <BoutonSignaler typeContenu="bien" contenuId={bien.id} discret className="pt-2" />
+          <Partage titre={bien.titre} className="pt-4 border-t border-gray-200" />
         </aside>
       </div>
     </section>

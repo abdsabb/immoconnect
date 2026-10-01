@@ -17,7 +17,6 @@ public record ExportDonnees(
         List<Visite> visites,
         List<Paiement> paiements,
         List<Message> messages,
-        List<Signalement> signalements,
         List<Historique> historique) {
 
     public record Compte(String prenom, String nom, String email, String telephone, String role, String langue,
@@ -37,10 +36,6 @@ public record ExportDonnees(
     }
 
     public record Message(String interlocuteur, boolean envoye, String contenu, LocalDateTime envoyeLe, boolean lu) {
-    }
-
-    public record Signalement(String typeContenu, String motif, String description, String statut, LocalDateTime creeLe,
-                              LocalDateTime traiteLe, String decision) {
     }
 
     public record Historique(String action, String entite, LocalDateTime horodatage, String ip) {

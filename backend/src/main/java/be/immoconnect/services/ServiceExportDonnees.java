@@ -11,7 +11,6 @@ import be.immoconnect.repositories.FavoriRepository;
 import be.immoconnect.repositories.JournalAuditRepository;
 import be.immoconnect.repositories.MessageRepository;
 import be.immoconnect.repositories.RendezVousRepository;
-import be.immoconnect.repositories.SignalementRepository;
 import be.immoconnect.repositories.UtilisateurRepository;
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -30,19 +29,17 @@ public class ServiceExportDonnees {
     private final FavoriRepository favoris;
     private final RendezVousRepository rendezVous;
     private final MessageRepository messages;
-    private final SignalementRepository signalements;
     private final JournalAuditRepository journal;
     private final ServiceAudit audit;
     private final Clock horloge;
 
     public ServiceExportDonnees(UtilisateurRepository utilisateurs, FavoriRepository favoris, RendezVousRepository rendezVous,
-                                MessageRepository messages, SignalementRepository signalements, JournalAuditRepository journal,
+                                MessageRepository messages, JournalAuditRepository journal,
                                 ServiceAudit audit, Clock horloge) {
         this.utilisateurs = utilisateurs;
         this.favoris = favoris;
         this.rendezVous = rendezVous;
         this.messages = messages;
-        this.signalements = signalements;
         this.journal = journal;
         this.audit = audit;
         this.horloge = horloge;
@@ -84,16 +81,12 @@ public class ServiceExportDonnees {
                         (m.getAuteur().getId().equals(utilisateurId) ? m.getDestinataire() : m.getAuteur()).getNomComplet(),
                         m.getAuteur().getId().equals(utilisateurId), m.getContenu(), m.getEnvoyeLe(), m.isLu())).toList();
 
-        List<ExportDonnees.Signalement> mesSignalements = signalements.findByAuteurIdOrderByCreeLeDesc(utilisateurId).stream()
-                .map(s -> new ExportDonnees.Signalement(s.getTypeContenu().name(), s.getMotif().name(), s.getDescription(),
-                        s.getStatut().name(), s.getCreeLe(), s.getTraiteLe(), s.getDecision())).toList();
-
         // La demande d'export fait elle-même partie de l'historique exporté
         audit.enregistrer(u, "export_donnees", "utilisateur#" + utilisateurId, ip);
         List<ExportDonnees.Historique> historique = journal.findByUtilisateurIdOrderByHorodatageAsc(utilisateurId).stream()
                 .map(j -> new ExportDonnees.Historique(j.getAction(), j.getEntite(), j.getHorodatage(), j.getIp())).toList();
 
         return new ExportDonnees(LocalDateTime.now(horloge), compte, mesFavoris, mesVisites, mesPaiements, mesMessages,
-                mesSignalements, historique);
+                historique);
     }
 }

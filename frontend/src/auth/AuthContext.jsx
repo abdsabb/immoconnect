@@ -82,10 +82,13 @@ export function AuthProvider({ children }) {
     return appliquer(reponse)
   }, [appliquer, queryClient])
 
-  /** @return l'utilisateur connecté, ou { doubleFacteur, defi } quand un code est attendu */
+  /**
+   * @return l'utilisateur connecté, ou { codeAttendu, defi } quand un code est attendu. Le nom « codeAttendu » est
+   *         choisi pour ne jamais se confondre avec le champ « doubleFacteur » du profil de l'utilisateur.
+   */
   const connecter = useCallback(async (identifiants) => {
     const { data, status } = await api.post('/auth/login', identifiants)
-    if (status === 202) return { doubleFacteur: true, defi: data.defi, expireDans: data.expireDans }
+    if (status === 202) return { codeAttendu: true, defi: data.defi, expireDans: data.expireDans }
     return ouvrir(data)
   }, [ouvrir])
 

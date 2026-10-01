@@ -126,6 +126,12 @@ public class RenduControleur {
         tete.append("<meta property=\"og:description\" content=\"").append(ServiceRenduPublic.e(page.description())).append("\">\n");
         tete.append("<meta property=\"og:url\" content=\"").append(url).append("\">\n");
         tete.append("<meta property=\"og:type\" content=\"website\">\n");
+        if (page.image() != null) {
+            // Aperçu lors d'un partage : la photo de couverture, en adresse absolue
+            String image = ServiceRenduPublic.e(page.image().startsWith("http") ? page.image() : urlSite + page.image());
+            tete.append("<meta property=\"og:image\" content=\"").append(image).append("\">\n");
+            tete.append("<meta name=\"twitter:card\" content=\"summary_large_image\">\n");
+        }
         tete.append("<script type=\"application/ld+json\">").append(page.jsonLd()).append("</script>\n");
         // Remplacements par position, sans expression régulière : le contenu peut contenir « $ » ou « \ »
         String resultat = remplacerEntre(html, "<title>", "</title>", ServiceRenduPublic.e(page.titre()));
