@@ -8,7 +8,6 @@ import { chargerCategories } from '../services/annonces'
 import CarteBien from '../components/CarteBien'
 // La carte (Leaflet) se charge à part : la liste s'affiche sans l'attendre
 const CarteResultats = lazy(() => import('../components/CarteResultats'))
-import LienFlux from '../components/LienFlux'
 
 const CRITERES = ['categorieId', 'ville', 'prixMin', 'prixMax', 'chambresMin', 'superficieMin', 'statut']
 const TRI_PAR_DEFAUT = 'publieLe,desc'
@@ -84,13 +83,9 @@ export default function Biens({ typeOffre: typeImpose }) {
   return (
     <section className="bg-perle">
       <div className="mx-auto max-w-6xl px-4 py-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <nav aria-label="Fil d'Ariane" className="text-sm text-gray-500">
-            <Link to="/" className="hover:text-turquoise">{t('nav.accueil')}</Link> › <span className="text-nuit">{titre}</span>
-          </nav>
-          {/* Le flux suit le type d'offre de la page, pas les filtres : il annonce les nouveautés */}
-          <LienFlux chemin={typeOffre ? `biens?typeOffre=${typeOffre}` : 'biens'} titre={t('biens.flux', { titre })} />
-        </div>
+        <nav aria-label="Fil d'Ariane" className="text-sm text-gray-500">
+          <Link to="/" className="hover:text-turquoise">{t('nav.accueil')}</Link> › <span className="text-nuit">{titre}</span>
+        </nav>
 
         <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
           <h1 className="text-3xl font-bold text-nuit">

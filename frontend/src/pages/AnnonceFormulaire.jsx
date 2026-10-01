@@ -9,6 +9,7 @@ import {
   statutsPour, supprimerPhoto, TAILLE_MAX_PHOTO, versRequete,
 } from '../services/annonces'
 import { TYPES_OFFRE } from '../services/biens'
+import { chargerAnnonceAdmin } from '../services/admin'
 import { BoutonPrincipal, Champ, classeInput, erreursApi } from '../components/Formulaire'
 import { Photo } from '../components/CarteBien'
 import CarteChoixPosition from '../components/CarteChoixPosition'
@@ -30,9 +31,20 @@ export default function AnnonceFormulaire() {
   const queryClient = useQueryClient()
   const [message, setMessage] = useState(null)
   const [erreur, setErreur] = useState(null)
+  // Création : photos choisies avant même que l'annonce existe, et publication immédiate si souhaitée
+  const photosInitiales = useRef(null)
+  const [nbPhotos, setNbPhotos] = useState(0)
+  const [publier, setPublier] = useState(false)
 
   const categories = useQuery({ queryKey: ['categories'], queryFn: chargerCategories, staleTime: Infinity })
-  const annonce = useQuery({ queryKey: ['annonce', id], queryFn: () => chargerAnnonce(id), enabled: !creation })
+  // L'administrateur gestionnaire ouvre l'annonce de n'importe quel agent ; il revient ensuite à sa liste
+  const supervision = utilisateur?.role === 'admin'
+  const retour = supervision ? '/admin/annonces' : '/annonces'
+  const annonce = useQuery({
+    queryKey: ['annonce', id],
+    queryFn: () => (supervision ? chargerAnnonceAdmin(id) : chargerAnnonce(id)),
+    enabled: !creation,
+  })
   const { register, handleSubmit, reset, setValue, setError, watch, formState: { errors, isSubmitting } } = useForm({ defaultValues: VIDE })
 
   useEffect(() => {
@@ -42,6 +54,7 @@ export default function AnnonceFormulaire() {
   const rafraichir = (donnees) => {
     queryClient.setQueryData(['annonce', String(donnees.id)], donnees)
     queryClient.invalidateQueries({ queryKey: ['annonces', utilisateur?.id] })
+    queryClient.invalidateQueries({ queryKey: ['admin', 'annonces'] })
     queryClient.invalidateQueries({ queryKey: ['bien', String(donnees.id)] })
   }
 
@@ -50,9 +63,25 @@ export default function AnnonceFormulaire() {
     setErreur(null)
     try {
       if (creation) {
-        const creee = await creerAnnonce(versRequete(valeurs))
+        // Contrôles de confort sur les photos choisies : le serveur refait les siens sur le contenu réel
+        const choisies = [...(photosInitiales.current?.files ?? [])]
+        if (choisies.some((f) => !['image/jpeg', 'image/png'].includes(f.type))) return setErreur(t('annonce.photoFormat'))
+        if (choisies.some((f) => f.size > TAILLE_MAX_PHOTO)) return setErreur(t('annonce.photoTropLourde'))
+        // L'annonce naît hors ligne (RA6) ; ses photos suivent, puis elle est publiée si l'agent l'a demandé
+        let creee = await creerAnnonce(versRequete({ ...valeurs, statut: 'archive' }))
+        let photosRefusees = false
+        for (const fichier of choisies) {
+          try {
+            creee = await ajouterPhoto(creee.id, fichier, '')
+          } catch {
+            photosRefusees = true
+          }
+        }
+        if (publier && creee.photos.length > 0) {
+          creee = await modifierAnnonce(creee.id, versRequete({ ...valeurs, statut: 'disponible' }))
+        }
         rafraichir(creee)
-        navigate(`/annonces/${creee.id}`, { replace: true, state: { creee: true } })
+        navigate(`/annonces/${creee.id}`, { replace: true, state: { creee: true, photosRefusees } })
       } else {
         rafraichir(await modifierAnnonce(id, versRequete(valeurs)))
         setMessage(t('annonce.enregistree'))
@@ -72,7 +101,7 @@ export default function AnnonceFormulaire() {
     return (
       <section className="mx-auto max-w-4xl px-4 py-10">
         <p role="alert" className="text-erreur">{erreursApi(annonce.error, t).message}</p>
-        <Link to="/annonces" className="mt-4 inline-block text-turquoise underline">{t('annonce.retour')}</Link>
+        <Link to={retour} className="mt-4 inline-block text-turquoise underline">{t('annonce.retour')}</Link>
       </section>
     )
   }
@@ -88,7 +117,8 @@ export default function AnnonceFormulaire() {
   return (
     <section className="mx-auto max-w-4xl px-4 py-10 space-y-8">
       <header>
-        <Link to="/annonces" className="text-sm text-turquoise hover:underline">‹ {t('annonce.retour')}</Link>
+        <Link to={retour} className="text-sm text-turquoise hover:underline">‹ {t('annonce.retour')}</Link>
+        {supervision && annonce.data && <p className="mt-2 rounded-lg bg-perle px-4 py-2 text-sm text-gray-700">{t('admin.annonces.supervision', { agent: annonce.data.agent })}</p>}
         <h1 className="mt-2 text-3xl font-bold text-nuit">{t(creation ? 'annonce.nouvelle' : 'annonce.modifierTitre')}</h1>
         {creation && <p className="text-gray-600">{t('annonce.explicationCreation')}</p>}
       </header>
@@ -168,6 +198,21 @@ export default function AnnonceFormulaire() {
             <input type="number" step="0.000001" {...champ('longitude', nombre(-180, 180))} />
           </Champ>
         </div>
+
+        {creation && (
+          <>
+            <h2 className="pt-4 text-xl font-bold text-nuit">{t('annonce.photos')}</h2>
+            <Champ label={t('annonce.photosInitiales')}>
+              <input ref={photosInitiales} type="file" accept="image/jpeg,image/png" multiple className="w-full text-sm"
+                onChange={(e) => { setNbPhotos(e.target.files.length); if (e.target.files.length === 0) setPublier(false) }} />
+            </Champ>
+            <p className="-mt-2 text-xs text-gray-500">{t('annonce.photosInitialesAide')}</p>
+            <label className="flex items-start gap-3 text-sm text-gray-700">
+              <input type="checkbox" className="mt-1" checked={publier} disabled={nbPhotos === 0} onChange={(e) => setPublier(e.target.checked)} />
+              <span>{t('annonce.publierAussitot')}</span>
+            </label>
+          </>
+        )}
 
         {!creation && (
           <>

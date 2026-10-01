@@ -197,6 +197,9 @@ export default function Layout() {
             <NavLink to="/confidentialite" className="hover:text-white">{contenu('footer.rgpd', 'pied.confidentialite')}</NavLink>
             <NavLink to="/conditions" className="hover:text-white">{t('pied.conditions')}</NavLink>
             <NavLink to="/credits-photos" className="hover:text-white">{t('pied.credits')}</NavLink>
+            {/* Flux RSS : des documents XML servis par l'API, ouverts à part */}
+            <a href="/api/v1/flux/biens" type="application/rss+xml" target="_blank" rel="noreferrer" className="hover:text-white">{t('pied.fluxBiens')}</a>
+            <a href="/api/v1/flux/articles" type="application/rss+xml" target="_blank" rel="noreferrer" className="hover:text-white">{t('pied.fluxBlog')}</a>
             <span>{t('pied.osm')}</span>
           </span>
         </div>

@@ -123,8 +123,7 @@
       "gratuit": "Tijdstippen overdag gratis",
       "paiement": "Beveiligde betaling via Stripe",
       "adresse": "Adres meegedeeld zodra het bezoek bevestigd is"
-    },
-    "flux": "RSS-feed — {{titre}}"
+    }
   },
   "bien": {
     "chambres_one": "slaapkamer",
@@ -160,7 +159,9 @@
     "confidentialite": "Privacy",
     "osm": "© OpenStreetMap-bijdragers",
     "credits": "Fotocredits",
-    "conditions": "Algemene voorwaarden"
+    "conditions": "Algemene voorwaarden",
+    "fluxBiens": "RSS-feed van de advertenties",
+    "fluxBlog": "RSS-feed van de blog"
   },
   "auth": {
     "connexionTitre": "Aanmelden",
@@ -230,8 +231,7 @@
     "confirmerDesinscription": "Het verwijderen van uw account bevestigen? Dit kan niet ongedaan worden gemaakt.",
     "securiteEtChoix": "Beveiliging en communicatie",
     "doubleFacteur": "Aanmelden in twee stappen",
-    "doubleFacteurExplication": "Bij elke aanmelding wordt naast het wachtwoord een per e-mail gestuurde code gevraagd.",
-    "doubleFacteurImpose": "Verplicht voor uw rol: bij elke aanmelding wordt een per e-mail gestuurde code gevraagd.",
+    "doubleFacteurExplication": "Optioneel. Als u dit inschakelt, wordt bij elke aanmelding naast het wachtwoord een per e-mail gestuurde code gevraagd.",
     "communications": "Informatie van het kantoor",
     "communicationsExplication": "Informatie ontvangen over nieuwe panden en nieuws. Altijd intrekbaar.",
     "mesDonnees": "Mijn gegevens",
@@ -399,7 +399,10 @@
     "peb": "EPC-klasse",
     "pebChoisir": "Kiezen…",
     "pebAide": "De energieklasse van het EPC is verplicht in elke vastgoedadvertentie.",
-    "vues": "Weergaven"
+    "vues": "Weergaven",
+    "photosInitiales": "Foto’s van de advertentie (optioneel)",
+    "photosInitialesAide": "JPEG of PNG, hoogstens 5 MB per foto; de eerste wordt de omslagfoto. Later kunt u nog foto’s toevoegen.",
+    "publierAussitot": "De advertentie meteen publiceren (minstens één foto nodig). Anders blijft ze offline tot u ze publiceert."
   },
   "blog": {
     "titre": "Blog",
@@ -408,8 +411,7 @@
     "toutes": "Alle",
     "vide": "Nog geen artikels in deze categorie.",
     "introuvable": "Dit artikel bestaat niet of is niet meer gepubliceerd.",
-    "retour": "Terug naar de blog",
-    "flux": "RSS-feed van de blog"
+    "retour": "Terug naar de blog"
   },
   "admin": {
     "titre": "Beheer",
@@ -424,9 +426,10 @@
       "categories": "Categorieën",
       "traductions": "Talen",
       "clesApi": "API-sleutels",
-      "signalements": "Meldingen",
       "parametres": "Instellingen",
-      "securite": "Beveiliging"
+      "securite": "Beveiliging",
+      "annonces": "Advertenties",
+      "messagerie": "Berichten"
     },
     "role": {
       "membre": "Lid",
@@ -539,31 +542,6 @@
       "supprime": "Artikel verwijderd.",
       "confirmerSuppression": "« {{titre}} » definitief verwijderen?"
     },
-    "signalement": {
-      "explication": "Door gebruikers gemelde inhoud. Verwijderen wist het bericht, haalt de advertentie offline of archiveert het artikel; behouden laat de inhoud staan. Elke beslissing wordt gemotiveerd, is definitief en wordt gelogd.",
-      "statuts": {
-        "ouvert": "Te behandelen",
-        "retire": "Verwijderd",
-        "conserve": "Behouden"
-      },
-      "aucun": "Geen meldingen in deze lijst.",
-      "date": "Datum",
-      "contenu": "Inhoud",
-      "motif": "Reden",
-      "auteur": "Gemeld door",
-      "decision": "Beslissing",
-      "motivation": "Motivering van de beslissing (verplicht)",
-      "motivationRequise": "Motiveer de beslissing voordat u beslist.",
-      "retirer": "Verwijderen",
-      "conserver": "Behouden",
-      "retireFait": "Inhoud verwijderd en beslissing opgeslagen.",
-      "conserveFait": "Inhoud behouden en beslissing opgeslagen.",
-      "types": {
-        "message": "Bericht",
-        "bien": "Advertentie",
-        "article": "Artikel"
-      }
-    },
     "parametre": {
       "explication": "Identiteit van het kantoor op de site en talen die de bezoekers krijgen. Betaal- en e-mailsleutels worden hier niet ingesteld: die blijven op de server.",
       "cles": {
@@ -593,6 +571,22 @@
         "cle_revoquee": "Ingetrokken API-sleutel gebruikt"
       },
       "procedure": "Procedure: het auditlogboek nakijken, het adres blokkeren of de sleutel intrekken, de impact inschatten, documenteren. Gaat het om persoonsgegevens: melding aan de Gegevensbeschermingsautoriteit binnen 72 uur."
+    },
+    "annonces": {
+      "explication": "De advertenties van alle makelaars, ook de offline. U kunt ze bekijken en wijzigen; elke wijziging wordt op uw naam gelogd.",
+      "agent": "Makelaar",
+      "tousLesAgents": "Alle makelaars",
+      "annonce": "Advertentie",
+      "voir": "Pand bekijken",
+      "nombre_one": "{{count}} advertentie",
+      "nombre_other": "{{count}} advertenties",
+      "supervision": "Advertentie van {{agent}}, geopend als beheerder."
+    },
+    "messagerie": {
+      "explication": "De gesprekken van elke makelaar met de klanten, alleen-lezen: u schrijft niet in de plaats van de makelaar en niets wordt als gelezen gemarkeerd. Elke raadpleging wordt in het auditlogboek genoteerd.",
+      "choisirAgent": "Kies een makelaar…",
+      "aucune": "Deze makelaar heeft geen gesprekken.",
+      "choisirConversation": "Kies een gesprek om de berichten te lezen."
     }
   },
   "erreur": {
@@ -637,18 +631,12 @@
     "nl": "Nederlands",
     "en": "English"
   },
-  "signalement": {
-    "bouton": "Deze inhoud melden",
-    "titre": "Inhoud melden",
-    "motif": "Reden",
-    "description": "Leg het probleem uit",
-    "envoyer": "Melding versturen",
-    "merci": "Bedankt, uw melding wordt door het team van de site onderzocht.",
-    "motifs": {
-      "illicite": "Onwettige inhoud",
-      "arnaque": "Oplichting of misleiding",
-      "indesirable": "Reclame of ongewenste inhoud",
-      "autre": "Andere"
-    }
+  "partage": {
+    "titre": "Deze advertentie delen",
+    "sur": "Delen op {{reseau}}",
+    "courriel": "E-mail",
+    "copier": "Link kopiëren",
+    "copie": "Link gekopieerd",
+    "copierManuel": "Kopieer het adres van de advertentie:"
   }
 }

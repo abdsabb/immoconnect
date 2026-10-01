@@ -33,7 +33,8 @@ const ArticleFormulaire = lazy(() => import('./pages/admin/ArticleFormulaire'))
 const Categories = lazy(() => import('./pages/admin/Categories'))
 const Traductions = lazy(() => import('./pages/admin/Traductions'))
 const ClesApi = lazy(() => import('./pages/admin/ClesApi'))
-const Signalements = lazy(() => import('./pages/admin/Signalements'))
+const AnnoncesAgents = lazy(() => import('./pages/admin/AnnoncesAgents'))
+const MessagerieAgents = lazy(() => import('./pages/admin/MessagerieAgents'))
 const Parametres = lazy(() => import('./pages/admin/Parametres'))
 const Alertes = lazy(() => import('./pages/admin/Alertes'))
 
@@ -91,7 +92,9 @@ export default function App() {
             <Route path="categories" element={<Categories />} />
             <Route path="traductions" element={<Traductions />} />
             <Route path="cles-api" element={<ClesApi />} />
-            <Route path="signalements" element={<Signalements />} />
+            <Route path="annonces" element={<AnnoncesAgents />} />
+            <Route path="annonces/:id" element={<AnnonceFormulaire key="supervision" />} />
+            <Route path="messagerie" element={<MessagerieAgents />} />
             <Route path="parametres" element={<Parametres />} />
             <Route path="securite" element={<Alertes />} />
           </Route>

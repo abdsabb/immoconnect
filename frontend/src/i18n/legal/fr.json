@@ -78,8 +78,8 @@
       {
         "titre": "Contenus des utilisateurs",
         "paragraphes": [
-          "Les messages échangés entre un membre et un agent n'engagent que leur auteur. Le site n'exerce pas de surveillance générale de ces messages.",
-          "Pour signaler un contenu illicite, utilisez le lien « Signaler ce contenu » présent sous chaque message reçu, chaque annonce et chaque article. Le signalement est examiné par un administrateur, qui retire le contenu ou le conserve et motive sa décision ; celle-ci est conservée avec le signalement."
+          "Les messages échangés entre un membre et un agent n'engagent que leur auteur. La direction de l'agence peut les consulter.",
+          "Pour signaler un contenu illicite, utilisez le point de contact indiqué plus haut. Un contenu signalé est examiné et, s'il est illicite, retiré."
         ]
       },
       {
@@ -221,7 +221,7 @@
         "liste": [
           "Les échanges avec le site sont chiffrés (HTTPS).",
           "Les mots de passe sont enregistrés sous forme d'empreinte (bcrypt) : personne ne peut les lire, pas même un administrateur. Un mot de passe choisi est comparé aux fuites de données connues par le service Have I Been Pwned, sans jamais lui être transmis : seuls cinq caractères de son empreinte partent.",
-          "Les agents et les administrateurs se connectent en deux étapes, avec un code envoyé par e-mail ; les membres peuvent le choisir.",
+          "La connexion en deux étapes, avec un code envoyé par e-mail, est proposée à chaque compte, qui l’active dans son profil.",
           "Après plusieurs échecs, la connexion est bloquée quelques minutes, de plus en plus longtemps.",
           "Chaque compte n’accède qu’à ses propres données ; les droits dépendent du rôle.",
           "Les connexions, les échecs de connexion et les actions sensibles sont inscrits dans un journal."
@@ -270,7 +270,7 @@
       {
         "titre": "Compte",
         "paragraphes": [
-          "Un compte est personnel. Vous choisissez un mot de passe robuste et le gardez secret ; les agents et les administrateurs s'identifient en deux étapes. Vous pouvez supprimer votre compte à tout moment depuis votre profil : vos favoris et vos messages sont effacés, vos rendez-vous et paiements conservés sans votre identité."
+          "Un compte est personnel. Vous choisissez un mot de passe robuste et le gardez secret ; vous pouvez activer la connexion en deux étapes dans votre profil. Vous pouvez supprimer votre compte à tout moment depuis votre profil : vos favoris et vos messages sont effacés, vos rendez-vous et paiements conservés sans votre identité."
         ]
       },
       {

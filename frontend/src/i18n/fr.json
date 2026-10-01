@@ -123,8 +123,7 @@
       "gratuit": "Créneaux en journée gratuits",
       "paiement": "Paiement sécurisé par Stripe",
       "adresse": "Adresse communiquée dès la visite confirmée"
-    },
-    "flux": "Flux RSS — {{titre}}"
+    }
   },
   "bien": {
     "chambres_one": "chambre",
@@ -160,7 +159,9 @@
     "confidentialite": "Confidentialité",
     "osm": "© les contributeurs OpenStreetMap",
     "credits": "Crédits photos",
-    "conditions": "Conditions générales"
+    "conditions": "Conditions générales",
+    "fluxBiens": "Flux RSS des annonces",
+    "fluxBlog": "Flux RSS du blog"
   },
   "auth": {
     "connexionTitre": "Se connecter",
@@ -230,8 +231,7 @@
     "confirmerDesinscription": "Confirmer la suppression de votre compte ? Cette action est irréversible.",
     "securiteEtChoix": "Sécurité et communications",
     "doubleFacteur": "Connexion en deux étapes",
-    "doubleFacteurExplication": "À chaque connexion, un code envoyé par e-mail sera demandé en plus du mot de passe.",
-    "doubleFacteurImpose": "Obligatoire pour votre rôle : un code envoyé par e-mail est demandé à chaque connexion.",
+    "doubleFacteurExplication": "Facultatif. Si vous l’activez, un code envoyé par e-mail sera demandé à chaque connexion, en plus du mot de passe.",
     "communications": "Informations de l’agence",
     "communicationsExplication": "Recevoir des informations sur les nouveaux biens et les actualités. Retirable à tout moment.",
     "mesDonnees": "Mes données",
@@ -399,7 +399,10 @@
     "peb": "Classe PEB",
     "pebChoisir": "Choisir…",
     "pebAide": "La classe énergétique du certificat PEB est obligatoire dans toute publicité immobilière.",
-    "vues": "Vues"
+    "vues": "Vues",
+    "photosInitiales": "Photos de l’annonce (facultatif)",
+    "photosInitialesAide": "JPEG ou PNG, 5 Mo au plus par photo ; la première devient la couverture. D’autres photos pourront être ajoutées ensuite.",
+    "publierAussitot": "Publier l’annonce dès sa création (il faut au moins une photo). Sinon, elle reste hors ligne jusqu’à ce que vous la publiiez."
   },
   "blog": {
     "titre": "Blog",
@@ -408,8 +411,7 @@
     "toutes": "Toutes",
     "vide": "Aucun article dans cette catégorie pour le moment.",
     "introuvable": "Cet article n'existe pas ou n'est plus publié.",
-    "retour": "Retour au blog",
-    "flux": "Flux RSS du blog"
+    "retour": "Retour au blog"
   },
   "admin": {
     "titre": "Administration",
@@ -424,9 +426,10 @@
       "categories": "Catégories",
       "traductions": "Langues",
       "clesApi": "Clés API",
-      "signalements": "Signalements",
       "parametres": "Paramètres",
-      "securite": "Sécurité"
+      "securite": "Sécurité",
+      "annonces": "Annonces",
+      "messagerie": "Messagerie"
     },
     "role": {
       "membre": "Membre",
@@ -539,31 +542,6 @@
       "supprime": "Article supprimé.",
       "confirmerSuppression": "Supprimer définitivement « {{titre}} » ?"
     },
-    "signalement": {
-      "explication": "Contenus signalés par les utilisateurs. Retirer un contenu vide le message, met l’annonce hors ligne ou archive l’article ; conserver le laisse en place. Chaque décision est motivée, définitive et journalisée.",
-      "statuts": {
-        "ouvert": "À traiter",
-        "retire": "Retirés",
-        "conserve": "Conservés"
-      },
-      "aucun": "Aucun signalement dans cette liste.",
-      "date": "Date",
-      "contenu": "Contenu",
-      "motif": "Motif",
-      "auteur": "Signalé par",
-      "decision": "Décision",
-      "motivation": "Motivation de la décision (obligatoire)",
-      "motivationRequise": "Motivez la décision avant de trancher.",
-      "retirer": "Retirer",
-      "conserver": "Conserver",
-      "retireFait": "Contenu retiré et décision enregistrée.",
-      "conserveFait": "Contenu conservé et décision enregistrée.",
-      "types": {
-        "message": "Message",
-        "bien": "Annonce",
-        "article": "Article"
-      }
-    },
     "parametre": {
       "explication": "Identité de l’agence affichée sur le site et langues proposées aux visiteurs. Les clés de paiement et de courriel ne se règlent pas ici : elles restent sur le serveur.",
       "cles": {
@@ -593,6 +571,22 @@
         "cle_revoquee": "Clé API révoquée présentée"
       },
       "procedure": "Procédure : vérifier le journal d’audit, bloquer l’adresse ou révoquer la clé, évaluer l’impact, documenter. Si des données personnelles sont concernées : notification à l’Autorité de protection des données sous 72 heures."
+    },
+    "annonces": {
+      "explication": "Les annonces de tous les agents, hors ligne comprises. Vous pouvez les consulter et les modifier ; chaque modification est inscrite au journal à votre nom.",
+      "agent": "Agent",
+      "tousLesAgents": "Tous les agents",
+      "annonce": "Annonce",
+      "voir": "Voir la fiche",
+      "nombre_one": "{{count}} annonce",
+      "nombre_other": "{{count}} annonces",
+      "supervision": "Annonce de {{agent}}, ouverte en tant qu’administrateur."
+    },
+    "messagerie": {
+      "explication": "Les échanges de chaque agent avec les clients, en lecture seule : vous n’écrivez pas à la place de l’agent et rien n’est marqué comme lu. Chaque consultation est inscrite au journal d’audit.",
+      "choisirAgent": "Choisir un agent…",
+      "aucune": "Cet agent n’a aucune conversation.",
+      "choisirConversation": "Choisissez une conversation pour lire les messages."
     }
   },
   "erreur": {
@@ -637,18 +631,12 @@
     "nl": "Nederlands",
     "en": "English"
   },
-  "signalement": {
-    "bouton": "Signaler ce contenu",
-    "titre": "Signaler un contenu",
-    "motif": "Motif",
-    "description": "Expliquez le problème",
-    "envoyer": "Envoyer le signalement",
-    "merci": "Merci, votre signalement sera examiné par l’équipe du site.",
-    "motifs": {
-      "illicite": "Contenu illicite",
-      "arnaque": "Arnaque ou tromperie",
-      "indesirable": "Publicité ou contenu indésirable",
-      "autre": "Autre"
-    }
+  "partage": {
+    "titre": "Partager cette annonce",
+    "sur": "Partager sur {{reseau}}",
+    "courriel": "E-mail",
+    "copier": "Copier le lien",
+    "copie": "Lien copié",
+    "copierManuel": "Copiez l’adresse de l’annonce :"
   }
 }

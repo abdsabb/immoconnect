@@ -4,7 +4,6 @@ import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useTitrePage } from '../services/titre'
 import { chargerArticles, chargerCategoriesBlog, formatDate } from '../services/admin'
-import LienFlux from '../components/LienFlux'
 
 // Cas V5 « Lire les articles du blog » : articles publiés, classés par date, filtrables par catégorie
 export default function Blog() {
@@ -29,10 +28,7 @@ export default function Blog() {
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-10">
-      <div className="flex flex-wrap items-baseline justify-between gap-3">
-        <h1 className="text-3xl font-bold text-nuit">{t('blog.titre')}</h1>
-        <LienFlux chemin="articles" titre={t('blog.flux')} />
-      </div>
+      <h1 className="text-3xl font-bold text-nuit">{t('blog.titre')}</h1>
       <p className="mt-1 text-gray-600">{t('blog.sousTitre')}</p>
 
       <div className="mt-6 flex flex-wrap gap-2" role="group" aria-label={t('blog.categories')}>
