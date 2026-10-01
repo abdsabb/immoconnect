@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { rendre } from './rendu'
 import Connexion from '../pages/Connexion'
@@ -7,6 +7,9 @@ import Connexion from '../pages/Connexion'
 const connecter = vi.fn()
 const validerCode = vi.fn()
 vi.mock('../auth/AuthContext', () => ({ useAuth: () => ({ connecter, validerCode }) }))
+// La navigation est observée : après une connexion réussie, la page doit quitter /connexion
+const naviguer = vi.fn()
+vi.mock('react-router', async (original) => ({ ...(await original()), useNavigate: () => naviguer }))
 
 describe('Connexion (cas M9) et second facteur', () => {
   it('exige e-mail et mot de passe', async () => {
@@ -18,7 +21,7 @@ describe('Connexion (cas M9) et second facteur', () => {
   })
 
   it('passe à l’étape du code quand l’API renvoie un défi, avec un champ vide', async () => {
-    connecter.mockResolvedValueOnce({ doubleFacteur: true, defi: 'defi-1' })
+    connecter.mockResolvedValueOnce({ codeAttendu: true, defi: 'defi-1' })
     const utilisateur = userEvent.setup()
     rendre(<Connexion />)
     await utilisateur.type(screen.getByLabelText(/adresse e-mail/i), 'sarah.dubois@mail.be')
@@ -37,6 +40,18 @@ describe('Connexion (cas M9) et second facteur', () => {
     await utilisateur.type(champCode, '482913')
     await utilisateur.click(screen.getByRole('button', { name: /valider/i }))
     expect(validerCode).toHaveBeenCalledWith('defi-1', '482913')
+  })
+
+  it('ne demande pas de code à un compte dont le profil porte « doubleFacteur » quand la session est ouverte', async () => {
+    // Régression : le profil d’un agent contient doubleFacteur: true ; ce n’est pas le signal « code attendu »
+    connecter.mockResolvedValueOnce({ id: 101, prenom: 'Sarah', role: 'agent', doubleFacteur: true })
+    const utilisateur = userEvent.setup()
+    rendre(<Connexion />)
+    await utilisateur.type(screen.getByLabelText(/adresse e-mail/i), 'sarah.dubois@mail.be')
+    await utilisateur.type(screen.getByLabelText(/mot de passe/i), 'password')
+    await utilisateur.click(screen.getByRole('button', { name: /se connecter/i }))
+    await waitFor(() => expect(naviguer).toHaveBeenCalledWith('/profil', { replace: true }))
+    expect(screen.queryByLabelText(/code reçu/i)).not.toBeInTheDocument()
   })
 
   it('affiche l’erreur de l’API et propose de renvoyer l’activation', async () => {

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
@@ -10,7 +10,7 @@ import { Champ, BoutonPrincipal, classeInput, erreursApi } from '../components/F
 // Deuxième étape quand un code est attendu (double facteur, livrable 16 §2.2).
 export default function Connexion() {
   const { t } = useTranslation()
-  const { connecter, validerCode } = useAuth()
+  const { connecter, validerCode, estConnecte } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const [erreurApi, setErreurApi] = useState(null)
@@ -27,7 +27,7 @@ export default function Connexion() {
     setErreurApi(null); setNonActive(false)
     try {
       const resultat = await connecter(valeurs)
-      if (resultat.doubleFacteur) {
+      if (resultat.codeAttendu) {
         setEmail(valeurs.email)
         setDefi(resultat.defi)
         return
@@ -62,6 +62,9 @@ export default function Connexion() {
       setErreurApi(erreursApi(e, t).message)
     }
   }
+
+  // Déjà connecté (retour arrière, adresse tapée à la main) : la page de connexion n'a plus lieu d'être
+  if (estConnecte) return <Navigate to={destination} replace />
 
   // Les deux étapes ont la même structure : sans clé, React garderait le champ e-mail (et sa valeur)
   // comme champ du code
