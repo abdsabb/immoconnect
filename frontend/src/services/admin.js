@@ -31,6 +31,10 @@ export const chargerAnnonceAdmin = (id) => api.get(`/admin/biens/${id}`).then(do
 export const chargerConversationsAgent = (agentId) => api.get(`/admin/agents/${agentId}/conversations`).then(donnees)
 export const chargerConversationAgent = (agentId, membreId) => api.get(`/admin/agents/${agentId}/conversations/${membreId}`).then(donnees)
 
+// Demandes du formulaire de contact
+export const chargerContacts = (filtres) => api.get('/admin/contacts', { params: sansVide(filtres) }).then(donnees)
+export const traiterContact = (id) => api.patch(`/admin/contacts/${id}/traiter`).then(donnees)
+
 // Paramètres du site (A5)
 export const chargerParametres = () => api.get('/admin/parametres').then(donnees)
 export const chargerAlertes = (filtres) => api.get('/admin/alertes', { params: sansVide(filtres) }).then(donnees)
