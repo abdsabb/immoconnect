@@ -40,6 +40,20 @@ class BienControleurTest {
                 .andExpect(jsonPath("$.contenu[*].statut", Matchers.everyItem(Matchers.is("disponible"))));
     }
 
+    /** L'agence travaille à Bruxelles : les annonces de test de quatre villes hors Région ont été relocalisées (V13). */
+    @Test
+    void aucuneAnnonceNEstSitueeANamurNivellesLiegeOuLouvainLaNeuve() throws Exception {
+        for (String ville : new String[] {"Namur", "Nivelles", "Liège", "Louvain-la-Neuve"}) {
+            mvc.perform(get("/api/v1/biens").param("ville", ville))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.totalElements").value(0));
+        }
+        mvc.perform(get("/api/v1/biens").param("ville", "Koekelberg"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.contenu[0].codePostal").value("1081"))
+                .andExpect(jsonPath("$.contenu[0].titre", Matchers.containsString("Koekelberg")));
+    }
+
     @Test
     void leFiltreParVilleNeRenvoieQueCetteVille() throws Exception {
         mvc.perform(get("/api/v1/biens").param("ville", "Ixelles"))
