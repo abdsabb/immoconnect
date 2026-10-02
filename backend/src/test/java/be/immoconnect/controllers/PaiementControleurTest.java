@@ -64,7 +64,8 @@ class PaiementControleurTest {
     @Test
     void leScenarioNominalCreeUnRendezVousConfirmeEtSonPaiement() throws Exception {
         String membre = connecter(MEMBRE);
-        String creneau = premierCreneau(membre, "premium");
+        // À plus de 24 heures : l'annulation qui clôt ce scénario doit être remboursée (RA14), quelle que soit l'heure du test
+        String creneau = premierCreneauPremiumRemboursable(membre);
         JsonNode intention = preparer(membre, creneau);
         assertThat(intention.get("montant").asDouble()).isEqualTo(15.0);
         assertThat(intention.get("devise").asString()).isEqualTo("eur");
@@ -260,6 +261,16 @@ class PaiementControleurTest {
         return mvc.perform(post("/api/v1/rendez-vous").header("Authorization", "Bearer " + jeton)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"bienId\":" + BIEN + ",\"dateHeure\":\"" + dateHeure + "\",\"paymentIntentId\":\"" + paymentIntentId + "\"}"));
+    }
+
+    /** Premier créneau premium situé à plus de 24 heures : son annulation par le membre est encore remboursée (RA14). */
+    private String premierCreneauPremiumRemboursable(String jeton) throws Exception {
+        java.time.LocalDateTime limite = java.time.LocalDateTime.now(java.time.ZoneId.of("Europe/Brussels")).plusHours(25);
+        return creneaux(jeton).valueStream()
+                .filter(c -> "premium".equals(c.get("type").asString()))
+                .map(c -> c.get("dateHeure").asString())
+                .filter(d -> java.time.LocalDateTime.parse(d).isAfter(limite))
+                .findFirst().orElseThrow();
     }
 
     private String premierCreneau(String jeton, String type) throws Exception {
