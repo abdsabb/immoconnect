@@ -176,6 +176,12 @@
               "Pages viewed, referrer, device type, actions (viewing, message, sign-up); truncated IP address",
               "Legitimate interest: improving the site",
               "Anonymous statistics, on the site's own server"
+            ],
+            [
+              "Contact form",
+              "Name, e-mail address, phone (optional), message, IP address",
+              "Pre-contractual steps taken at your request",
+              "Until the request is handled, then archived"
             ]
           ]
         }

@@ -442,7 +442,8 @@
       "parametres": "Instellingen",
       "securite": "Beveiliging",
       "annonces": "Advertenties",
-      "messagerie": "Berichten"
+      "messagerie": "Berichten",
+      "contacts": "Contact"
     },
     "role": {
       "membre": "Lid",
@@ -600,6 +601,14 @@
       "choisirAgent": "Kies een makelaar…",
       "aucune": "Deze makelaar heeft geen gesprekken.",
       "choisirConversation": "Kies een gesprek om de berichten te lezen."
+    },
+    "contact": {
+      "explication": "Berichten ontvangen via het contactformulier. Antwoord per e-mail door op het adres te klikken en markeer de aanvraag daarna als behandeld.",
+      "enAttente": "Te behandelen",
+      "toutes": "Alle",
+      "aucune": "Geen aanvragen in deze lijst.",
+      "traiter": "Als behandeld markeren",
+      "traiteePar": "Behandeld door {{qui}} op {{quand}}"
     }
   },
   "erreur": {
@@ -654,12 +663,16 @@
   },
   "contact": {
     "titre": "Contact met het kantoor",
-    "sousTitre": "Uw vastgoedkantoor in Brussel",
-    "adresse": "Adres",
-    "joindre": "Ons bereiken",
-    "horaires": "Openingsuren",
-    "visites": "Bezoeken boekt u online, 7 dagen op 7, vanaf de pagina van elk pand.",
-    "agentTitre": "Een vraag over een pand?",
-    "agentTexte": "Elke advertentie heeft haar makelaar: open de pagina van het pand om hem rechtstreeks te schrijven of een afspraak te maken."
+    "sousTitre": "Een vraag, een pand te koop of te huur? Schrijf ons, wij antwoorden per e-mail.",
+    "nom": "Naam en voornaam",
+    "telephone": "Telefoon (optioneel)",
+    "sujet": "Onderwerp",
+    "message": "Uw bericht",
+    "envoyer": "Bericht versturen",
+    "envoye": "Bedankt, uw bericht is verstuurd. Het kantoor antwoordt u per e-mail.",
+    "autre": "Nog een bericht versturen",
+    "emailInvalide": "Ongeldig e-mailadres",
+    "donnees": "Uw gegevens dienen alleen om u te antwoorden. Zie het",
+    "agentTexte": "Voor een vraag over een bepaald pand schrijft u rechtstreeks naar de makelaar vanaf de pagina van het pand:"
   }
 }

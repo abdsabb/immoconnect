@@ -176,6 +176,12 @@
               "Pages vues, provenance, type d'appareil, actions (rendez-vous, message, inscription) ; adresse IP tronquée",
               "Intérêt légitime : améliorer le site",
               "Statistiques anonymes, sur le serveur du site"
+            ],
+            [
+              "Formulaire de contact",
+              "Nom, adresse e-mail, téléphone (facultatif), message, adresse IP",
+              "Mesures précontractuelles prises à votre demande",
+              "Jusqu’au traitement de la demande, puis archivage"
             ]
           ]
         }

@@ -442,7 +442,8 @@
       "parametres": "Settings",
       "securite": "Security",
       "annonces": "Listings",
-      "messagerie": "Messages"
+      "messagerie": "Messages",
+      "contacts": "Contact"
     },
     "role": {
       "membre": "Member",
@@ -600,6 +601,14 @@
       "choisirAgent": "Choose an agent…",
       "aucune": "This agent has no conversations.",
       "choisirConversation": "Choose a conversation to read the messages."
+    },
+    "contact": {
+      "explication": "Messages received through the contact form. Answer by e-mail by clicking the address, then mark the request as handled.",
+      "enAttente": "To handle",
+      "toutes": "All",
+      "aucune": "No requests in this list.",
+      "traiter": "Mark as handled",
+      "traiteePar": "Handled by {{qui}} on {{quand}}"
     }
   },
   "erreur": {
@@ -654,12 +663,16 @@
   },
   "contact": {
     "titre": "Contact the agency",
-    "sousTitre": "Your estate agency in Brussels",
-    "adresse": "Address",
-    "joindre": "Reach us",
-    "horaires": "Opening hours",
-    "visites": "Viewings are booked online, 7 days a week, from each property page.",
-    "agentTitre": "A question about a property?",
-    "agentTexte": "Every listing has its agent: open the property page to write to them directly or book a viewing."
+    "sousTitre": "A question, a property to sell or to let? Write to us, we answer by e-mail.",
+    "nom": "Full name",
+    "telephone": "Phone (optional)",
+    "sujet": "Subject",
+    "message": "Your message",
+    "envoyer": "Send the message",
+    "envoye": "Thank you, your message has been sent. The agency will answer by e-mail.",
+    "autre": "Send another message",
+    "emailInvalide": "Invalid e-mail address",
+    "donnees": "Your details are only used to answer you. See the",
+    "agentTexte": "For a question about a specific property, write directly to its agent from the property page:"
   }
 }

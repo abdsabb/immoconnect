@@ -176,6 +176,12 @@
               "Bekeken pagina's, herkomst, type toestel, acties (afspraak, bericht, inschrijving); ingekort IP-adres",
               "Gerechtvaardigd belang: de site verbeteren",
               "Anonieme statistieken, op de server van de site"
+            ],
+            [
+              "Contactformulier",
+              "Naam, e-mailadres, telefoon (optioneel), bericht, IP-adres",
+              "Precontractuele maatregelen op uw verzoek",
+              "Tot de aanvraag behandeld is, daarna archivering"
             ]
           ]
         }
