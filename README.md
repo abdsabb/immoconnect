@@ -199,6 +199,7 @@ page `/credits-photos`.
 | POST | `/api/v1/auth/login/code` · `/auth/refresh` · `/auth/logout` — code du second facteur, renouvellement par le cookie de session, déconnexion | public |
 | POST | `/api/v1/auth/mot-de-passe-oublie` · `/auth/reinitialisation` · `/auth/activation` · `/auth/activation/renvoi` — liens à usage unique reçus par e-mail | public |
 | GET | `/api/v1/configuration` — options publiques : activation, double facteur, boîte de démonstration, identité de l'agence et langues actives (A5) | public |
+| POST | `/api/v1/contact` — formulaire de contact : demande enregistrée et transmise par e-mail à l'agence (5 par heure et par IP) | public |
 | GET | `/api/v1/auth/me/export` — toutes mes données en JSON (portabilité, RGPD) | JWT |
 | GET / PATCH / DELETE | `/api/v1/auth/me` — profil, modification, désinscription (soft delete RA11) | JWT |
 | PUT | `/api/v1/auth/me/mot-de-passe` | JWT |
@@ -226,6 +227,7 @@ page `/credits-photos`.
 | GET / POST / PATCH | `/api/v1/admin/cles-api` · `/cles-api/{id}/revoquer` — clés API (RA12) | JWT admin, niveau 2 |
 | GET | `/api/v1/admin/biens` · `/admin/biens/{id}` — annonces de tous les agents ; modification par `PUT /biens/{id}` | JWT admin, niveau 2 |
 | GET | `/api/v1/admin/agents/{agentId}/conversations` · `/conversations/{membreId}` — messagerie d'un agent, en lecture seule, consultation journalisée | JWT admin, niveau 2 |
+| GET / PATCH | `/api/v1/admin/contacts` · `/contacts/{id}/traiter` — demandes du formulaire de contact | JWT admin, niveau 2 |
 | GET / PUT | `/api/v1/admin/parametres` — nom, coordonnées, horaires de l'agence, langues actives (A5, A6) | JWT admin, niveau 2 |
 | POST / PUT / DELETE | `/api/v1/admin/categories` · `/admin/articles` · `/admin/traductions/{cle}` | JWT admin, niveau 1 |
 | GET | `/api/v1/flux/articles` · `/flux/biens?typeOffre=` — flux RSS 2.0 des derniers articles et des dernières annonces | public |
