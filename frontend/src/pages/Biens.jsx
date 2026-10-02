@@ -14,7 +14,7 @@ const TRI_PAR_DEFAUT = 'publieLe,desc'
 const TRIS = { [TRI_PAR_DEFAUT]: 'triRecent', 'prix,asc': 'triPrixAsc', 'prix,desc': 'triPrixDesc', 'superficie,desc': 'triSurface' }
 const REASSURANCES = ['visites', 'gratuit', 'paiement', 'adresse']
 // Un bien hors ligne n'est jamais public ; « vendu » ne concerne qu'une vente, « loué » qu'une location
-const statutsPour = (typeOffre) => ['sous_option', 'vendu', 'loue'].filter((s) => s !== { vente: 'loue', location: 'vendu' }[typeOffre])
+const statutsPour = (typeOffre) => ['disponible', 'sous_option', 'vendu', 'loue'].filter((s) => s !== { vente: 'loue', location: 'vendu' }[typeOffre])
 
 function Champ({ libelle, children }) {
   return (
@@ -149,7 +149,7 @@ export default function Biens({ typeOffre: typeImpose }) {
               </Champ>
               <Champ libelle={t('bien.statutLabel')}>
                 <select name="statut" defaultValue={criteres.statut} className={champ}>
-                  <option value="">{t('statut.disponible')}</option>
+                  <option value="">{t('biens.tousLesStatuts')}</option>
                   {statutsPour(typeOffre).map((s) => <option key={s} value={s}>{t(`statut.${s}`)}</option>)}
                 </select>
               </Champ>

@@ -192,7 +192,7 @@ page `/credits-photos`.
 
 | Méthode | Endpoint | Accès |
 |---|---|---|
-| GET | `/api/v1/biens` — recherche multicritères paginée (type d'offre, ville, catégorie, prix, chambres, superficie, tri) | public |
+| GET | `/api/v1/biens` — recherche multicritères paginée (type d'offre, ville, catégorie, prix, chambres, superficie, statut, tri) ; sans statut : disponibles, sous option, vendus et loués | public |
 | GET | `/api/v1/biens/{id}` — détail, photos, agent (adresse exacte masquée) | public |
 | GET | `/api/v1/traductions/{fr\|nl\|en}` — dictionnaire d'interface | public |
 | POST | `/api/v1/auth/register` · `/api/v1/auth/login` — inscription (202 si activation par e-mail), connexion (202 et défi si second facteur) | public |
@@ -205,7 +205,7 @@ page `/credits-photos`.
 | GET | `/api/v1/biens/{id}/creneaux` — créneaux de visite libres, standard et premium | JWT membre |
 | GET | `/api/v1/rendez-vous` — mes visites (membre) ou mon agenda (agent) | JWT |
 | POST | `/api/v1/rendez-vous` — réserver un créneau (409 si le créneau vient d'être pris) | JWT membre |
-| PATCH | `/api/v1/rendez-vous/{id}/confirmer` · `/honorer` | JWT agent du rendez-vous |
+| PATCH | `/api/v1/rendez-vous/{id}/confirmer` · `/honorer` · `/classer` (demande dont la date est passée sans réponse) | JWT agent du rendez-vous |
 | PATCH | `/api/v1/rendez-vous/{id}/annuler` — rembourse un créneau premium payé (RA8), sauf annulation par le membre moins de 24 h avant la visite (RA14) | JWT membre ou agent du rendez-vous |
 | PUT / DELETE | `/api/v1/biens/{id}/favori` — ajouter ou retirer un favori (idempotent) | JWT membre |
 | GET | `/api/v1/membres/moi/favoris` — mes favoris, paginés | JWT membre |
@@ -218,7 +218,8 @@ page `/credits-photos`.
 | GET | `/api/v1/categories` — catégories de biens | public |
 | GET | `/api/v1/articles` · `/articles/{id}` · `/articles/categories` — blog, articles publiés uniquement (RA4) | public |
 | GET | `/api/v1/agents/moi/biens` — mes annonces et leur tableau de bord | JWT agent |
-| POST / PUT / DELETE | `/api/v1/biens` · `/biens/{id}` — créer, modifier, archiver une annonce (RA6) | JWT agent responsable |
+| POST / PUT / DELETE | `/api/v1/biens` · `/biens/{id}` — créer, modifier, mettre hors ligne une annonce (RA6) | JWT agent responsable |
+| DELETE | `/api/v1/biens/{id}/definitif` — supprimer définitivement une annonce sans historique de visites (RA10) | JWT agent responsable ou admin niveau 2 |
 | POST / DELETE / PUT | `/api/v1/biens/{id}/photos` · `/photos/{photoId}` · `/photos/{photoId}/couverture` | JWT agent responsable |
 | GET / POST / PATCH | `/api/v1/admin/utilisateurs` · `/admin/agents` · `/utilisateurs/{id}/activer` · `/desactiver` | JWT admin, niveau 2 |
 | GET | `/api/v1/admin/journal` · `/admin/statistiques` — journal d'audit filtrable, statistiques | JWT admin, niveau 2 |

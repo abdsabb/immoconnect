@@ -50,7 +50,8 @@ public class ConfigurationSecurite {
                 // Déclaré avant la règle publique des biens, qui couvrirait sinon /biens/{id}/creneaux.
                 .requestMatchers(HttpMethod.GET, "/api/v1/biens/*/creneaux").hasRole("MEMBRE")
                 .requestMatchers(HttpMethod.POST, "/api/v1/rendez-vous").hasRole("MEMBRE")
-                .requestMatchers(HttpMethod.PATCH, "/api/v1/rendez-vous/*/confirmer", "/api/v1/rendez-vous/*/honorer").hasRole("AGENT")
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/rendez-vous/*/confirmer", "/api/v1/rendez-vous/*/honorer",
+                        "/api/v1/rendez-vous/*/classer").hasRole("AGENT")
                 // Favoris : propres au membre connecté
                 .requestMatchers("/api/v1/biens/*/favori", "/api/v1/membres/moi/**").hasRole("MEMBRE")
                 // Paiement : le webhook est public mais authentifié par la signature de Stripe.

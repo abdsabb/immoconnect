@@ -82,6 +82,14 @@ public class AnnonceControleur {
         service.archiver(identifiant(jeton), id, adresseIp(http));
     }
 
+    @DeleteMapping("/biens/{id}/definitif")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Supprimer définitivement une annonce (agent responsable ou administrateur gestionnaire)",
+            description = "L'annonce, ses photos et ses favoris sont supprimés (RA10). Refusé (409) si l'annonce a un historique de visites : elle se met alors hors ligne.")
+    public void supprimer(@AuthenticationPrincipal Jwt jeton, @PathVariable Integer id, HttpServletRequest http) {
+        service.supprimer(identifiant(jeton), id, adresseIp(http));
+    }
+
     @PostMapping(path = "/biens/{id}/photos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Ajouter une photo (agent responsable)",

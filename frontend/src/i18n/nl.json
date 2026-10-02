@@ -123,7 +123,8 @@
       "gratuit": "Tijdstippen overdag gratis",
       "paiement": "Beveiligde betaling via Stripe",
       "adresse": "Adres meegedeeld zodra het bezoek bevestigd is"
-    }
+    },
+    "tousLesStatuts": "Alle statussen"
   },
   "bien": {
     "chambres_one": "slaapkamer",
@@ -301,7 +302,8 @@
     "action": {
       "confirmer": "Bevestigen",
       "annuler": "Annuleren",
-      "honorer": "Bezoek afgelegd"
+      "honorer": "Bezoek afgelegd",
+      "classer": "Zonder gevolg klasseren"
     },
     "confirmerAnnulation": "Deze afspraak annuleren?",
     "confirmerAnnulationPayee": "Deze afspraak annuleren? De betaling van het premium tijdslot wordt terugbetaald.",
@@ -313,7 +315,9 @@
     "vue": {
       "liste": "Lijst",
       "agenda": "Agenda"
-    }
+    },
+    "confirmerClassement": "Deze aanvraag zonder gevolg klasseren? Ze krijgt de status ‘Geannuleerd’.",
+    "demandeExpiree": "De datum van deze aanvraag is zonder antwoord verstreken: ze kan niet meer bevestigd worden."
   },
   "favori": {
     "titre": "Mijn favorieten",
@@ -402,7 +406,11 @@
     "vues": "Weergaven",
     "photosInitiales": "Foto’s van de advertentie (optioneel)",
     "photosInitialesAide": "JPEG of PNG, hoogstens 5 MB per foto; de eerste wordt de omslagfoto. Later kunt u nog foto’s toevoegen.",
-    "publierAussitot": "De advertentie meteen publiceren (minstens één foto nodig). Anders blijft ze offline tot u ze publiceert."
+    "publierAussitot": "De advertentie meteen publiceren (minstens één foto nodig). Anders blijft ze offline tot u ze publiceert.",
+    "toutes": "Alle",
+    "supprimer": "Verwijderen",
+    "supprimee": "Advertentie verwijderd.",
+    "confirmerSuppression": "« {{titre}} » definitief verwijderen? De advertentie en haar foto’s worden gewist; dit kan niet ongedaan worden gemaakt."
   },
   "blog": {
     "titre": "Blog",

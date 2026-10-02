@@ -32,6 +32,8 @@ function actionsPossibles(rdv, role) {
   const actions = []
   if (role === 'agent' && rdv.statut === 'demande' && futur) actions.push('confirmer')
   if (role === 'agent' && rdv.statut === 'confirme' && !futur) actions.push('honorer')
+  // Demande restée sans réponse jusqu'à sa date : elle ne se confirme plus, l'agent la classe
+  if (role === 'agent' && rdv.statut === 'demande' && !futur) actions.push('classer')
   if (actif && futur) actions.push('annuler')
   return actions
 }
@@ -69,6 +71,7 @@ export default function MesRendezVous() {
 
   const executer = (rdv, action) => {
     if (action === 'annuler' && !window.confirm(t(messageAnnulation(rdv, role)))) return
+    if (action === 'classer' && !window.confirm(t('rdv.confirmerClassement'))) return
     transition.mutate({ id: rdv.id, action })
   }
 
@@ -147,12 +150,13 @@ function Liste({ titre, vide, rendezVous, role, langue, executer, enCours }) {
               )}
             </dl>
 
+            {actionsPossibles(rdv, role).includes('classer') && <p className="mt-3 text-sm text-gray-600">{t('rdv.demandeExpiree')}</p>}
             {actionsPossibles(rdv, role).length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2">
                 {actionsPossibles(rdv, role).map((action) => (
                   <button key={action} type="button" disabled={enCours} onClick={() => executer(rdv, action)}
                     className={`rounded-lg px-4 py-2 font-titre font-semibold disabled:opacity-60 ${
-                      action === 'annuler' ? 'border-2 border-erreur text-erreur hover:bg-erreur/10' : 'bg-turquoise text-white hover:bg-turquoise/90'
+                      action === 'annuler' || action === 'classer' ? 'border-2 border-erreur text-erreur hover:bg-erreur/10' : 'bg-turquoise text-white hover:bg-turquoise/90'
                     }`}>
                     {t(`rdv.action.${action}`)}
                   </button>

@@ -5,6 +5,7 @@ import be.immoconnect.dto.BienDetail;
 import be.immoconnect.dto.BienResume;
 import be.immoconnect.dto.CritereRechercheBien;
 import be.immoconnect.dto.SiteInfos;
+import be.immoconnect.entities.StatutBien;
 import be.immoconnect.entities.TypeOffre;
 import be.immoconnect.exceptions.RessourceIntrouvableException;
 import java.math.BigDecimal;
@@ -45,19 +46,19 @@ public class ServiceRenduPublic {
     private static final Pattern NUMERO = Pattern.compile("^\\d{1,9}$");
 
     private static final Map<String, Map<String, String>> TEXTES = Map.of(
-            "fr", texte("accueil", "Accueil", "vente", "À vendre", "location", "À louer", "biens", "Tous nos biens", "blog", "Blog",
+            "fr", texte("sous_option", "Sous option", "vendu", "Vendu", "loue", "Loué", "accueil", "Accueil", "vente", "À vendre", "location", "À louer", "biens", "Tous nos biens", "blog", "Blog",
                     "chambres", "chambres", "mois", "/ mois", "voir", "Voir la fiche", "publie", "Publié le", "agent", "Votre agent",
                     "description", "Description", "localisation", "Localisation", "quartier", "L'adresse exacte est communiquée après la prise de rendez-vous.",
                     "accueilTitre", "Trouvez votre prochain chez-vous à Bruxelles", "accueilSousTitre", "Appartements, maisons et commerces à vendre et à louer",
                     "derniers", "Nos dernières annonces", "listeDesc", "annonces immobilières avec photos, prix, classe PEB et carte du quartier. Visite en ligne, en journée gratuite, en soirée et le week-end.",
                     "blogDesc", "Conseils pour acheter, vendre et louer à Bruxelles : guides, fiscalité, rénovation et PEB.", "rechercher", "Rechercher un bien", "toutesLangues", "Ce site existe en français, néerlandais et anglais."),
-            "nl", texte("accueil", "Home", "vente", "Te koop", "location", "Te huur", "biens", "Al onze panden", "blog", "Blog",
+            "nl", texte("sous_option", "Onder optie", "vendu", "Verkocht", "loue", "Verhuurd", "accueil", "Home", "vente", "Te koop", "location", "Te huur", "biens", "Al onze panden", "blog", "Blog",
                     "chambres", "slaapkamers", "mois", "/ maand", "voir", "Bekijk het pand", "publie", "Gepubliceerd op", "agent", "Uw makelaar",
                     "description", "Beschrijving", "localisation", "Ligging", "quartier", "Het exacte adres wordt meegedeeld na het maken van een afspraak.",
                     "accueilTitre", "Vind uw volgende thuis in Brussel", "accueilSousTitre", "Appartementen, huizen en handelspanden te koop en te huur",
                     "derniers", "Onze laatste advertenties", "listeDesc", "vastgoedadvertenties met foto's, prijs, EPC-klasse en buurtkaart. Bezoek online, overdag gratis, 's avonds en in het weekend.",
                     "blogDesc", "Advies om te kopen, verkopen en huren in Brussel: gidsen, fiscaliteit, renovatie en EPC.", "rechercher", "Een pand zoeken", "toutesLangues", "Deze site bestaat in het Frans, Nederlands en Engels."),
-            "en", texte("accueil", "Home", "vente", "For sale", "location", "For rent", "biens", "All our properties", "blog", "Blog",
+            "en", texte("sous_option", "Under option", "vendu", "Sold", "loue", "Let", "accueil", "Home", "vente", "For sale", "location", "For rent", "biens", "All our properties", "blog", "Blog",
                     "chambres", "bedrooms", "mois", "/ month", "voir", "View the listing", "publie", "Published on", "agent", "Your agent",
                     "description", "Description", "localisation", "Location", "quartier", "The exact address is given once a viewing is booked.",
                     "accueilTitre", "Find your next home in Brussels", "accueilSousTitre", "Flats, houses and shops for sale and for rent",
@@ -108,7 +109,7 @@ public class ServiceRenduPublic {
     /** Plan du site : pages publiques, biens disponibles et articles publiés, avec leurs versions linguistiques. */
     public List<String> cheminsDuPlan() {
         List<String> chemins = new ArrayList<>(List.of("/", "/a-vendre", "/a-louer", "/biens", "/blog"));
-        biens.rechercher(new CritereRechercheBien(null, null, null, null, null, null, null, null), PageRequest.of(0, 1000))
+        biens.rechercher(CritereRechercheBien.disponibles(), PageRequest.of(0, 1000))
                 .forEach(b -> chemins.add("/biens/" + b.id()));
         blog.publies(null, PageRequest.of(0, 1000)).forEach(a -> chemins.add("/blog/" + a.id()));
         return chemins;
@@ -117,7 +118,7 @@ public class ServiceRenduPublic {
     private Page_ accueil(String l) {
         SiteInfos site = parametres.site();
         Map<String, String> t = TEXTES.get(l);
-        Page<BienResume> derniers = biens.rechercher(new CritereRechercheBien(null, null, null, null, null, null, null, null),
+        Page<BienResume> derniers = biens.rechercher(CritereRechercheBien.disponibles(),
                 PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "publieLe", "id")));
         StringBuilder corps = new StringBuilder();
         corps.append("<section><h1>").append(e(t.get("accueilTitre"))).append("</h1><p>").append(e(t.get("accueilSousTitre"))).append("</p>")
@@ -221,7 +222,9 @@ public class ServiceRenduPublic {
             s.append("<li><a href=\"/biens/").append(b.id()).append("\">").append(e(b.titre())).append("</a> — ").append(e(t.get(b.typeOffre().name())))
                     .append(", ").append(e(b.categorie())).append(", ").append(e(b.ville())).append(" · ").append(b.superficie().stripTrailingZeros().toPlainString())
                     .append(" m² · ").append(b.nbChambres()).append(' ').append(e(t.get("chambres"))).append(" · PEB ").append(e(b.peb().etiquette()))
-                    .append(" · <strong>").append(prix(b.typeOffre(), b.prix(), t, "fr")).append("</strong></li>");
+                    .append(" · <strong>").append(prix(b.typeOffre(), b.prix(), t, "fr")).append("</strong>")
+                    // Un bien sous option, vendu ou loué reste affiché, avec son statut
+                    .append(b.statut() == StatutBien.disponible ? "" : " · " + e(t.get(b.statut().name()))).append("</li>");
         }
         return s.append("</ul>").toString();
     }

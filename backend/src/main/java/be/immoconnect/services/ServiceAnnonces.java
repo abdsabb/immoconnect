@@ -135,6 +135,25 @@ public class ServiceAnnonces {
         }
     }
 
+    /**
+     * Suppression définitive : l'annonce, ses photos (fichiers compris) et ses favoris disparaissent (RA10).
+     * Une annonce qui a un historique de visites ne se supprime pas — les rendez-vous et les paiements doivent
+     * rester lisibles : elle se met hors ligne.
+     */
+    @Transactional
+    public void supprimer(Integer agentId, Integer bienId, String ip) {
+        Bien bien = monAnnonce(agentId, bienId);
+        if (rendezVous.existsByBienId(bienId)) {
+            throw new RegleAnnonceException("Cette annonce a des visites dans son historique : elle ne peut pas être supprimée. Mettez-la hors ligne.");
+        }
+        List<String> fichiers = bien.getPhotos().stream().map(Photo::getUrl).toList();
+        Utilisateur auteur = auteur(agentId, bien);
+        biens.delete(bien);
+        biens.flush();
+        fichiers.forEach(stockage::supprimer);
+        audit.enregistrer(auteur, "suppression_bien", "bien#" + bienId, ip);
+    }
+
     @Transactional
     public BienGestion ajouterPhoto(Integer agentId, Integer bienId, byte[] fichier, String legende, String ip) {
         Bien bien = monAnnonce(agentId, bienId);

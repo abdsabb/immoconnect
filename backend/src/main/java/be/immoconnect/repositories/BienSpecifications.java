@@ -12,8 +12,14 @@ public final class BienSpecifications {
     private BienSpecifications() {
     }
 
+    /**
+     * Sans statut demandé, tout ce qui est en ligne : disponible, sous option, vendu, loué. Un bien hors ligne
+     * (« archive ») n'est jamais public (RA5).
+     */
     public static Specification<Bien> statut(StatutBien statut) {
-        return (racine, requete, cb) -> statut == null ? null : cb.equal(racine.get("statut"), statut);
+        return (racine, requete, cb) -> statut == null
+                ? cb.notEqual(racine.get("statut"), StatutBien.archive)
+                : cb.equal(racine.get("statut"), statut);
     }
 
     public static Specification<Bien> typeOffre(TypeOffre typeOffre) {

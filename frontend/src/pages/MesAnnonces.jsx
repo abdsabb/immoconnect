@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
-import { archiverAnnonce, chargerMesAnnonces } from '../services/annonces'
+import { archiverAnnonce, chargerMesAnnonces, supprimerAnnonce } from '../services/annonces'
 import { formatPrixBien } from '../services/biens'
 import { Photo } from '../components/CarteBien'
 import { erreursApi } from '../components/Formulaire'
@@ -22,6 +22,7 @@ export default function MesAnnonces() {
   const { utilisateur } = useAuth()
   const queryClient = useQueryClient()
   const [erreur, setErreur] = useState(null)
+  const [typeOffre, setTypeOffre] = useState('')
   const cle = ['annonces', utilisateur?.id]
 
   const { data: annonces, isPending, isError } = useQuery({ queryKey: cle, queryFn: chargerMesAnnonces })
@@ -31,6 +32,18 @@ export default function MesAnnonces() {
     onError: (e) => setErreur(erreursApi(e, t).message),
     onSettled: () => queryClient.invalidateQueries({ queryKey: cle }),
   })
+
+  const suppression = useMutation({
+    mutationFn: supprimerAnnonce,
+    onMutate: () => setErreur(null),
+    // Refus de l'API (annonce avec un historique de visites) : son explication est affichée telle quelle
+    onError: (e) => setErreur(e.response?.data?.detail ?? erreursApi(e, t).message),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: cle }),
+  })
+  const supprimer = (annonce) => {
+    if (window.confirm(t('annonce.confirmerSuppression', { titre: annonce.titre }))) suppression.mutate(annonce.id)
+  }
+  const affichees = (annonces ?? []).filter((a) => typeOffre === '' || a.typeOffre === typeOffre)
 
   const archiver = (annonce) => {
     if (window.confirm(t('annonce.confirmerArchivage', { titre: annonce.titre }))) archivage.mutate(annonce.id)
@@ -63,8 +76,16 @@ export default function MesAnnonces() {
           </dl>
 
           {annonces.length === 0 && <p className="mt-6 text-gray-600">{t('annonce.aucune')}</p>}
-          <ul className="mt-6 space-y-3">
-            {annonces.map((a) => (
+          <div role="group" aria-label={t('annonce.typeOffre')} className="mt-6 flex flex-wrap gap-2">
+            {['', 'vente', 'location'].map((type) => (
+              <button key={type} type="button" onClick={() => setTypeOffre(type)} aria-pressed={typeOffre === type}
+                className={`rounded-lg px-3 py-2 text-sm font-titre font-semibold ${typeOffre === type ? 'bg-nuit text-white' : 'bg-perle text-nuit hover:bg-gray-200'}`}>
+                {type === '' ? t('annonce.toutes') : t(`offre.${type}`)} ({annonces.filter((a) => type === '' || a.typeOffre === type).length})
+              </button>
+            ))}
+          </div>
+          <ul className="mt-4 space-y-3">
+            {affichees.map((a) => (
               <li key={a.id} className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex flex-wrap gap-4 items-center">
                 <Photo src={a.photos[0]?.url} alt={a.titre} className="w-28 h-20 rounded-lg shrink-0" />
                 <div className="flex-1 min-w-52">
@@ -90,6 +111,10 @@ export default function MesAnnonces() {
                         {t('annonce.archiver')}
                       </button>
                     )}
+                    <button type="button" disabled={suppression.isPending} onClick={() => supprimer(a)}
+                      className="rounded-lg px-3 py-2 text-sm font-titre font-semibold bg-erreur text-white hover:bg-erreur/90 disabled:opacity-60">
+                      {t('annonce.supprimer')}
+                    </button>
                   </div>
                 </div>
               </li>

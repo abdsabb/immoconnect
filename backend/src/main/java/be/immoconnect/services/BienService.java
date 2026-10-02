@@ -26,12 +26,13 @@ public class BienService {
     }
 
     public Page<BienResume> rechercher(CritereRechercheBien criteres, Pageable pagination) {
-        // RA5 : un bien hors ligne n'est pas public, la recherche ne doit pas permettre de le lister
+        // RA5 : un bien hors ligne n'est pas public, la recherche ne doit pas permettre de le lister. Les biens
+        // vendus ou loués restent visibles, avec leur statut : ils montrent l'activité de l'agence.
         if (criteres.statut() == StatutBien.archive) {
             throw new IllegalArgumentException("Statut de recherche inconnu : archive");
         }
         Specification<Bien> specification = Specification.allOf(
-                BienSpecifications.statut(criteres.statutEffectif()),
+                BienSpecifications.statut(criteres.statut()),
                 BienSpecifications.typeOffre(criteres.typeOffre()),
                 BienSpecifications.ville(criteres.ville()),
                 BienSpecifications.categorie(criteres.categorieId()),

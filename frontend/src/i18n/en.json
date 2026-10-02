@@ -123,7 +123,8 @@
       "gratuit": "Daytime slots are free",
       "paiement": "Secure payment by Stripe",
       "adresse": "Address given once the viewing is confirmed"
-    }
+    },
+    "tousLesStatuts": "All statuses"
   },
   "bien": {
     "chambres_one": "bedroom",
@@ -301,7 +302,8 @@
     "action": {
       "confirmer": "Confirm",
       "annuler": "Cancel",
-      "honorer": "Visit completed"
+      "honorer": "Visit completed",
+      "classer": "Close without follow-up"
     },
     "confirmerAnnulation": "Cancel this visit?",
     "confirmerAnnulationPayee": "Cancel this visit? The premium slot payment will be refunded.",
@@ -313,7 +315,9 @@
     "vue": {
       "liste": "List",
       "agenda": "Calendar"
-    }
+    },
+    "confirmerClassement": "Close this request without follow-up? Its status will become “Cancelled”.",
+    "demandeExpiree": "The date of this request has passed without an answer: it can no longer be confirmed."
   },
   "favori": {
     "titre": "My favourites",
@@ -402,7 +406,11 @@
     "vues": "Views",
     "photosInitiales": "Listing photos (optional)",
     "photosInitialesAide": "JPEG or PNG, 5 MB at most per photo; the first becomes the cover. More photos can be added later.",
-    "publierAussitot": "Publish the listing as soon as it is created (at least one photo needed). Otherwise it stays offline until you publish it."
+    "publierAussitot": "Publish the listing as soon as it is created (at least one photo needed). Otherwise it stays offline until you publish it.",
+    "toutes": "All",
+    "supprimer": "Delete",
+    "supprimee": "Listing deleted.",
+    "confirmerSuppression": "Permanently delete “{{titre}}”? The listing and its photos will be erased; this cannot be undone."
   },
   "blog": {
     "titre": "Blog",

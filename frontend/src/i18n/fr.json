@@ -123,7 +123,8 @@
       "gratuit": "Créneaux en journée gratuits",
       "paiement": "Paiement sécurisé par Stripe",
       "adresse": "Adresse communiquée dès la visite confirmée"
-    }
+    },
+    "tousLesStatuts": "Tous les statuts"
   },
   "bien": {
     "chambres_one": "chambre",
@@ -301,7 +302,8 @@
     "action": {
       "confirmer": "Confirmer",
       "annuler": "Annuler",
-      "honorer": "Visite effectuée"
+      "honorer": "Visite effectuée",
+      "classer": "Classer sans suite"
     },
     "confirmerAnnulation": "Annuler ce rendez-vous ?",
     "confirmerAnnulationPayee": "Annuler ce rendez-vous ? Le paiement du créneau premium sera remboursé.",
@@ -313,7 +315,9 @@
     "vue": {
       "liste": "Liste",
       "agenda": "Agenda"
-    }
+    },
+    "confirmerClassement": "Classer cette demande sans suite ? Elle passera au statut « Annulé ».",
+    "demandeExpiree": "La date de cette demande est passée sans réponse : elle ne peut plus être confirmée."
   },
   "favori": {
     "titre": "Mes favoris",
@@ -402,7 +406,11 @@
     "vues": "Vues",
     "photosInitiales": "Photos de l’annonce (facultatif)",
     "photosInitialesAide": "JPEG ou PNG, 5 Mo au plus par photo ; la première devient la couverture. D’autres photos pourront être ajoutées ensuite.",
-    "publierAussitot": "Publier l’annonce dès sa création (il faut au moins une photo). Sinon, elle reste hors ligne jusqu’à ce que vous la publiiez."
+    "publierAussitot": "Publier l’annonce dès sa création (il faut au moins une photo). Sinon, elle reste hors ligne jusqu’à ce que vous la publiiez.",
+    "toutes": "Toutes",
+    "supprimer": "Supprimer",
+    "supprimee": "Annonce supprimée.",
+    "confirmerSuppression": "Supprimer définitivement « {{titre}} » ? L’annonce et ses photos seront effacées ; cette action ne peut pas être annulée."
   },
   "blog": {
     "titre": "Blog",
