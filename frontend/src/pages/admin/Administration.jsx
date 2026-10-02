@@ -1,36 +1,13 @@
-import { NavLink, Outlet } from 'react-router'
+import { Outlet } from 'react-router'
 import { useTranslation } from 'react-i18next'
 
-const RUBRIQUES = [
-  { chemin: '/admin', cle: 'statistiques', fin: true },
-  { chemin: '/admin/utilisateurs', cle: 'comptes' },
-  { chemin: '/admin/annonces', cle: 'annonces' },
-  { chemin: '/admin/messagerie', cle: 'messagerie' },
-  { chemin: '/admin/contacts', cle: 'contacts' },
-  { chemin: '/admin/journal', cle: 'journal' },
-  { chemin: '/admin/articles', cle: 'articles' },
-  { chemin: '/admin/categories', cle: 'categories' },
-  { chemin: '/admin/traductions', cle: 'traductions' },
-  { chemin: '/admin/cles-api', cle: 'clesApi' },
-  { chemin: '/admin/parametres', cle: 'parametres' },
-  { chemin: '/admin/securite', cle: 'securite' },
-]
-
-// Gabarit du back-office de l'administrateur (contrainte de l'épreuve) : une rubrique par cas d'utilisation A1 à A8
+// Gabarit du back-office de l'administrateur (contrainte de l'épreuve) : une rubrique par cas d'utilisation A1 à A8.
+// Les rubriques sont dans le menu de gauche de l'espace connecté (EspaceCompte).
 export default function Administration() {
   const { t } = useTranslation()
   return (
     <section className="mx-auto max-w-6xl px-4 py-10">
       <h1 className="text-3xl font-bold text-nuit">{t('admin.titre')}</h1>
-      <nav aria-label={t('admin.titre')} className="mt-4 flex flex-wrap gap-2 border-b border-gray-200 pb-3">
-        {RUBRIQUES.map((r) => (
-          <NavLink key={r.chemin} to={r.chemin} end={r.fin}
-            className={({ isActive }) => `rounded-lg px-3 py-2 text-sm font-titre font-semibold ${
-              isActive ? 'bg-nuit text-white' : 'text-nuit hover:bg-perle'}`}>
-            {t(`admin.rubrique.${r.cle}`)}
-          </NavLink>
-        ))}
-      </nav>
       <div className="mt-6">
         <Outlet />
       </div>
