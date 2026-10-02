@@ -247,7 +247,7 @@ services d'exploitation les entourent.
 | `backend` | API Spring Boot, profil `prod`, utilisateur non root |
 | `db` | MySQL 8.4, sans port publié ; schéma et données de test appliqués par Flyway |
 | `caddy` | Point d'entrée HTTPS et en-têtes de sécurité : `/api`, `/storage` et Swagger vers le backend, le reste vers le frontend |
-| `mailpit` | Boîte de réception de démonstration sur `/courriels/` : capture les e-mails, n'en envoie aucun |
+| `mailpit` | Boîte de réception de démonstration sur `/courriels/` : capture les e-mails, n'en envoie aucun ; remplaçable par un autre serveur SMTP, par exemple Mailtrap (`SMTP_*` dans `.env`) |
 | `sauvegarde` | Sauvegarde de la base chaque nuit et des photos chaque dimanche, chiffrées |
 | `matomo`, `matomo-db` | Mesure d'audience auto-hébergée, sans cookie, sur `/matomo/` |
 

@@ -40,8 +40,9 @@ services:
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
       STRIPE_MOYENS: ${STRIPE_MOYENS:-card,bancontact}
       MAIL_FROM: ${MAIL_FROM:-no-reply@immoconnect.be}
-      # Les e-mails arrivent dans Mailpit : le site le dit aux personnes qui s'inscrivent
-      DEMO_BOITE_COURRIELS: ${DEMO_BOITE_COURRIELS:-/courriels/}
+      # Les e-mails arrivent dans Mailpit : le site le dit aux personnes qui s'inscrivent. Avec un autre serveur
+      # SMTP, mettre DEMO_BOITE_COURRIELS= (vide) dans .env : le lien vers la boîte de démonstration disparaît.
+      DEMO_BOITE_COURRIELS: ${DEMO_BOITE_COURRIELS-/courriels/}
       # Mesure d'audience Matomo : vide tant que le site n'est pas déclaré dans Matomo (voir le README)
       MATOMO_SITE_ID: ${MATOMO_SITE_ID:-}
       COOKIE_SECURE: "true"
