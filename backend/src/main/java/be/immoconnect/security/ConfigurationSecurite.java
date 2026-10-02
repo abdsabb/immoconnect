@@ -79,6 +79,8 @@ public class ConfigurationSecurite {
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/auth/login/code",
                         "/api/v1/auth/refresh", "/api/v1/auth/logout", "/api/v1/auth/mot-de-passe-oublie",
                         "/api/v1/auth/reinitialisation", "/api/v1/auth/activation", "/api/v1/auth/activation/renvoi").permitAll()
+                // Formulaire de contact : ouvert à tous les visiteurs
+                .requestMatchers(HttpMethod.POST, "/api/v1/contact").permitAll()
                 // Tout le reste exige un jeton valide
                 .anyRequest().authenticated())
             .oauth2ResourceServer(serveur -> serveur.jwt(jwt -> jwt.jwtAuthenticationConverter(convertisseur)))
