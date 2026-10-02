@@ -163,7 +163,11 @@
     "credits": "Crédits photos",
     "conditions": "Conditions générales",
     "fluxBiens": "Flux RSS des annonces",
-    "fluxBlog": "Flux RSS du blog"
+    "fluxBlog": "Flux RSS du blog",
+    "slogan": "Votre agence immobilière à Bruxelles",
+    "biens": "Nos biens",
+    "informations": "Informations",
+    "suivre": "Rester informé"
   },
   "auth": {
     "connexionTitre": "Se connecter",

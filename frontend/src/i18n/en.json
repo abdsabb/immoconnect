@@ -163,7 +163,11 @@
     "credits": "Photo credits",
     "conditions": "Terms and conditions",
     "fluxBiens": "Listings RSS feed",
-    "fluxBlog": "Blog RSS feed"
+    "fluxBlog": "Blog RSS feed",
+    "slogan": "Your estate agency in Brussels",
+    "biens": "Our properties",
+    "informations": "Information",
+    "suivre": "Stay informed"
   },
   "auth": {
     "connexionTitre": "Log in",

@@ -163,7 +163,11 @@
     "credits": "Fotocredits",
     "conditions": "Algemene voorwaarden",
     "fluxBiens": "RSS-feed van de advertenties",
-    "fluxBlog": "RSS-feed van de blog"
+    "fluxBlog": "RSS-feed van de blog",
+    "slogan": "Uw vastgoedkantoor in Brussel",
+    "biens": "Onze panden",
+    "informations": "Informatie",
+    "suivre": "Op de hoogte blijven"
   },
   "auth": {
     "connexionTitre": "Aanmelden",
