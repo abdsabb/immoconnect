@@ -12,7 +12,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import be.immoconnect.CourrielRecu;
 import be.immoconnect.TestcontainersConfiguration;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -22,7 +24,6 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mail.MailSendException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -64,21 +65,24 @@ class NotificationRendezVousTest {
         int id = corps(reserver(membre, premierCreneauStandard(membre)).andExpect(status().isCreated())).get("id").asInt();
 
         // L'agente a choisi le néerlandais dans son profil
-        SimpleMailMessage pourLAgente = dernierEnvoi();
-        assertThat(pourLAgente.getTo()).containsExactly(AGENTE);
-        assertThat(pourLAgente.getSubject()).startsWith("[ImmoConnect] Nieuwe bezoekaanvraag");
-        assertThat(pourLAgente.getText()).contains("Dag Aurore", "Emma Janssens wil", "Reden: Seconde visite");
+        CourrielRecu pourLAgente = dernierEnvoi();
+        assertThat(pourLAgente.destinataires()).containsExactly(AGENTE);
+        assertThat(pourLAgente.sujet()).startsWith("[ImmoConnect] Nieuwe bezoekaanvraag");
+        assertThat(pourLAgente.texte()).contains("Dag Aurore", "Emma Janssens wil", "Reden: Seconde visite");
 
         reset(messagerie);
         mvc.perform(patch("/api/v1/rendez-vous/" + id + "/confirmer").header("Authorization", "Bearer " + connecter(AGENTE)))
                 .andExpect(status().isOk());
 
         // Le membre s'est inscrit en anglais : il reçoit l'adresse exacte du bien
-        SimpleMailMessage pourLeMembre = dernierEnvoi();
-        assertThat(pourLeMembre.getTo()).containsExactly("emma.janssens@test.immoconnect.be");
-        assertThat(pourLeMembre.getSubject()).startsWith("[ImmoConnect] Your visit is confirmed");
-        assertThat(pourLeMembre.getText()).contains("Hello Emma", "Address: Rue Antoine Dansaert 88, 1180 Uccle",
+        CourrielRecu pourLeMembre = dernierEnvoi();
+        assertThat(pourLeMembre.destinataires()).containsExactly("emma.janssens@test.immoconnect.be");
+        assertThat(pourLeMembre.sujet()).startsWith("[ImmoConnect] Your visit is confirmed");
+        assertThat(pourLeMembre.texte()).contains("Hello Emma", "Address: Rue Antoine Dansaert 88, 1180 Uccle",
                 "Your agent: Aurore Fontaine");
+        // La version HTML met le sujet en titre, les libellés en gras et le lien en bouton
+        assertThat(pourLeMembre.html()).contains("<h1", "Your visit is confirmed", "<strong>Address</strong>: Rue Antoine Dansaert 88, 1180 Uccle",
+                "/rendez-vous\"", "View my visits</a>");
     }
 
     @Test
@@ -91,32 +95,32 @@ class NotificationRendezVousTest {
         mvc.perform(patch("/api/v1/rendez-vous/" + id + "/annuler").header("Authorization", "Bearer " + membre))
                 .andExpect(status().isOk());
 
-        SimpleMailMessage pourLAgente = dernierEnvoi();
-        assertThat(pourLAgente.getTo()).containsExactly(AGENTE);
-        assertThat(pourLAgente.getSubject()).startsWith("[ImmoConnect] Bezoek geannuleerd");
-        assertThat(pourLAgente.getText()).contains("Hugo Lefebvre heeft het bezoek");
+        CourrielRecu pourLAgente = dernierEnvoi();
+        assertThat(pourLAgente.destinataires()).containsExactly(AGENTE);
+        assertThat(pourLAgente.sujet()).startsWith("[ImmoConnect] Bezoek geannuleerd");
+        assertThat(pourLAgente.texte()).contains("Hugo Lefebvre heeft het bezoek");
     }
 
     /** E2 : l'envoi échoue, il est retenté trois fois, et le rendez-vous reste valide. */
     @Test
     void unePanneDeMessagerieNEmpechePasLaPriseDeRendezVous() throws Exception {
-        doThrow(new MailSendException("serveur SMTP injoignable")).when(messagerie).send(any(SimpleMailMessage.class));
+        doThrow(new MailSendException("serveur SMTP injoignable")).when(messagerie).send(any(MimeMessage.class));
         String membre = inscrire("Maes", "Lotte", "lotte.maes@test.immoconnect.be", "nl");
 
         int id = corps(reserver(membre, premierCreneauStandard(membre))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.statut").value("demande"))).get("id").asInt();
 
-        verify(messagerie, timeout(ATTENTE_MS).times(3)).send(any(SimpleMailMessage.class));
+        verify(messagerie, timeout(ATTENTE_MS).times(3)).send(any(MimeMessage.class));
         mvc.perform(get("/api/v1/rendez-vous").header("Authorization", "Bearer " + membre))
                 .andExpect(jsonPath("$[0].id").value(id))
                 .andExpect(jsonPath("$[0].statut").value("demande"));
     }
 
-    private SimpleMailMessage dernierEnvoi() {
-        ArgumentCaptor<SimpleMailMessage> message = ArgumentCaptor.forClass(SimpleMailMessage.class);
+    private CourrielRecu dernierEnvoi() {
+        ArgumentCaptor<MimeMessage> message = ArgumentCaptor.forClass(MimeMessage.class);
         verify(messagerie, timeout(ATTENTE_MS)).send(message.capture());
-        return message.getValue();
+        return CourrielRecu.de(message.getValue());
     }
 
     private ResultActions reserver(String jeton, String dateHeure) throws Exception {
