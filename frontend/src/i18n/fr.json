@@ -14,7 +14,8 @@
     "monProfil": "Mon profil",
     "annonces": "Mes annonces",
     "administration": "Administration",
-    "menu": "Menu"
+    "menu": "Menu",
+    "contact": "Contact"
   },
   "commun": {
     "chargement": "Chargement…",
@@ -646,5 +647,15 @@
     "copier": "Copier le lien",
     "copie": "Lien copié",
     "copierManuel": "Copiez l’adresse de l’annonce :"
+  },
+  "contact": {
+    "titre": "Contacter l’agence",
+    "sousTitre": "Votre agence immobilière à Bruxelles",
+    "adresse": "Adresse",
+    "joindre": "Nous joindre",
+    "horaires": "Horaires",
+    "visites": "Les visites se réservent en ligne, 7 jours sur 7, depuis la fiche de chaque bien.",
+    "agentTitre": "Une question sur un bien ?",
+    "agentTexte": "Chaque annonce a son agent : ouvrez la fiche du bien pour lui écrire directement ou prendre rendez-vous."
   }
 }

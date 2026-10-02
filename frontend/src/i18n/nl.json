@@ -14,7 +14,8 @@
     "monProfil": "Mijn profiel",
     "annonces": "Mijn advertenties",
     "administration": "Beheer",
-    "menu": "Menu"
+    "menu": "Menu",
+    "contact": "Contact"
   },
   "commun": {
     "chargement": "Laden…",
@@ -646,5 +647,15 @@
     "copier": "Link kopiëren",
     "copie": "Link gekopieerd",
     "copierManuel": "Kopieer het adres van de advertentie:"
+  },
+  "contact": {
+    "titre": "Contact met het kantoor",
+    "sousTitre": "Uw vastgoedkantoor in Brussel",
+    "adresse": "Adres",
+    "joindre": "Ons bereiken",
+    "horaires": "Openingsuren",
+    "visites": "Bezoeken boekt u online, 7 dagen op 7, vanaf de pagina van elk pand.",
+    "agentTitre": "Een vraag over een pand?",
+    "agentTexte": "Elke advertentie heeft haar makelaar: open de pagina van het pand om hem rechtstreeks te schrijven of een afspraak te maken."
   }
 }
