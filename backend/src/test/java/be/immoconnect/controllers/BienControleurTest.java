@@ -40,6 +40,25 @@ class BienControleurTest {
                 .andExpect(jsonPath("$.contenu[*].statut", Matchers.everyItem(Matchers.is("disponible"))));
     }
 
+    /** L'agence travaille à Bruxelles : les annonces de test de neuf villes hors Région ont été relocalisées (V13, V14). */
+    @Test
+    void aucuneAnnonceNEstSitueeHorsDeLaRegionBruxelloise() throws Exception {
+        for (String ville : new String[] {"Namur", "Nivelles", "Liège", "Louvain-la-Neuve", "Tervuren", "Wavre", "Mons", "Waterloo", "Charleroi"}) {
+            mvc.perform(get("/api/v1/biens").param("ville", ville))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.totalElements").value(0));
+        }
+        mvc.perform(get("/api/v1/biens").param("ville", "Koekelberg"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.contenu[0].codePostal").value("1081"))
+                .andExpect(jsonPath("$.contenu[0].titre", Matchers.containsString("Koekelberg")));
+        // Tous les codes postaux sont ceux de la Région de Bruxelles-Capitale (1000 à 1210)
+        mvc.perform(get("/api/v1/biens").param("taille", "100"))
+                .andExpect(jsonPath("$.contenu[*].codePostal", Matchers.everyItem(Matchers.matchesPattern("1[0-2][0-9]{2}"))));
+        mvc.perform(get("/api/v1/articles").param("taille", "50"))
+                .andExpect(jsonPath("$.contenu[*].titre", Matchers.everyItem(Matchers.not(Matchers.matchesPattern(".* à (Mons|Wavre|Charleroi|Waterloo|Tervuren|Namur|Nivelles|Liège|Louvain-la-Neuve).*")))));
+    }
+
     @Test
     void leFiltreParVilleNeRenvoieQueCetteVille() throws Exception {
         mvc.perform(get("/api/v1/biens").param("ville", "Ixelles"))
