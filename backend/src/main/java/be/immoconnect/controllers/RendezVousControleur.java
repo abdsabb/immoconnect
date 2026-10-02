@@ -87,6 +87,13 @@ public class RendezVousControleur {
         return service.annuler(id, identifiant(jeton), adresseIp(http));
     }
 
+    @PatchMapping("/rendez-vous/{id}/classer")
+    @Operation(summary = "Classer sans suite une demande dont la date est passée (agent du rendez-vous)",
+            description = "Transition demande → annule, possible uniquement après la date de la visite demandée ; aucun e-mail n'est envoyé.")
+    public RendezVousResume classer(@AuthenticationPrincipal Jwt jeton, @PathVariable Integer id, HttpServletRequest http) {
+        return service.classerSansSuite(id, identifiant(jeton), adresseIp(http));
+    }
+
     @PatchMapping("/rendez-vous/{id}/honorer")
     @Operation(summary = "Signaler qu'une visite a eu lieu (agent du rendez-vous)",
             description = "Transition confirme → honore, possible uniquement après la date de la visite.")

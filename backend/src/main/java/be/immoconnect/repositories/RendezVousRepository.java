@@ -28,6 +28,9 @@ public interface RendezVousRepository extends JpaRepository<RendezVous, Integer>
 
     boolean existsByMembreIdAndDateHeureAndStatutIn(Integer membreId, LocalDateTime dateHeure, Collection<StatutRendezVous> statuts);
 
+    /** Un bien qui a déjà reçu une demande de visite garde son historique : il ne se supprime pas. */
+    boolean existsByBienId(Integer bienId);
+
     boolean existsByBienIdAndStatutInAndDateHeureAfter(Integer bienId, Collection<StatutRendezVous> statuts, LocalDateTime apres);
 
     /** Visites à venir par bien et par statut, pour un agent : lignes [identifiant du bien, statut, nombre]. */

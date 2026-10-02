@@ -31,6 +31,11 @@ export async function archiverAnnonce(id) {
   await api.delete(`/biens/${id}`)
 }
 
+/** Suppression définitive (RA10) ; refusée par l'API si l'annonce a un historique de visites. */
+export async function supprimerAnnonce(id) {
+  await api.delete(`/biens/${id}/definitif`)
+}
+
 export async function ajouterPhoto(id, fichier, legende) {
   const formulaire = new FormData()
   formulaire.append('fichier', fichier)

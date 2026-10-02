@@ -212,6 +212,31 @@ class RendezVousControleurTest {
                 .andExpect(jsonPath("$.statut").value("honore"));
     }
 
+    /** Une demande restée sans réponse jusqu'à sa date ne reste pas « en attente » : l'agent la classe sans suite. */
+    @Test
+    void lAgenteClasseSansSuiteUneDemandeDontLaDateEstPassee() throws Exception {
+        String membre = connecter(emailDuMembre(7));
+        String agente = connecter(AGENTE_EMAIL);
+        int id = corps(reserver(membre, BIEN, premierCreneau(membre, "standard"), "Demande oubliée")
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.statut").value("demande"))).get("id").asInt();
+
+        // Tant que la date est à venir, la demande se confirme ou s'annule : elle ne se classe pas
+        mvc.perform(patch("/api/v1/rendez-vous/" + id + "/classer").header("Authorization", "Bearer " + agente))
+                .andExpect(status().isConflict());
+
+        jdbc.update("UPDATE rendez_vous SET date_heure = '2026-01-12 10:00:00' WHERE id = ?", id);
+        mvc.perform(patch("/api/v1/rendez-vous/" + id + "/confirmer").header("Authorization", "Bearer " + agente))
+                .andExpect(status().isConflict());
+        mvc.perform(patch("/api/v1/rendez-vous/" + id + "/classer").header("Authorization", "Bearer " + membre))
+                .andExpect(status().isForbidden());
+        mvc.perform(patch("/api/v1/rendez-vous/" + id + "/classer").header("Authorization", "Bearer " + agente))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statut").value("annule"));
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM journal_audit WHERE action = 'demande_sans_suite' AND entite = ?",
+                Integer.class, "rendez_vous#" + id)).isEqualTo(1);
+    }
+
     private ResultActions reserver(String jeton, int bienId, String dateHeure, String motif) throws Exception {
         String corps = "{\"bienId\":" + bienId + ",\"dateHeure\":\"" + dateHeure + "\""
                 + (motif == null ? "" : ",\"motif\":\"" + motif + "\"") + "}";

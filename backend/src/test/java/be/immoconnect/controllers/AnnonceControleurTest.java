@@ -108,6 +108,35 @@ class AnnonceControleurTest {
                 Integer.class, "bien#" + id)).isEqualTo(3);
     }
 
+    /** RA10 : une annonce se supprime avec ses photos ; celle qui a un historique de visites se met hors ligne. */
+    @Test
+    void uneAnnonceSansVisiteSeSupprimeDefinitivement() throws Exception {
+        String agent = connecter(AGENT);
+        int id = corps(creer(agent).andExpect(status().isCreated())).get("id").asInt();
+        televerser(agent, id, image("jpg", 800, 600), "salon.jpg", "Salon").andExpect(status().isCreated());
+
+        // Un collègue ne supprime pas l'annonce d'un autre, un membre encore moins
+        mvc.perform(delete("/api/v1/biens/" + id + "/definitif").header("Authorization", "Bearer " + connecter(AUTRE_AGENT)))
+                .andExpect(status().isForbidden());
+        mvc.perform(delete("/api/v1/biens/" + id + "/definitif").header("Authorization", "Bearer " + connecter(MEMBRE)))
+                .andExpect(status().isForbidden());
+
+        mvc.perform(delete("/api/v1/biens/" + id + "/definitif").header("Authorization", "Bearer " + agent))
+                .andExpect(status().isNoContent());
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM bien WHERE id = ?", Integer.class, id)).isZero();
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM photo WHERE bien_id = ?", Integer.class, id)).isZero();
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM journal_audit WHERE action = 'suppression_bien' AND entite = ?",
+                Integer.class, "bien#" + id)).isEqualTo(1);
+        mvc.perform(get("/api/v1/agents/moi/biens/" + id).header("Authorization", "Bearer " + agent)).andExpect(status().isNotFound());
+
+        // Une annonce qui a reçu des visites garde son historique : suppression refusée, avec la marche à suivre
+        Integer avecVisites = jdbc.queryForObject("SELECT MIN(b.id) FROM bien b JOIN utilisateur u ON u.id = b.agent_id "
+                + "WHERE u.email = ? AND EXISTS (SELECT 1 FROM rendez_vous r WHERE r.bien_id = b.id)", Integer.class, AGENT);
+        mvc.perform(delete("/api/v1/biens/" + avecVisites + "/definitif").header("Authorization", "Bearer " + agent))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail", Matchers.containsString("hors ligne")));
+    }
+
     @Test
     void unFichierQuiNEstPasUneImageEstRefuse() throws Exception {
         String agent = connecter(AGENT);

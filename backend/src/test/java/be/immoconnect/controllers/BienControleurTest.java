@@ -25,14 +25,19 @@ class BienControleurTest {
     @Autowired
     private MockMvc mvc;
 
+    /** Le site montre les biens disponibles, sous option, vendus et loués ; jamais un bien hors ligne (RA5). */
     @Test
-    void laRechercheRenvoieUnePageDeBiensDisponibles() throws Exception {
-        mvc.perform(get("/api/v1/biens").param("taille", "5").param("tri", "prix,asc"))
+    void laRechercheRenvoieLesBiensEnLigneQuelQueSoitLeurStatut() throws Exception {
+        mvc.perform(get("/api/v1/biens").param("taille", "100").param("tri", "prix,asc"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.contenu", Matchers.hasSize(5)))
-                .andExpect(jsonPath("$.totalElements", Matchers.greaterThan(5)))
-                .andExpect(jsonPath("$.contenu[0].statut").value("disponible"))
+                .andExpect(jsonPath("$.contenu", Matchers.hasSize(100)))
+                .andExpect(jsonPath("$.contenu[*].statut", Matchers.hasItems("disponible", "sous_option", "vendu", "loue")))
+                .andExpect(jsonPath("$.contenu[*].statut", Matchers.not(Matchers.hasItem("archive"))))
                 .andExpect(jsonPath("$.contenu[0].agent.nomComplet").isNotEmpty());
+        // Le filtre par statut reste disponible
+        mvc.perform(get("/api/v1/biens").param("statut", "disponible").param("taille", "50"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.contenu[*].statut", Matchers.everyItem(Matchers.is("disponible"))));
     }
 
     @Test
@@ -61,7 +66,8 @@ class BienControleurTest {
 
     @Test
     void leFiltreParTypeDOffreSepareLesVentesDesLocations() throws Exception {
-        mvc.perform(get("/api/v1/biens").param("typeOffre", "location").param("taille", "100"))
+        // Biens disponibles seulement : les annonces créées par les autres tests ne faussent pas le contrôle des loyers
+        mvc.perform(get("/api/v1/biens").param("typeOffre", "location").param("statut", "disponible").param("taille", "100"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.contenu", Matchers.hasSize(Matchers.greaterThanOrEqualTo(10))))
                 .andExpect(jsonPath("$.contenu[*].typeOffre", Matchers.everyItem(Matchers.is("location"))))

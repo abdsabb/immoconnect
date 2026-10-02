@@ -257,7 +257,7 @@ paths:
         - { name: prixMax, in: query, schema: { type: number }, example: 350000, description: Prix de vente ou loyer mensuel maximum }
         - { name: chambresMin, in: query, schema: { type: integer } }
         - { name: superficieMin, in: query, schema: { type: number } }
-        - { name: statut, in: query, schema: { type: string, enum: [disponible, sous_option, vendu, loue], default: disponible }, description: Un bien hors ligne (archive) n'est jamais listé }
+        - { name: statut, in: query, schema: { type: string, enum: [disponible, sous_option, vendu, loue] }, description: Sans ce paramètre, tous les biens en ligne sont listés (disponibles, sous option, vendus, loués) ; un bien hors ligne (archive) ne l'est jamais }
         - { name: page, in: query, schema: { type: integer, default: 0 } }
         - { name: taille, in: query, schema: { type: integer, default: 20, maximum: 100 } }
         - { name: tri, in: query, schema: { type: string, example: 'prix,asc' } }
@@ -327,6 +327,20 @@ paths:
       responses:
         '204': { description: Annonce archivée }
         '403': { $ref: '#/components/responses/ErreurDroits' }
+        '409': { $ref: '#/components/responses/ErreurConflit' }
+  /biens/{id}/definitif:
+    delete:
+      tags: [Biens]
+      summary: Supprimer définitivement une annonce (agent responsable ou administrateur gestionnaire)
+      description: >
+        L'annonce, ses photos et ses favoris sont supprimés (règle RA10). Une annonce qui a un historique de
+        visites n'est pas supprimée (409) : elle se met hors ligne par DELETE /biens/{id}.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '204': { description: Annonce supprimée }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
         '409': { $ref: '#/components/responses/ErreurConflit' }
   /biens/{id}/photos:
     parameters:
@@ -616,6 +630,21 @@ paths:
         '403': { $ref: '#/components/responses/ErreurDroits' }
         '409': { $ref: '#/components/responses/ErreurConflit' }
         '502': { $ref: '#/components/responses/ErreurPaiement' }
+  /rendez-vous/{id}/classer:
+    patch:
+      tags: [Rendez-vous]
+      summary: Classer sans suite une demande dont la date est passée (agent) — transition demande → annule
+      description: Une demande restée sans réponse jusqu'à sa date ne peut plus être confirmée (règle RA2) ; l'agent la classe. Aucun e-mail n'est envoyé.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Demande classée
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RendezVous' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+        '409': { $ref: '#/components/responses/ErreurConflit' }
   /rendez-vous/{id}/honorer:
     patch:
       tags: [Rendez-vous]

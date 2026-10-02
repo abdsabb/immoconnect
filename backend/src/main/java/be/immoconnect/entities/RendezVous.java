@@ -98,6 +98,18 @@ public class RendezVous {
         this.statut = StatutRendezVous.honore;
     }
 
+    /**
+     * Une demande restée sans réponse jusqu'à sa date ne peut plus être confirmée ni annulée (RA2) : l'agent la
+     * classe sans suite, pour qu'elle ne reste pas indéfiniment « en attente ».
+     */
+    public void classerSansSuite(LocalDateTime maintenant) {
+        exigerTransition(statut == StatutRendezVous.demande, "classer sans suite");
+        if (dateHeure.isAfter(maintenant)) {
+            throw new TransitionInterditeException("Cette demande est encore à venir : confirmez-la ou annulez-la (RA2)");
+        }
+        this.statut = StatutRendezVous.annule;
+    }
+
     public boolean estPremium() {
         return paiement != null;
     }

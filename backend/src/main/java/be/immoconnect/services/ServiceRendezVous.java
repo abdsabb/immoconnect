@@ -241,6 +241,16 @@ public class ServiceRendezVous {
         return parLAgent ? RendezVousResume.pourAgent(rdv) : RendezVousResume.pourMembre(rdv);
     }
 
+    /** Demande dont la date est passée sans réponse : l'agent la classe sans suite (demande -> annule), sans e-mail. */
+    @Transactional
+    public RendezVousResume classerSansSuite(Integer id, Integer agentId, String ip) {
+        RendezVous rdv = charger(id);
+        exigerAgentDuRendezVous(rdv, agentId);
+        rdv.classerSansSuite(maintenant());
+        audit.enregistrer(rdv.getAgent(), "demande_sans_suite", "rendez_vous#" + id, ip);
+        return RendezVousResume.pourAgent(rdv);
+    }
+
     /** Après la visite, l'agent signale qu'elle a eu lieu : confirme -> honore (RA2). */
     @Transactional
     public RendezVousResume honorer(Integer id, Integer agentId, String ip) {

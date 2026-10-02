@@ -15,8 +15,8 @@ public record CritereRechercheBien(
         BigDecimal superficieMin,
         StatutBien statut) {
 
-    /** Par défaut, la recherche publique ne renvoie que les biens disponibles (RA5). */
-    public StatutBien statutEffectif() {
-        return statut == null ? StatutBien.disponible : statut;
+    /** Critères de la vitrine : les biens disponibles seulement (accueil, flux des nouveautés). */
+    public static CritereRechercheBien disponibles() {
+        return new CritereRechercheBien(null, null, null, null, null, null, null, StatutBien.disponible);
     }
 }
