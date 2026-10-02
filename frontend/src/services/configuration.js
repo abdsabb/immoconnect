@@ -8,4 +8,6 @@ export const chargerConfiguration = () => api.get('/configuration').then((r) => 
 export const useConfiguration = () =>
   useQuery({ queryKey: ['configuration'], queryFn: chargerConfiguration, staleTime: Infinity })
 
+export const envoyerContact = (demande) => api.post('/contact', demande)
+
 export const exporterMesDonnees = () => api.get('/auth/me/export', { responseType: 'blob' }).then((r) => r.data)
