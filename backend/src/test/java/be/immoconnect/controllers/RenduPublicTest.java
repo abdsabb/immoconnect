@@ -134,7 +134,9 @@ class RenduPublicTest {
         mvc.perform(get("/rendu/contact"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(Matchers.containsString("<h1>Contacter l&#39;agence</h1>")))
-                .andExpect(content().string(Matchers.containsString("contact@immoconnect.be")))
+                .andExpect(content().string(Matchers.containsString("\"@type\":\"ContactPage\"")))
+                // Les coordonnées de l'agence ne figurent plus sur cette page : elle porte un formulaire
+                .andExpect(content().string(Matchers.not(Matchers.containsString("contact@immoconnect.be"))))
                 .andExpect(content().string(Matchers.containsString("<link rel=\"canonical\" href=\"https://www.immoconnect.test/contact\">")));
         mvc.perform(get("/rendu/blog/3"))
                 .andExpect(status().isOk())
