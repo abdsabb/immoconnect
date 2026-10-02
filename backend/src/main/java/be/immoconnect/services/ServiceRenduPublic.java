@@ -46,19 +46,19 @@ public class ServiceRenduPublic {
     private static final Pattern NUMERO = Pattern.compile("^\\d{1,9}$");
 
     private static final Map<String, Map<String, String>> TEXTES = Map.of(
-            "fr", texte("contact", "Contacter l'agence", "horaires", "Horaires", "sous_option", "Sous option", "vendu", "Vendu", "loue", "Loué", "accueil", "Accueil", "vente", "À vendre", "location", "À louer", "biens", "Tous nos biens", "blog", "Blog",
+            "fr", texte("contact", "Contacter l'agence", "contactTexte", "Une question, un bien à vendre ou à louer ? Écrivez à l'agence par le formulaire : elle vous répond par e-mail.", "sous_option", "Sous option", "vendu", "Vendu", "loue", "Loué", "accueil", "Accueil", "vente", "À vendre", "location", "À louer", "biens", "Tous nos biens", "blog", "Blog",
                     "chambres", "chambres", "mois", "/ mois", "voir", "Voir la fiche", "publie", "Publié le", "agent", "Votre agent",
                     "description", "Description", "localisation", "Localisation", "quartier", "L'adresse exacte est communiquée après la prise de rendez-vous.",
                     "accueilTitre", "Trouvez votre prochain chez-vous à Bruxelles", "accueilSousTitre", "Appartements, maisons et commerces à vendre et à louer",
                     "derniers", "Nos dernières annonces", "listeDesc", "annonces immobilières avec photos, prix, classe PEB et carte du quartier. Visite en ligne, en journée gratuite, en soirée et le week-end.",
                     "blogDesc", "Conseils pour acheter, vendre et louer à Bruxelles : guides, fiscalité, rénovation et PEB.", "rechercher", "Rechercher un bien", "toutesLangues", "Ce site existe en français, néerlandais et anglais."),
-            "nl", texte("contact", "Contact met het kantoor", "horaires", "Openingsuren", "sous_option", "Onder optie", "vendu", "Verkocht", "loue", "Verhuurd", "accueil", "Home", "vente", "Te koop", "location", "Te huur", "biens", "Al onze panden", "blog", "Blog",
+            "nl", texte("contact", "Contact met het kantoor", "contactTexte", "Een vraag, een pand te koop of te huur? Schrijf het kantoor via het formulier: het antwoordt per e-mail.", "sous_option", "Onder optie", "vendu", "Verkocht", "loue", "Verhuurd", "accueil", "Home", "vente", "Te koop", "location", "Te huur", "biens", "Al onze panden", "blog", "Blog",
                     "chambres", "slaapkamers", "mois", "/ maand", "voir", "Bekijk het pand", "publie", "Gepubliceerd op", "agent", "Uw makelaar",
                     "description", "Beschrijving", "localisation", "Ligging", "quartier", "Het exacte adres wordt meegedeeld na het maken van een afspraak.",
                     "accueilTitre", "Vind uw volgende thuis in Brussel", "accueilSousTitre", "Appartementen, huizen en handelspanden te koop en te huur",
                     "derniers", "Onze laatste advertenties", "listeDesc", "vastgoedadvertenties met foto's, prijs, EPC-klasse en buurtkaart. Bezoek online, overdag gratis, 's avonds en in het weekend.",
                     "blogDesc", "Advies om te kopen, verkopen en huren in Brussel: gidsen, fiscaliteit, renovatie en EPC.", "rechercher", "Een pand zoeken", "toutesLangues", "Deze site bestaat in het Frans, Nederlands en Engels."),
-            "en", texte("contact", "Contact the agency", "horaires", "Opening hours", "sous_option", "Under option", "vendu", "Sold", "loue", "Let", "accueil", "Home", "vente", "For sale", "location", "For rent", "biens", "All our properties", "blog", "Blog",
+            "en", texte("contact", "Contact the agency", "contactTexte", "A question, a property to sell or to let? Write to the agency through the form: it answers by e-mail.", "sous_option", "Under option", "vendu", "Sold", "loue", "Let", "accueil", "Home", "vente", "For sale", "location", "For rent", "biens", "All our properties", "blog", "Blog",
                     "chambres", "bedrooms", "mois", "/ month", "voir", "View the listing", "publie", "Published on", "agent", "Your agent",
                     "description", "Description", "localisation", "Location", "quartier", "The exact address is given once a viewing is booked.",
                     "accueilTitre", "Find your next home in Brussels", "accueilSousTitre", "Flats, houses and shops for sale and for rent",
@@ -135,18 +135,13 @@ public class ServiceRenduPublic {
         return new Page_(site.nom() + " — " + t.get("accueilTitre"), t.get("accueilSousTitre") + ". " + site.slogan() + ".", "/", l, jsonLd, corps.toString(), true, null);
     }
 
-    /** Coordonnées et horaires de l'agence, réglés par l'administrateur (cas A5). */
+    /** Page du formulaire de contact : son titre et son invitation, le formulaire étant monté par l'application. */
     private Page_ contact(String l) {
-        SiteInfos site = parametres.site();
         Map<String, String> t = TEXTES.get(l);
-        String corps = "<section><h1>" + e(t.get("contact")) + "</h1><p>" + e(site.slogan()) + "</p><h2>" + e(site.nom()) + "</h2><address>"
-                + e(site.adresse()) + "<br><a href=\"tel:" + e(site.telephone().replaceAll("[^+\\d]", "")) + "\">" + e(site.telephone()) + "</a><br><a href=\"mailto:"
-                + e(site.email()) + "\">" + e(site.email()) + "</a></address><h2>" + e(t.get("horaires")) + "</h2><p>" + e(site.horaires()) + "</p></section>";
-        String jsonLd = "{\"@context\":\"https://schema.org\",\"@type\":\"RealEstateAgent\",\"name\":" + j(site.nom())
-                + ",\"address\":" + j(site.adresse()) + ",\"telephone\":" + j(site.telephone()) + ",\"email\":" + j(site.email())
-                + ",\"openingHours\":" + j(site.horaires()) + "}";
-        return new Page_(t.get("contact") + " — " + site.nom(), site.nom() + ", " + site.adresse() + ". " + site.telephone() + ". " + site.horaires() + ".",
-                "/contact", l, jsonLd, corps, true, null);
+        String corps = "<section><h1>" + e(t.get("contact")) + "</h1><p>" + e(t.get("contactTexte")) + "</p></section>";
+        String jsonLd = "{\"@context\":\"https://schema.org\",\"@type\":\"ContactPage\",\"name\":" + j(t.get("contact"))
+                + ",\"about\":{\"@type\":\"RealEstateAgent\",\"name\":" + j(parametres.site().nom()) + "}}";
+        return new Page_(t.get("contact") + " — " + parametres.site().nom(), t.get("contactTexte"), "/contact", l, jsonLd, corps, true, null);
     }
 
     private Page_ liste(String l, TypeOffre type, String chemin) {

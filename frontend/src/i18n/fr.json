@@ -442,7 +442,8 @@
       "parametres": "Paramètres",
       "securite": "Sécurité",
       "annonces": "Annonces",
-      "messagerie": "Messagerie"
+      "messagerie": "Messagerie",
+      "contacts": "Contact"
     },
     "role": {
       "membre": "Membre",
@@ -600,6 +601,14 @@
       "choisirAgent": "Choisir un agent…",
       "aucune": "Cet agent n’a aucune conversation.",
       "choisirConversation": "Choisissez une conversation pour lire les messages."
+    },
+    "contact": {
+      "explication": "Messages reçus par le formulaire de contact. Répondez par e-mail en cliquant sur l’adresse, puis marquez la demande comme traitée.",
+      "enAttente": "À traiter",
+      "toutes": "Toutes",
+      "aucune": "Aucune demande dans cette liste.",
+      "traiter": "Marquer comme traitée",
+      "traiteePar": "Traitée par {{qui}} le {{quand}}"
     }
   },
   "erreur": {
@@ -654,12 +663,16 @@
   },
   "contact": {
     "titre": "Contacter l’agence",
-    "sousTitre": "Votre agence immobilière à Bruxelles",
-    "adresse": "Adresse",
-    "joindre": "Nous joindre",
-    "horaires": "Horaires",
-    "visites": "Les visites se réservent en ligne, 7 jours sur 7, depuis la fiche de chaque bien.",
-    "agentTitre": "Une question sur un bien ?",
-    "agentTexte": "Chaque annonce a son agent : ouvrez la fiche du bien pour lui écrire directement ou prendre rendez-vous."
+    "sousTitre": "Une question, un bien à vendre ou à louer ? Écrivez-nous, nous vous répondons par e-mail.",
+    "nom": "Nom et prénom",
+    "telephone": "Téléphone (facultatif)",
+    "sujet": "Sujet",
+    "message": "Votre message",
+    "envoyer": "Envoyer le message",
+    "envoye": "Merci, votre message est bien parti. L’agence vous répondra par e-mail.",
+    "autre": "Envoyer un autre message",
+    "emailInvalide": "Adresse e-mail invalide",
+    "donnees": "Vos coordonnées ne servent qu’à vous répondre. Voir la",
+    "agentTexte": "Pour une question sur un bien précis, écrivez directement à son agent depuis la fiche du bien :"
   }
 }

@@ -34,6 +34,8 @@ tags:
     description: >
       Back-office de l'administrateur. Rôle « admin » exigé, puis niveau d'accès : éditeur (1),
       gestionnaire (2) ou super-administrateur (3).
+  - name: Contact
+    description: Formulaire de contact du site
   - name: Configuration
     description: Réglages publics du site
 security:
@@ -232,6 +234,29 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/ExportDonnees' }
         '401': { $ref: '#/components/responses/ErreurAuthentification' }
+  /contact:
+    post:
+      tags: [Contact]
+      summary: Envoyer un message à l'agence
+      description: Ouvert à tous. La demande est enregistrée, transmise par e-mail à l'agence et suivie dans le back-office. Cinq messages par heure et par adresse IP.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nom, email, sujet, message]
+              properties:
+                nom: { type: string, maxLength: 100 }
+                email: { type: string, format: email, maxLength: 150 }
+                telephone: { type: string, maxLength: 30, nullable: true }
+                sujet: { type: string, maxLength: 150 }
+                message: { type: string, maxLength: 3000 }
+      responses:
+        '202': { description: Demande enregistrée }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+        '429': { $ref: '#/components/responses/ErreurTentatives' }
   /configuration:
     get:
       tags: [Configuration]
@@ -1206,6 +1231,41 @@ paths:
                 type: array
                 items: { $ref: '#/components/schemas/Message' }
         '403': { $ref: '#/components/responses/ErreurDroits' }
+  /admin/contacts:
+    get:
+      tags: [Administration]
+      summary: Demandes du formulaire de contact (gestionnaire)
+      parameters:
+        - { name: enAttente, in: query, schema: { type: boolean, default: false }, description: Ne garder que les demandes sans réponse }
+        - { name: page, in: query, schema: { type: integer, default: 0 } }
+        - { name: taille, in: query, schema: { type: integer, default: 20, maximum: 100 } }
+      responses:
+        '200':
+          description: De la plus récente à la plus ancienne
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contenu: { type: array, items: { $ref: '#/components/schemas/DemandeContact' } }
+                  page: { type: integer }
+                  taille: { type: integer }
+                  totalElements: { type: integer }
+                  totalPages: { type: integer }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+  /admin/contacts/{id}/traiter:
+    patch:
+      tags: [Administration]
+      summary: Marquer une demande de contact comme traitée (gestionnaire)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Demande traitée
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DemandeContact' }
+        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
   /admin/parametres:
     get:
       tags: [Administration]
@@ -1470,6 +1530,19 @@ components:
             email: { type: string, format: email }
             horaires: { type: string }
             languesActives: { type: array, items: { type: string, enum: [fr, nl, en] } }
+    DemandeContact:
+      type: object
+      properties:
+        id: { type: integer }
+        nom: { type: string }
+        email: { type: string, format: email }
+        telephone: { type: string, nullable: true }
+        sujet: { type: string }
+        message: { type: string }
+        creeLe: { type: string, format: date-time }
+        traitee: { type: boolean }
+        traiteLe: { type: string, format: date-time, nullable: true }
+        traitePar: { type: string, nullable: true }
     AlerteSecurite:
       type: object
       properties:

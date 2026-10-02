@@ -6,6 +6,7 @@ const RUBRIQUES = [
   { chemin: '/admin/utilisateurs', cle: 'comptes' },
   { chemin: '/admin/annonces', cle: 'annonces' },
   { chemin: '/admin/messagerie', cle: 'messagerie' },
+  { chemin: '/admin/contacts', cle: 'contacts' },
   { chemin: '/admin/journal', cle: 'journal' },
   { chemin: '/admin/articles', cle: 'articles' },
   { chemin: '/admin/categories', cle: 'categories' },

@@ -36,6 +36,7 @@ const Traductions = lazy(() => import('./pages/admin/Traductions'))
 const ClesApi = lazy(() => import('./pages/admin/ClesApi'))
 const AnnoncesAgents = lazy(() => import('./pages/admin/AnnoncesAgents'))
 const MessagerieAgents = lazy(() => import('./pages/admin/MessagerieAgents'))
+const DemandesContact = lazy(() => import('./pages/admin/DemandesContact'))
 const Parametres = lazy(() => import('./pages/admin/Parametres'))
 const Alertes = lazy(() => import('./pages/admin/Alertes'))
 
@@ -97,6 +98,7 @@ export default function App() {
             <Route path="annonces" element={<AnnoncesAgents />} />
             <Route path="annonces/:id" element={<AnnonceFormulaire key="supervision" />} />
             <Route path="messagerie" element={<MessagerieAgents />} />
+            <Route path="contacts" element={<DemandesContact />} />
             <Route path="parametres" element={<Parametres />} />
             <Route path="securite" element={<Alertes />} />
           </Route>

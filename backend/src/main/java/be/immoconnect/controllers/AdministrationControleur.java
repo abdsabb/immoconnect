@@ -8,6 +8,7 @@ import be.immoconnect.dto.CategorieResume;
 import be.immoconnect.dto.CleApiResume;
 import be.immoconnect.dto.CompteResume;
 import be.immoconnect.dto.ConversationResume;
+import be.immoconnect.dto.DemandeContactResume;
 import be.immoconnect.dto.MessageResume;
 import be.immoconnect.dto.PageReponse;
 import be.immoconnect.dto.ParametreLigne;
@@ -23,6 +24,7 @@ import be.immoconnect.services.ServiceAnnonces;
 import be.immoconnect.services.ServiceCategories;
 import be.immoconnect.services.ServiceClesApi;
 import be.immoconnect.services.ServiceComptes;
+import be.immoconnect.services.ServiceContact;
 import be.immoconnect.services.ServiceJournal;
 import be.immoconnect.services.ServiceMessagerie;
 import be.immoconnect.services.ServiceParametres;
@@ -76,11 +78,14 @@ public class AdministrationControleur {
     private final ServiceAlertesSecurite alertes;
     private final ServiceAnnonces annonces;
     private final ServiceMessagerie messagerie;
+    private final ServiceContact contact;
 
     public AdministrationControleur(ServiceComptes comptes, ServiceJournal journal, ServiceStatistiques statistiques,
                                     ServiceCategories categories, ServiceClesApi clesApi, ServiceTraductions traductions,
                                     ServiceParametres parametres,
-                                    ServiceAlertesSecurite alertes, ServiceAnnonces annonces, ServiceMessagerie messagerie) {
+                                    ServiceAlertesSecurite alertes, ServiceAnnonces annonces, ServiceMessagerie messagerie,
+                                    ServiceContact contact) {
+        this.contact = contact;
         this.alertes = alertes;
         this.annonces = annonces;
         this.messagerie = messagerie;
@@ -167,6 +172,23 @@ public class AdministrationControleur {
     public List<MessageResume> conversation(@AuthenticationPrincipal Jwt jeton, @PathVariable Integer agentId,
                                             @PathVariable Integer membreId, HttpServletRequest http) {
         return messagerie.conversationDeLAgent(identifiant(jeton), agentId, membreId, adresseIp(http));
+    }
+
+    // ---------- Demandes du formulaire de contact ----------
+
+    @GetMapping("/contacts")
+    @Operation(summary = "Demandes de contact", description = "De la plus récente à la plus ancienne ; enAttente=true ne garde que celles sans réponse. Niveau 2.")
+    public PageReponse<DemandeContactResume> contacts(@AuthenticationPrincipal Jwt jeton,
+                                                      @RequestParam(defaultValue = "false") boolean enAttente,
+                                                      @RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "20") int taille) {
+        return PageReponse.depuis(contact.lister(identifiant(jeton), enAttente, PageRequest.of(Math.max(page, 0), Math.clamp(taille, 1, TAILLE_MAX))));
+    }
+
+    @PatchMapping("/contacts/{id}/traiter")
+    @Operation(summary = "Marquer une demande de contact comme traitée", description = "Journalisé au nom de l'administrateur. Niveau 2.")
+    public DemandeContactResume traiterContact(@AuthenticationPrincipal Jwt jeton, @PathVariable Integer id, HttpServletRequest http) {
+        return contact.traiter(identifiant(jeton), id, adresseIp(http));
     }
 
     // ---------- A4 — Journal d'audit ----------
