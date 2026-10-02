@@ -2,39 +2,10 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
-import { useConversations } from '../services/messages'
 import { useConfiguration } from '../services/configuration'
 import { demarrerMesure, pageVue } from '../services/mesure'
 
 const LANGUES = ['fr', 'nl', 'en']
-
-// Seconde barre, réservée au compte connecté : ses liens dépendent du rôle. La navigation
-// principale garde ainsi ses quatre entrées, quelle que soit la personne connectée.
-function BarreEspace({ role }) {
-  const { t } = useTranslation()
-  const { nonLus } = useConversations()
-  const lien = ({ isActive }) =>
-    `whitespace-nowrap px-3 py-2 text-sm font-semibold border-b-2 ${
-      isActive ? 'border-corail text-white' : 'border-transparent text-white/80 hover:text-white'
-    }`
-  return (
-    <nav aria-label={t('nav.profil')} className="bg-nuit border-t border-white/10">
-      <div className="mx-auto max-w-6xl px-4 flex gap-1 overflow-x-auto">
-        {role === 'agent' && <NavLink to="/annonces" className={lien}>{t('nav.annonces')}</NavLink>}
-        {role !== 'admin' && <NavLink to="/rendez-vous" className={lien}>{t(role === 'agent' ? 'nav.agenda' : 'nav.visites')}</NavLink>}
-        {role === 'membre' && <NavLink to="/favoris" className={lien}>{t('nav.favoris')}</NavLink>}
-        {role !== 'admin' && (
-          <NavLink to="/messages" className={lien}>
-            {t('nav.messages')}
-            {nonLus > 0 && <span className="ml-2 rounded-full bg-corail text-white text-xs font-bold px-2 py-0.5">{nonLus}</span>}
-          </NavLink>
-        )}
-        {role === 'admin' && <NavLink to="/admin" className={lien}>{t('nav.administration')}</NavLink>}
-        <NavLink to="/profil" className={lien}>{t('nav.monProfil')}</NavLink>
-      </div>
-    </nav>
-  )
-}
 
 /**
  * Entrée « Biens » de la navigation : un lien vers tout le catalogue, avec un sous-menu
@@ -137,15 +108,22 @@ export default function Layout() {
       <NavLink to="/blog" className={lien} onClick={fermer}>{contenu('nav.blog', 'nav.blog')}</NavLink>
       <NavLink to="/contact" className={lien} onClick={fermer}>{t('nav.contact')}</NavLink>
       {/* Sur téléphone, la connexion suit les quatre entrées dans le menu replié */}
-      {mobile && connexion('px-3 py-2 rounded-md text-left font-titre font-semibold text-corail')}
+      {mobile && connexion('px-3 py-2 rounded-md text-left font-titre font-semibold text-corail', true)}
     </>
   )
   // Connexion ou déconnexion : à droite de l'en-tête, à côté des langues (charte graphique)
-  function connexion(classe) {
+  function connexion(classe, mobile = false) {
     return estConnecte ? (
-      <button type="button" onClick={() => { fermer(); deconnecter().then(() => naviguer('/')) }} className={classe}>
-        {t('nav.deconnexion')} ({utilisateur?.prenom})
-      </button>
+      <>
+        {/* L'espace de chaque rôle a son propre menu, à gauche de ses pages : ce lien y mène depuis tout le site */}
+        <NavLink to={{ admin: '/admin', agent: '/annonces' }[utilisateur?.role] ?? '/rendez-vous'} onClick={fermer}
+          className={mobile ? classe : 'mr-2 rounded-lg border border-white/40 px-4 py-2 text-sm font-titre font-bold text-white hover:border-white'}>
+          {t('nav.profil')}
+        </NavLink>
+        <button type="button" onClick={() => { fermer(); deconnecter().then(() => naviguer('/')) }} className={classe}>
+          {t('nav.deconnexion')}
+        </button>
+      </>
     ) : (
       <NavLink to="/connexion" className={classe} onClick={fermer}>{contenu('nav.connexion', 'nav.connexion')}</NavLink>
     )
@@ -189,7 +167,6 @@ export default function Layout() {
         {menuOuvert && (
           <nav id="menu-mobile" aria-label="Navigation principale" className="flex flex-col border-t border-white/10 px-4 py-2 md:hidden">{liens(true)}</nav>
         )}
-        {estConnecte && <BarreEspace role={utilisateur?.role} />}
       </header>
 
       <main className="flex-1">

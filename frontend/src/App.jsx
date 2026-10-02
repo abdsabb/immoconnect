@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import Layout from './components/Layout'
 import RouteProtegee from './auth/RouteProtegee'
+import EspaceCompte from './components/EspaceCompte'
 import Accueil from './pages/Accueil'
 import Biens from './pages/Biens'
 import BienDetail from './pages/BienDetail'
@@ -70,21 +71,28 @@ export default function App() {
         <Route path="reinitialisation" element={<MotDePasseOublie />} />
         <Route path="activation" element={<Activation />} />
         <Route element={<RouteProtegee />}>
-          <Route path="profil" element={<Profil />} />
+          {/* La prise de rendez-vous prolonge la fiche du bien : elle garde toute la largeur */}
           <Route path="biens/:id/rendez-vous" element={<PriseRendezVous />} />
-          <Route path="rendez-vous" element={<MesRendezVous />} />
-          <Route path="favoris" element={<MesFavoris />} />
-          <Route path="messages" element={<Messagerie />} />
-          <Route path="messages/:interlocuteurId" element={<Messagerie />} />
+          {/* Espace connecté : menu à gauche, commun aux trois rôles */}
+          <Route element={<EspaceCompte />}>
+            <Route path="profil" element={<Profil />} />
+            <Route path="rendez-vous" element={<MesRendezVous />} />
+            <Route path="favoris" element={<MesFavoris />} />
+            <Route path="messages" element={<Messagerie />} />
+            <Route path="messages/:interlocuteurId" element={<Messagerie />} />
+          </Route>
         </Route>
         {/* Back-office de l'agent. La clé distingue création et modification : le formulaire repart de zéro. */}
         <Route element={<RouteProtegee roles={['agent']} />}>
-          <Route path="annonces" element={<MesAnnonces />} />
-          <Route path="annonces/nouvelle" element={<AnnonceFormulaire key="nouvelle" />} />
-          <Route path="annonces/:id" element={<AnnonceFormulaire key="existante" />} />
+          <Route element={<EspaceCompte />}>
+            <Route path="annonces" element={<MesAnnonces />} />
+            <Route path="annonces/nouvelle" element={<AnnonceFormulaire key="nouvelle" />} />
+            <Route path="annonces/:id" element={<AnnonceFormulaire key="existante" />} />
+          </Route>
         </Route>
         {/* Back-office de l'administrateur : une rubrique par cas d'utilisation */}
         <Route element={<RouteProtegee roles={['admin']} />}>
+          <Route element={<EspaceCompte />}>
           <Route path="admin" element={<Administration />}>
             <Route index element={<TableauDeBord />} />
             <Route path="utilisateurs" element={<Comptes />} />
@@ -101,6 +109,7 @@ export default function App() {
             <Route path="contacts" element={<DemandesContact />} />
             <Route path="parametres" element={<Parametres />} />
             <Route path="securite" element={<Alertes />} />
+          </Route>
           </Route>
         </Route>
         <Route path="*" element={<Biens />} />
