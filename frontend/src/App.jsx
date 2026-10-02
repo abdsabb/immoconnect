@@ -24,6 +24,7 @@ const CreditsPhotos = lazy(() => import('./pages/CreditsPhotos'))
 const PageLegale = lazy(() => import('./pages/PageLegale'))
 const MotDePasseOublie = lazy(() => import('./pages/MotDePasseOublie'))
 const Activation = lazy(() => import('./pages/Activation'))
+const Contact = lazy(() => import('./pages/Contact'))
 const Administration = lazy(() => import('./pages/admin/Administration'))
 const TableauDeBord = lazy(() => import('./pages/admin/TableauDeBord'))
 const Comptes = lazy(() => import('./pages/admin/Comptes'))
@@ -57,6 +58,7 @@ export default function App() {
         <Route path="biens/:id" element={<BienDetail />} />
         <Route path="blog" element={<Blog />} />
         <Route path="blog/:id" element={<Article />} />
+        <Route path="contact" element={<Contact />} />
         <Route path="credits-photos" element={<CreditsPhotos />} />
         <Route path="mentions-legales" element={<PageLegale key="mentions" page="mentions" />} />
         <Route path="confidentialite" element={<PageLegale key="confidentialite" page="confidentialite" />} />

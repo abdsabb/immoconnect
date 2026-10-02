@@ -14,7 +14,8 @@
     "monProfil": "My profile",
     "annonces": "My listings",
     "administration": "Administration",
-    "menu": "Menu"
+    "menu": "Menu",
+    "contact": "Contact"
   },
   "commun": {
     "chargement": "Loading…",
@@ -162,7 +163,11 @@
     "credits": "Photo credits",
     "conditions": "Terms and conditions",
     "fluxBiens": "Listings RSS feed",
-    "fluxBlog": "Blog RSS feed"
+    "fluxBlog": "Blog RSS feed",
+    "slogan": "Your estate agency in Brussels",
+    "biens": "Our properties",
+    "informations": "Information",
+    "suivre": "Stay informed"
   },
   "auth": {
     "connexionTitre": "Log in",
@@ -646,5 +651,15 @@
     "copier": "Copy link",
     "copie": "Link copied",
     "copierManuel": "Copy the address of the listing:"
+  },
+  "contact": {
+    "titre": "Contact the agency",
+    "sousTitre": "Your estate agency in Brussels",
+    "adresse": "Address",
+    "joindre": "Reach us",
+    "horaires": "Opening hours",
+    "visites": "Viewings are booked online, 7 days a week, from each property page.",
+    "agentTitre": "A question about a property?",
+    "agentTexte": "Every listing has its agent: open the property page to write to them directly or book a viewing."
   }
 }

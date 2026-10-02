@@ -165,7 +165,7 @@ les textes. Les pages du site déclarent les flux dans leur en-tête, et les aff
 ### Référencement : pages publiques rendues côté serveur
 
 Une application React renvoie par défaut une page vide que le navigateur remplit ensuite. Pour les moteurs de
-recherche, les pages publiques — accueil, `/a-vendre`, `/a-louer`, `/biens`, `/biens/{id}`, `/blog`, `/blog/{id}` —
+recherche, les pages publiques — accueil, `/a-vendre`, `/a-louer`, `/biens`, `/biens/{id}`, `/blog`, `/blog/{id}`, `/contact` —
 sont donc **rendues par le serveur** : Nginx les confie au backend (`/rendu/...`), qui complète l'`index.html` construit
 avec le titre, la description, la balise canonique, les balises `hreflang` (fr, nl, en, selon les langues actives), les
 données **Schema.org** (`RealEstateAgent`, `RealEstateListing`, `ItemList`, `Blog`, `BlogPosting`) et le contenu

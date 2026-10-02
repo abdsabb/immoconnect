@@ -131,6 +131,11 @@ class RenduPublicTest {
         mvc.perform(get("/rendu/blog"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(Matchers.containsString("\"@type\":\"Blog\"")));
+        mvc.perform(get("/rendu/contact"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Matchers.containsString("<h1>Contacter l&#39;agence</h1>")))
+                .andExpect(content().string(Matchers.containsString("contact@immoconnect.be")))
+                .andExpect(content().string(Matchers.containsString("<link rel=\"canonical\" href=\"https://www.immoconnect.test/contact\">")));
         mvc.perform(get("/rendu/blog/3"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(Matchers.containsString("\"@type\":\"BlogPosting\"")))

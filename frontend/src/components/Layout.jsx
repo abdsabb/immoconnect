@@ -91,7 +91,7 @@ function MenuBiens({ lien, contenu, fermer, mobile }) {
 }
 
 // Gabarit commun à toutes les pages : en-tête (logo, navigation à quatre entrées — Accueil, Biens,
-// Blog, Connexion —, sélecteur de langue) et pied de page, structure du site du livrable 10.
+// Blog, Contact —, sélecteur de langue et connexion à droite) et pied de page, structure du site du livrable 10.
 // L'entrée « Biens » mène au catalogue et déplie « À vendre » et « À louer ».
 export default function Layout() {
   const { t, i18n } = useTranslation()
@@ -128,21 +128,28 @@ export default function Layout() {
   const fermer = () => setMenuOuvert(false)
   const lien = ({ isActive }) =>
     `px-3 py-2 rounded-md font-titre font-semibold ${isActive ? 'text-corail' : 'text-white hover:text-turquoise'}`
+  const titrePied = 'font-titre text-xs font-bold uppercase tracking-wider text-white'
+  const lienPied = 'hover:text-white hover:underline'
   const liens = (mobile) => (
     <>
       <NavLink to="/" end className={lien} onClick={fermer}>{contenu('nav.accueil', 'nav.accueil')}</NavLink>
       <MenuBiens lien={lien} contenu={contenu} fermer={fermer} mobile={mobile} />
       <NavLink to="/blog" className={lien} onClick={fermer}>{contenu('nav.blog', 'nav.blog')}</NavLink>
-      {estConnecte ? (
-        <button type="button" onClick={() => { fermer(); deconnecter().then(() => naviguer('/')) }}
-          className="px-3 py-2 rounded-md text-left font-titre font-semibold text-white/80 hover:text-turquoise">
-          {t('nav.deconnexion')} ({utilisateur?.prenom})
-        </button>
-      ) : (
-        <NavLink to="/connexion" className={lien} onClick={fermer}>{contenu('nav.connexion', 'nav.connexion')}</NavLink>
-      )}
+      <NavLink to="/contact" className={lien} onClick={fermer}>{t('nav.contact')}</NavLink>
+      {/* Sur téléphone, la connexion suit les quatre entrées dans le menu replié */}
+      {mobile && connexion('px-3 py-2 rounded-md text-left font-titre font-semibold text-corail')}
     </>
   )
+  // Connexion ou déconnexion : à droite de l'en-tête, à côté des langues (charte graphique)
+  function connexion(classe) {
+    return estConnecte ? (
+      <button type="button" onClick={() => { fermer(); deconnecter().then(() => naviguer('/')) }} className={classe}>
+        {t('nav.deconnexion')} ({utilisateur?.prenom})
+      </button>
+    ) : (
+      <NavLink to="/connexion" className={classe} onClick={fermer}>{contenu('nav.connexion', 'nav.connexion')}</NavLink>
+    )
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -152,7 +159,8 @@ export default function Layout() {
             Immo<span className="text-corail">Connect</span>
           </NavLink>
           <nav aria-label="Navigation principale" className="hidden md:flex items-center gap-1">{liens(false)}</nav>
-          <div className="flex items-center gap-1" role="group" aria-label="Langue">
+          <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1" role="group" aria-label="Langue">
             {langues.map((l) => (
               <button
                 key={l}
@@ -166,6 +174,10 @@ export default function Layout() {
                 {l}
               </button>
             ))}
+            </div>
+            <span className="ml-2 hidden md:inline-flex">
+              {connexion('rounded-lg bg-corail px-4 py-2 text-sm font-titre font-bold text-white hover:bg-corail/90')}
+            </span>
             <button type="button" onClick={() => setMenuOuvert(!menuOuvert)} aria-expanded={menuOuvert} aria-controls="menu-mobile"
               aria-label={t('nav.menu')} className="ml-1 rounded p-2 text-white hover:text-turquoise md:hidden">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
@@ -184,24 +196,47 @@ export default function Layout() {
         <Outlet />
       </main>
 
-      <footer className="bg-nuit text-white/80 text-sm">
-        <div className="mx-auto max-w-6xl px-4 py-6 flex flex-wrap justify-between gap-2">
-          <span>
-            © {new Date().getFullYear()} {site?.nom ?? 'ImmoConnect'}
-            {site?.adresse && <span className="hidden sm:inline"> — {site.adresse}</span>}
-            {site?.telephone && <span className="hidden sm:inline"> · <a href={`tel:${site.telephone.replace(/ /g, '')}`} className="hover:text-white">{site.telephone}</a></span>}
-          </span>
-          <span className="flex gap-4">
-            {/* Liens internes : un lien ordinaire rechargerait la page et fermerait la session, gardée en mémoire */}
-            <NavLink to="/mentions-legales" className="hover:text-white">{contenu('footer.mentions', 'pied.mentions')}</NavLink>
-            <NavLink to="/confidentialite" className="hover:text-white">{contenu('footer.rgpd', 'pied.confidentialite')}</NavLink>
-            <NavLink to="/conditions" className="hover:text-white">{t('pied.conditions')}</NavLink>
-            <NavLink to="/credits-photos" className="hover:text-white">{t('pied.credits')}</NavLink>
+      <footer className="bg-nuit text-sm text-white/80">
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <NavLink to="/" className="font-titre text-xl font-extrabold tracking-tight text-white">
+              Immo<span className="text-corail">Connect</span>
+            </NavLink>
+            <p className="mt-3 max-w-xs leading-relaxed">{site?.slogan ?? t('pied.slogan')}</p>
+          </div>
+          {/* Liens internes : un lien ordinaire rechargerait la page et fermerait la session, gardée en mémoire */}
+          <nav aria-label={t('pied.biens')}>
+            <h2 className={titrePied}>{t('pied.biens')}</h2>
+            <ul className="mt-3 space-y-2">
+              <li><NavLink to="/a-vendre" className={lienPied}>{contenu('nav.vente', 'offre.vente')}</NavLink></li>
+              <li><NavLink to="/a-louer" className={lienPied}>{contenu('nav.location', 'offre.location')}</NavLink></li>
+              <li><NavLink to="/blog" className={lienPied}>{contenu('nav.blog', 'nav.blog')}</NavLink></li>
+              <li><NavLink to="/contact" className={lienPied}>{t('nav.contact')}</NavLink></li>
+            </ul>
+          </nav>
+          <nav aria-label={t('pied.informations')}>
+            <h2 className={titrePied}>{t('pied.informations')}</h2>
+            <ul className="mt-3 space-y-2">
+              <li><NavLink to="/mentions-legales" className={lienPied}>{contenu('footer.mentions', 'pied.mentions')}</NavLink></li>
+              <li><NavLink to="/confidentialite" className={lienPied}>{contenu('footer.rgpd', 'pied.confidentialite')}</NavLink></li>
+              <li><NavLink to="/conditions" className={lienPied}>{t('pied.conditions')}</NavLink></li>
+              <li><NavLink to="/credits-photos" className={lienPied}>{t('pied.credits')}</NavLink></li>
+            </ul>
+          </nav>
+          <nav aria-label={t('pied.suivre')}>
+            <h2 className={titrePied}>{t('pied.suivre')}</h2>
             {/* Flux RSS : des documents XML servis par l'API, ouverts à part */}
-            <a href="/api/v1/flux/biens" type="application/rss+xml" target="_blank" rel="noreferrer" className="hover:text-white">{t('pied.fluxBiens')}</a>
-            <a href="/api/v1/flux/articles" type="application/rss+xml" target="_blank" rel="noreferrer" className="hover:text-white">{t('pied.fluxBlog')}</a>
+            <ul className="mt-3 space-y-2">
+              <li><a href="/api/v1/flux/biens" type="application/rss+xml" target="_blank" rel="noreferrer" className={lienPied}>{t('pied.fluxBiens')}</a></li>
+              <li><a href="/api/v1/flux/articles" type="application/rss+xml" target="_blank" rel="noreferrer" className={lienPied}>{t('pied.fluxBlog')}</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div className="border-t border-white/10">
+          <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-2 px-4 py-4 text-xs text-white/60">
+            <span>© {new Date().getFullYear()} {site?.nom ?? 'ImmoConnect'}</span>
             <span>{t('pied.osm')}</span>
-          </span>
+          </div>
         </div>
       </footer>
     </div>
