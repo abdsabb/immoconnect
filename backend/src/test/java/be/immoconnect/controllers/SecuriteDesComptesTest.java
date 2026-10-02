@@ -10,7 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import be.immoconnect.CourrielRecu;
 import be.immoconnect.TestcontainersConfiguration;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.Cookie;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -24,7 +26,6 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -278,9 +279,9 @@ class SecuriteDesComptesTest {
         return mockingDetails(messagerie).getInvocations().stream()
                 .filter(invocation -> invocation.getMethod().getName().equals("send") && invocation.getArguments().length == 1)
                 .map(invocation -> invocation.getArgument(0))
-                .filter(SimpleMailMessage.class::isInstance).map(SimpleMailMessage.class::cast)
-                .filter(m -> m.getTo() != null && m.getTo().length > 0 && m.getTo()[0].equalsIgnoreCase(email))
-                .map(SimpleMailMessage::getText)
+                .filter(MimeMessage.class::isInstance).map(MimeMessage.class::cast).map(CourrielRecu::de)
+                .filter(m -> !m.destinataires().isEmpty() && m.destinataires().get(0).equalsIgnoreCase(email))
+                .map(CourrielRecu::texte)
                 .toList();
     }
 

@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import be.immoconnect.TestcontainersConfiguration;
+import jakarta.mail.internet.MimeMessage;
 import java.time.Duration;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,6 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -71,7 +71,7 @@ class DetectionIntrusionTest {
         assertThat(jdbc.queryForObject("SELECT detail FROM alerte_securite WHERE type = 'enumeration' AND ip = ?", String.class, attaquant))
                 .startsWith("3 comptes différents");
         // Le super-administrateur est prévenu par e-mail ; une seule alerte par heure pour la même adresse
-        verify(messagerie, atLeastOnce()).send(any(SimpleMailMessage.class));
+        verify(messagerie, atLeastOnce()).send(any(MimeMessage.class));
         connexion("c@essai.be", "mauvais", attaquant).andExpect(status().isTooManyRequests());
         assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM alerte_securite WHERE ip = ?", Integer.class, attaquant)).isEqualTo(1);
     }

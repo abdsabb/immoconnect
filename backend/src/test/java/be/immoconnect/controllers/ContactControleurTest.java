@@ -11,7 +11,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import be.immoconnect.CourrielRecu;
 import be.immoconnect.TestcontainersConfiguration;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,6 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -54,11 +55,14 @@ class ContactControleurTest {
                 """).andExpect(status().isAccepted());
 
         // L'agence est prévenue par e-mail, à l'adresse réglée dans les paramètres du site
-        ArgumentCaptor<SimpleMailMessage> courriel = ArgumentCaptor.forClass(SimpleMailMessage.class);
-        verify(messagerie, timeout(5000)).send(courriel.capture());
-        assertThat(courriel.getValue().getTo()).containsExactly("contact@immoconnect.be");
-        assertThat(courriel.getValue().getSubject()).contains("Estimation d'une maison");
-        assertThat(courriel.getValue().getText()).contains("Élise Martin", "elise.martin@mail.be", "estimation à Uccle");
+        ArgumentCaptor<MimeMessage> envoi = ArgumentCaptor.forClass(MimeMessage.class);
+        verify(messagerie, timeout(5000)).send(envoi.capture());
+        CourrielRecu courriel = CourrielRecu.de(envoi.getValue());
+        assertThat(courriel.destinataires()).containsExactly("contact@immoconnect.be");
+        assertThat(courriel.sujet()).contains("Estimation d'une maison");
+        assertThat(courriel.texte()).contains("Élise Martin", "elise.martin@mail.be", "estimation à Uccle");
+        // Version HTML : ce que le visiteur a saisi y entre échappé, jamais comme balise ni comme lien
+        assertThat(courriel.html()).contains("<strong>De</strong> : Élise Martin", "estimation à Uccle ?").doesNotContain("<script");
 
         // Le gestionnaire la retrouve dans le back-office et la marque comme traitée ; l'éditeur n'y a pas accès
         String gestionnaire = connecter("lotte.goossens@mail.be");
