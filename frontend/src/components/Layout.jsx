@@ -91,7 +91,7 @@ function MenuBiens({ lien, contenu, fermer, mobile }) {
 }
 
 // Gabarit commun à toutes les pages : en-tête (logo, navigation à quatre entrées — Accueil, Biens,
-// Blog, Connexion —, sélecteur de langue) et pied de page, structure du site du livrable 10.
+// Blog, Contact —, sélecteur de langue et connexion à droite) et pied de page, structure du site du livrable 10.
 // L'entrée « Biens » mène au catalogue et déplie « À vendre » et « À louer ».
 export default function Layout() {
   const { t, i18n } = useTranslation()
@@ -133,16 +133,21 @@ export default function Layout() {
       <NavLink to="/" end className={lien} onClick={fermer}>{contenu('nav.accueil', 'nav.accueil')}</NavLink>
       <MenuBiens lien={lien} contenu={contenu} fermer={fermer} mobile={mobile} />
       <NavLink to="/blog" className={lien} onClick={fermer}>{contenu('nav.blog', 'nav.blog')}</NavLink>
-      {estConnecte ? (
-        <button type="button" onClick={() => { fermer(); deconnecter().then(() => naviguer('/')) }}
-          className="px-3 py-2 rounded-md text-left font-titre font-semibold text-white/80 hover:text-turquoise">
-          {t('nav.deconnexion')} ({utilisateur?.prenom})
-        </button>
-      ) : (
-        <NavLink to="/connexion" className={lien} onClick={fermer}>{contenu('nav.connexion', 'nav.connexion')}</NavLink>
-      )}
+      <NavLink to="/contact" className={lien} onClick={fermer}>{t('nav.contact')}</NavLink>
+      {/* Sur téléphone, la connexion suit les quatre entrées dans le menu replié */}
+      {mobile && connexion('px-3 py-2 rounded-md text-left font-titre font-semibold text-corail')}
     </>
   )
+  // Connexion ou déconnexion : à droite de l'en-tête, à côté des langues (charte graphique)
+  function connexion(classe) {
+    return estConnecte ? (
+      <button type="button" onClick={() => { fermer(); deconnecter().then(() => naviguer('/')) }} className={classe}>
+        {t('nav.deconnexion')} ({utilisateur?.prenom})
+      </button>
+    ) : (
+      <NavLink to="/connexion" className={classe} onClick={fermer}>{contenu('nav.connexion', 'nav.connexion')}</NavLink>
+    )
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -152,7 +157,8 @@ export default function Layout() {
             Immo<span className="text-corail">Connect</span>
           </NavLink>
           <nav aria-label="Navigation principale" className="hidden md:flex items-center gap-1">{liens(false)}</nav>
-          <div className="flex items-center gap-1" role="group" aria-label="Langue">
+          <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1" role="group" aria-label="Langue">
             {langues.map((l) => (
               <button
                 key={l}
@@ -166,6 +172,10 @@ export default function Layout() {
                 {l}
               </button>
             ))}
+            </div>
+            <span className="ml-2 hidden md:inline-flex">
+              {connexion('rounded-lg bg-corail px-4 py-2 text-sm font-titre font-bold text-white hover:bg-corail/90')}
+            </span>
             <button type="button" onClick={() => setMenuOuvert(!menuOuvert)} aria-expanded={menuOuvert} aria-controls="menu-mobile"
               aria-label={t('nav.menu')} className="ml-1 rounded p-2 text-white hover:text-turquoise md:hidden">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
