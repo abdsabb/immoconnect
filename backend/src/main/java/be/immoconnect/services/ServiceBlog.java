@@ -11,6 +11,8 @@ import be.immoconnect.exceptions.DonneeInvalideException;
 import be.immoconnect.exceptions.RessourceIntrouvableException;
 import be.immoconnect.repositories.ArticleRepository;
 import be.immoconnect.repositories.CategorieArticleRepository;
+import be.immoconnect.stockage.ImagesBiens;
+import be.immoconnect.stockage.StockagePhotos;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
@@ -32,14 +34,18 @@ public class ServiceBlog {
     private final CategorieArticleRepository categories;
     private final AccesAdministrateur acces;
     private final ServiceAudit audit;
+    private final ImagesBiens images;
+    private final StockagePhotos stockage;
     private final Clock horloge;
 
     public ServiceBlog(ArticleRepository articles, CategorieArticleRepository categories, AccesAdministrateur acces,
-                       ServiceAudit audit, Clock horloge) {
+                       ServiceAudit audit, ImagesBiens images, StockagePhotos stockage, Clock horloge) {
         this.articles = articles;
         this.categories = categories;
         this.acces = acces;
         this.audit = audit;
+        this.images = images;
+        this.stockage = stockage;
         this.horloge = horloge;
     }
 
@@ -117,10 +123,41 @@ public class ServiceBlog {
         return ArticleVue.complet(article);
     }
 
+    /** L'image suit le même contrôle qu'une photo d'annonce : type lu dans le contenu, ré-encodage en JPEG. */
+    @Transactional
+    public ArticleVue definirImage(Integer administrateurId, Integer id, byte[] fichier, String ip) {
+        Administrateur administrateur = acces.exiger(administrateurId, AccesAdministrateur.EDITEUR);
+        Article article = charger(id);
+        String ancienne = article.getImageUrl();
+        article.setImageUrl(stockage.enregistrerCouverture(id, images.normaliser(fichier)));
+        articles.flush();
+        stockage.supprimer(ancienne);
+        audit.enregistrer(administrateur, "image_article", "article#" + id, ip);
+        return ArticleVue.complet(article);
+    }
+
+    @Transactional
+    public ArticleVue retirerImage(Integer administrateurId, Integer id, String ip) {
+        Administrateur administrateur = acces.exiger(administrateurId, AccesAdministrateur.EDITEUR);
+        Article article = charger(id);
+        String ancienne = article.getImageUrl();
+        if (ancienne != null) {
+            article.setImageUrl(null);
+            articles.flush();
+            stockage.supprimer(ancienne);
+            audit.enregistrer(administrateur, "retrait_image_article", "article#" + id, ip);
+        }
+        return ArticleVue.complet(article);
+    }
+
     @Transactional
     public void supprimer(Integer administrateurId, Integer id, String ip) {
         Administrateur administrateur = acces.exiger(administrateurId, AccesAdministrateur.EDITEUR);
-        articles.delete(charger(id));
+        Article article = charger(id);
+        String image = article.getImageUrl();
+        articles.delete(article);
+        articles.flush();
+        stockage.supprimer(image);
         audit.enregistrer(administrateur, "suppression_article", "article#" + id, ip);
     }
 

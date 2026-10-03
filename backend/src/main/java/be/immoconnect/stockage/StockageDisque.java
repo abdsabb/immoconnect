@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Stockage sur le disque du serveur (un volume Docker en production), sous
- * {dossier}/biens/{identifiant du bien}/{nom aléatoire}.jpg.
+ * {dossier}/biens/{identifiant du bien}/{nom aléatoire}.jpg et {dossier}/articles/{identifiant de l'article}/….
  * Le nom du fichier est généré par le serveur : rien de ce que l'utilisateur a saisi n'entre
  * dans le chemin, ce qui écarte toute remontée de répertoire.
  */
@@ -30,7 +30,16 @@ public class StockageDisque implements StockagePhotos {
 
     @Override
     public String enregistrer(Integer bienId, byte[] contenu) {
-        String relatif = "biens/" + bienId + "/" + UUID.randomUUID() + ".jpg";
+        return ecrire("biens/" + bienId, contenu);
+    }
+
+    @Override
+    public String enregistrerCouverture(Integer articleId, byte[] contenu) {
+        return ecrire("articles/" + articleId, contenu);
+    }
+
+    private String ecrire(String dossier, byte[] contenu) {
+        String relatif = dossier + "/" + UUID.randomUUID() + ".jpg";
         Path fichier = racine.resolve(relatif);
         try {
             Files.createDirectories(fichier.getParent());

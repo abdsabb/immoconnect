@@ -3,15 +3,20 @@ package be.immoconnect.controllers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import be.immoconnect.TestcontainersConfiguration;
 import be.immoconnect.config.ConfigurationHorloge;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
+import javax.imageio.ImageIO;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +25,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import tools.jackson.databind.JsonNode;
@@ -50,7 +56,11 @@ class BlogEtTraductionsTest {
                 .andExpect(jsonPath("$.contenu", Matchers.hasSize(50)))
                 .andExpect(jsonPath("$.contenu[*].statut", Matchers.everyItem(Matchers.is("publie"))))
                 .andExpect(jsonPath("$.contenu[0].extrait").isNotEmpty())
-                .andExpect(jsonPath("$.contenu[0].contenu").isEmpty());
+                .andExpect(jsonPath("$.contenu[0].contenu").isEmpty())
+                // Chaque article de test est illustré, et l'extrait est le chapeau, sans marque de mise en forme
+                .andExpect(jsonPath("$.contenu[*].imageUrl", Matchers.everyItem(Matchers.startsWith("/storage/articles/"))))
+                .andExpect(jsonPath("$.contenu[*].extrait", Matchers.everyItem(Matchers.not(Matchers.containsString("##")))))
+                .andExpect(jsonPath("$.contenu[0].minutesDeLecture").value(Matchers.greaterThanOrEqualTo(1)));
         // Les articles 1 (archivé) et 2 (brouillon) des données de test sont introuvables pour le public
         mvc.perform(get("/api/v1/articles/1")).andExpect(status().isNotFound());
         mvc.perform(get("/api/v1/articles/2")).andExpect(status().isNotFound());
@@ -122,6 +132,38 @@ class BlogEtTraductionsTest {
     }
 
     @Test
+    void lEditeurIllustreUnArticlePuisRetireSonImage() throws Exception {
+        String editeur = connecter(EDITEUR);
+        int id = corps(mvc.perform(post("/api/v1/admin/articles").header("Authorization", "Bearer " + editeur)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"titre\": \"Portes ouvertes à Uccle\", \"categorieId\": 6, \"contenu\": \"Venez visiter.\\n\\n## Le programme\\n\\n- Samedi\\n- Dimanche\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.imageUrl").isEmpty())
+                .andExpect(jsonPath("$.extrait").value("Venez visiter."))).get("id").asInt();
+
+        // L'image est contrôlée et ré-encodée comme une photo d'annonce ; un fichier qui n'est pas une image est refusé
+        televerser(editeur, id, "pas une image".getBytes()).andExpect(status().isUnprocessableContent())
+                .andExpect(jsonPath("$.champs.fichier").isNotEmpty());
+        String image = corps(televerser(editeur, id, image(1200, 800)).andExpect(status().isOk())).get("imageUrl").asString();
+        assertThat(image).startsWith("/storage/articles/" + id + "/").endsWith(".jpg");
+        mvc.perform(get(image)).andExpect(status().isOk()).andExpect(content().contentType(MediaType.IMAGE_JPEG));
+
+        // Une nouvelle image remplace la précédente, dont le fichier disparaît
+        String suivante = corps(televerser(editeur, id, image(900, 900)).andExpect(status().isOk())).get("imageUrl").asString();
+        assertThat(suivante).isNotEqualTo(image);
+        mvc.perform(get(image)).andExpect(status().isNotFound());
+
+        mvc.perform(delete("/api/v1/admin/articles/" + id + "/image").header("Authorization", "Bearer " + editeur))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.imageUrl").isEmpty());
+        mvc.perform(get(suivante)).andExpect(status().isNotFound());
+
+        // Un agent n'illustre pas le blog
+        televerser(connecter("sarah.dubois@mail.be"), id, image(1200, 800)).andExpect(status().isForbidden());
+        mvc.perform(delete("/api/v1/admin/articles/" + id).header("Authorization", "Bearer " + editeur)).andExpect(status().isNoContent());
+    }
+
+    @Test
     void laGestionDuBlogEstReserveeAuxAdministrateurs() throws Exception {
         mvc.perform(get("/api/v1/admin/articles")).andExpect(status().isUnauthorized());
         mvc.perform(post("/api/v1/admin/articles").header("Authorization", "Bearer " + connecter("sarah.dubois@mail.be"))
@@ -180,6 +222,18 @@ class BlogEtTraductionsTest {
         mvc.perform(put("/api/v1/admin/traductions/accueil.titre").header("Authorization", "Bearer " + connecter("alice.benali@mail.be"))
                         .contentType(MediaType.APPLICATION_JSON).content("{\"valeurs\": {\"fr\": \"Piraté\"}}"))
                 .andExpect(status().isForbidden());
+    }
+
+    private ResultActions televerser(String jeton, int id, byte[] contenu) throws Exception {
+        return mvc.perform(multipart("/api/v1/admin/articles/" + id + "/image")
+                .file(new MockMultipartFile("fichier", "couverture.jpg", "image/jpeg", contenu))
+                .header("Authorization", "Bearer " + jeton));
+    }
+
+    private static byte[] image(int largeur, int hauteur) throws Exception {
+        ByteArrayOutputStream sortie = new ByteArrayOutputStream();
+        ImageIO.write(new BufferedImage(largeur, hauteur, BufferedImage.TYPE_INT_RGB), "jpg", sortie);
+        return sortie.toByteArray();
     }
 
     private JsonNode corps(ResultActions reponse) throws Exception {

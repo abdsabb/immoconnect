@@ -2,6 +2,7 @@ package be.immoconnect.repositories;
 
 import be.immoconnect.entities.Article;
 import be.immoconnect.entities.StatutArticle;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,4 +25,12 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     Optional<Article> findWithDetailsById(Integer id);
 
     long countByCategorieId(Integer categorieId);
+
+    /** Couverture d'un article, avec sa catégorie : ce qu'il faut pour installer les images des données de test. */
+    record Couverture(Integer articleId, Integer categorieId, String url) {
+    }
+
+    @Query("select new be.immoconnect.repositories.ArticleRepository$Couverture(a.id, a.categorie.id, a.imageUrl) "
+            + "from Article a where a.imageUrl like concat(:prefixe, '%')")
+    List<Couverture> couvertures(String prefixe);
 }
