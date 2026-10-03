@@ -1,6 +1,6 @@
 # Photos de démonstration — crédits
 
-Ces photos illustrent les annonces des données de test. Elles viennent de
+Ces photos illustrent les annonces et les articles du blog des données de test. Elles viennent de
 [Wikimedia Commons](https://commons.wikimedia.org) et sont publiées sous licence libre.
 Chaque photo a été recadrée et réduite à 1080 × 720 pixels ; les plans sont posés sur fond blanc.
 Chaque photo modifiée reste sous la licence de l'original, indiquée ci-dessous.

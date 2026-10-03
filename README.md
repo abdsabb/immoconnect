@@ -30,7 +30,7 @@ documentée ainsi qu'un volet Open Data.
 │   └── src/main/resources/db/migration/   V1 = schéma (17 tables), V2 = données de test,
 │                                          V3 = expéditeur des messages, V4 = back-office administrateur,
 │                                          V5 = légendes des photos de test, V6 = biens à vendre ou à louer
-│   └── src/main/resources/photos-demo/    Photos des annonces de test (licences libres, voir CREDITS.md)
+│   └── src/main/resources/photos-demo/    Photos des annonces et des articles de test (licences libres, voir CREDITS.md)
 ├── frontend/                SPA React (Vite) — Dockerfile + nginx.conf
 ├── api/openapi.yaml         Spécification OpenAPI 3.0 de l'API (livrable 15)
 ├── docs/uml/                Sources PlantUML des diagrammes d'analyse (livrable 07) et du schéma BDD
@@ -184,6 +184,11 @@ de stockage, à partir de 112 photos de [Wikimedia Commons](https://commons.wiki
 l'application ; la photo est choisie d'après la légende (façade, séjour, cuisine…). Un fichier déjà présent
 n'est jamais remplacé, et une photo téléversée par un agent n'est pas concernée. `DEMO_PHOTOS=false` désactive
 cette étape.
+
+Les articles de test du blog reçoivent de la même façon une image de couverture, choisie d'après leur catégorie
+(migration V15). Depuis le back-office, l'éditeur téléverse la couverture d'un article ; elle est contrôlée et
+ré-encodée comme une photo d'annonce. Le texte d'un article reste du texte brut, avec deux marques en début de
+ligne : `## ` pour un intertitre, `- ` pour un élément de liste.
 
 Auteurs et licences : [CREDITS.md](backend/src/main/resources/photos-demo/CREDITS.md), repris sur le site à la
 page `/credits-photos`.
