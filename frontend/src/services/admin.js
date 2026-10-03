@@ -54,6 +54,12 @@ export const creerArticle = (article) => api.post('/admin/articles', article).th
 export const modifierArticle = (id, article) => api.put(`/admin/articles/${id}`, article).then(donnees)
 export const changerStatutArticle = (id, action) => api.patch(`/admin/articles/${id}/${action}`).then(donnees)
 export const supprimerArticle = (id) => api.delete(`/admin/articles/${id}`)
+export function definirImageArticle(id, fichier) {
+  const formulaire = new FormData()
+  formulaire.append('fichier', fichier)
+  return api.post(`/admin/articles/${id}/image`, formulaire).then(donnees)
+}
+export const retirerImageArticle = (id) => api.delete(`/admin/articles/${id}/image`).then(donnees)
 
 // V5 — blog public
 export const chargerArticles = (filtres) => api.get('/articles', { params: sansVide(filtres) }).then(donnees)
