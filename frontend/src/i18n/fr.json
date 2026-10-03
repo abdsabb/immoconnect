@@ -232,7 +232,7 @@
     "changerMotDePasse": "Changer le mot de passe",
     "motDePasseChange": "Mot de passe modifié.",
     "desinscription": "Supprimer mon compte",
-    "desinscriptionExplication": "Conformément au RGPD, vos données personnelles seront anonymisées et vos favoris supprimés. L'historique de vos rendez-vous et paiements est conservé sans identité (obligations comptables).",
+    "desinscriptionExplication": "Conformément au RGPD, vos données personnelles seront anonymisées et vos favoris supprimés. L'historique de vos rendez-vous et paiements est conservé sans identité (obligations comptables). Vos visites à venir seront annulées.",
     "supprimerCompte": "Supprimer définitivement mon compte",
     "confirmerDesinscription": "Confirmer la suppression de votre compte ? Cette action est irréversible.",
     "securiteEtChoix": "Sécurité et communications",

@@ -232,7 +232,7 @@
     "changerMotDePasse": "Change password",
     "motDePasseChange": "Password changed.",
     "desinscription": "Delete my account",
-    "desinscriptionExplication": "In line with the GDPR, your personal data will be anonymised and your favourites deleted. The history of your visits and payments is kept without identity (accounting obligations).",
+    "desinscriptionExplication": "In line with the GDPR, your personal data will be anonymised and your favourites deleted. The history of your visits and payments is kept without identity (accounting obligations). Your upcoming visits will be cancelled.",
     "supprimerCompte": "Permanently delete my account",
     "confirmerDesinscription": "Confirm the deletion of your account? This cannot be undone.",
     "securiteEtChoix": "Security and communications",
