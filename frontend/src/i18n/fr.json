@@ -428,7 +428,8 @@
     "aLaUne": "À la une",
     "lire": "Lire l’article",
     "lecture": "{{minutes}} min de lecture",
-    "aLireAussi": "À lire aussi"
+    "aLireAussi": "À lire aussi",
+    "partager": "Partager cet article"
   },
   "admin": {
     "titre": "Administration",

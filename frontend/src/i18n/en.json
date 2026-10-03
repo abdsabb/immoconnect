@@ -428,7 +428,8 @@
     "aLaUne": "Featured",
     "lire": "Read the article",
     "lecture": "{{minutes}} min read",
-    "aLireAussi": "Read also"
+    "aLireAussi": "Read also",
+    "partager": "Share this article"
   },
   "admin": {
     "titre": "Administration",

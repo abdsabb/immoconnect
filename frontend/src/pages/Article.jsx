@@ -42,7 +42,7 @@ export default function Article() {
         <MetaArticle article={article} className="mt-3 text-sm" />
         {article.imageUrl && <Photo src={article.imageUrl} alt="" className="mt-6 aspect-[16/9] w-full rounded-2xl" />}
         <ContenuArticle contenu={article.contenu} className="mt-8" />
-        <Partage titre={article.titre} className="mt-10 border-t border-gray-200 pt-6" />
+        <Partage titre={article.titre} libelle={t('blog.partager')} className="mt-10 border-t border-gray-200 pt-6" />
         <Link to="/blog" className="mt-8 inline-block font-semibold text-turquoise underline">‹ {t('blog.retour')}</Link>
       </article>
 

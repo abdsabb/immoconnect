@@ -428,7 +428,8 @@
     "aLaUne": "Uitgelicht",
     "lire": "Artikel lezen",
     "lecture": "{{minutes}} min leestijd",
-    "aLireAussi": "Lees ook"
+    "aLireAussi": "Lees ook",
+    "partager": "Dit artikel delen"
   },
   "admin": {
     "titre": "Beheer",
