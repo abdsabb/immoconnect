@@ -6,8 +6,9 @@ import { useTitrePage } from '../services/titre'
 import { cheminListe, rechercherBiens, TYPES_OFFRE } from '../services/biens'
 import { chargerCategories } from '../services/annonces'
 import { chargerConfigPaiement, formatMontant } from '../services/rendezVous'
-import { chargerArticles, formatDate } from '../services/admin'
+import { chargerArticles } from '../services/admin'
 import { useAuth } from '../auth/AuthContext'
+import CarteArticle from '../components/CarteArticle'
 import CarteBien from '../components/CarteBien'
 import photoBruxelles from '../assets/accueil-bruxelles.jpg'
 
@@ -178,14 +179,7 @@ export default function Accueil() {
           lien={<Link to="/blog" className={lienSection}>{t('accueil.blog.voirTout')}</Link>}>
           <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
             {articles.data.contenu.map((article) => (
-              <article key={article.id} className="flex flex-col gap-2 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                <p className="text-xs font-semibold uppercase tracking-wide text-turquoise">{article.categorie}</p>
-                <h3 className="font-titre font-bold leading-snug text-nuit">
-                  <Link to={`/blog/${article.id}`} className="hover:text-turquoise">{article.titre}</Link>
-                </h3>
-                <p className="text-sm text-gray-600">{article.extrait}</p>
-                <p className="mt-auto text-xs text-gray-500">{formatDate(article.publieLe, langue)} · {article.auteur}</p>
-              </article>
+              <CarteArticle key={article.id} article={article} niveau="h3" />
             ))}
           </div>
         </Section>
