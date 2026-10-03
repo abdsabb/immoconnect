@@ -34,6 +34,7 @@ documentée ainsi qu'un volet Open Data.
 ├── frontend/                SPA React (Vite) — Dockerfile + nginx.conf
 ├── api/openapi.yaml         Spécification OpenAPI 3.0 de l'API (livrable 15)
 ├── docs/uml/                Sources PlantUML des diagrammes d'analyse (livrable 07) et du schéma BDD
+├── docs/securite-owasp-top-10.md   Les dix risques de l'OWASP et la parade de chacun dans le code
 ├── .github/workflows/ci.yml Intégration continue
 ├── docker-compose.yml       Environnement de développement (MySQL 8.4 + Adminer + Mailpit)
 ├── docker-compose.prod.yml  Production : frontend, backend, MySQL + Caddy (HTTPS), Mailpit, sauvegardes, Matomo
