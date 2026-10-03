@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>be.immoconnect</groupId>
 	<artifactId>backend</artifactId>
-	<version>0.2.0-beta</version>
+	<version>1.0.0</version>
 	<name>immoconnect-backend</name>
 	<description>API REST ImmoConnect - plateforme web d&apos;agence immobiliere</description>
 	<url/>
