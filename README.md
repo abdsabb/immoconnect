@@ -34,6 +34,7 @@ documentée ainsi qu'un volet Open Data.
 ├── frontend/                SPA React (Vite) — Dockerfile + nginx.conf
 ├── api/openapi.yaml         Spécification OpenAPI 3.0 de l'API (livrable 15)
 ├── docs/uml/                Sources PlantUML des diagrammes d'analyse (livrable 07) et du schéma BDD
+├── docs/securite-owasp-top-10.md   Les dix risques de l'OWASP et la parade de chacun dans le code
 ├── .github/workflows/ci.yml Intégration continue
 ├── docker-compose.yml       Environnement de développement (MySQL 8.4 + Adminer + Mailpit)
 ├── docker-compose.prod.yml  Production : frontend, backend, MySQL + Caddy (HTTPS), Mailpit, sauvegardes, Matomo
@@ -141,7 +142,7 @@ Les photos téléversées sont enregistrées dans `backend/stockage/` (variable 
 - **Inscription** : acceptation des conditions générales obligatoire et horodatée (`cgu_acceptees_le`), consentement
   aux communications distinct.
 - **Droits RGPD** : accès et rectification (profil), portabilité (`GET /auth/me/export`, fichier JSON), effacement
-  (désinscription RA11).
+  (désinscription RA11 : identité anonymisée, visites à venir annulées, historique conservé).
 - **Supervision** : l'agence est une structure privée ; l'administrateur gestionnaire voit et modifie les annonces de
   tous les agents et lit leur messagerie (lecture seule, consultation journalisée).
 

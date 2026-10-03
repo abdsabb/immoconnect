@@ -1,6 +1,7 @@
 package be.immoconnect.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -241,6 +242,26 @@ class PaiementControleurTest {
         mvc.perform(post("/api/v1/paiements/intent").header("Authorization", "Bearer " + connecter("sarah.dubois@mail.be"))
                         .contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isForbidden());
+    }
+
+    /** RA11 et RA14 : le membre qui se désinscrit annule ses visites à venir ; payée plus de 24 h à l'avance, elle est remboursée. */
+    @Test
+    void laDesinscriptionAnnuleEtRembourseLaVisitePayeeAVenir() throws Exception {
+        String membre = corps(mvc.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"nom\":\"Partant\",\"prenom\":\"Nina\",\"email\":\"nina.partant@test.immoconnect.be\","
+                                + "\"motDePasse\":\"Visite-Bruxelles-2026!\",\"cguAcceptees\":true}"))
+                .andExpect(status().isCreated())).get("jeton").asString();
+        String creneau = premierCreneauPremiumRemboursable(membre);
+        JsonNode intention = preparer(membre, creneau);
+        payer(membre, intention, PasserelleSimulee.CARTE_ACCEPTEE).andExpect(status().isNoContent());
+        int rendezVous = corps(reserver(membre, creneau, intention.get("paymentIntentId").asString())
+                .andExpect(status().isCreated())).get("id").asInt();
+
+        mvc.perform(delete("/api/v1/auth/me").header("Authorization", "Bearer " + membre)).andExpect(status().isNoContent());
+
+        // La visite et son paiement restent dans l'historique : l'une annulée, l'autre remboursé
+        assertThat(jdbc.queryForObject("SELECT statut FROM rendez_vous WHERE id = ?", String.class, rendezVous)).isEqualTo("annule");
+        assertThat(jdbc.queryForObject("SELECT statut FROM paiement WHERE rendez_vous_id = ?", String.class, rendezVous)).isEqualTo("rembourse");
     }
 
     private JsonNode preparer(String jeton, String dateHeure) throws Exception {

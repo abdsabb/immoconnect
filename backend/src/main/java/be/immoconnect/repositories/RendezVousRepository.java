@@ -24,6 +24,10 @@ public interface RendezVousRepository extends JpaRepository<RendezVous, Integer>
     @EntityGraph(attributePaths = {"membre", "agent", "bien", "paiement"})
     Optional<RendezVous> findWithDetailsById(Integer id);
 
+    /** Visites d'un membre qui occupent encore un créneau après l'instant donné. */
+    @EntityGraph(attributePaths = {"membre", "agent", "bien", "paiement"})
+    List<RendezVous> findByMembreIdAndStatutInAndDateHeureAfter(Integer membreId, Collection<StatutRendezVous> statuts, LocalDateTime apres);
+
     boolean existsByAgentIdAndDateHeureAndStatutIn(Integer agentId, LocalDateTime dateHeure, Collection<StatutRendezVous> statuts);
 
     boolean existsByMembreIdAndDateHeureAndStatutIn(Integer membreId, LocalDateTime dateHeure, Collection<StatutRendezVous> statuts);

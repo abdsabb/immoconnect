@@ -26,15 +26,17 @@ public class ServiceProfil {
     private final LangueRepository langues;
     private final FavoriRepository favoris;
     private final MessageRepository messages;
+    private final ServiceRendezVous rendezVous;
     private final PasswordEncoder encodeur;
     private final ServiceAudit audit;
 
     public ServiceProfil(UtilisateurRepository utilisateurs, LangueRepository langues, FavoriRepository favoris,
-                         MessageRepository messages, PasswordEncoder encodeur, ServiceAudit audit) {
+                         MessageRepository messages, ServiceRendezVous rendezVous, PasswordEncoder encodeur, ServiceAudit audit) {
         this.utilisateurs = utilisateurs;
         this.langues = langues;
         this.favoris = favoris;
         this.messages = messages;
+        this.rendezVous = rendezVous;
         this.encodeur = encodeur;
         this.audit = audit;
     }
@@ -78,6 +80,7 @@ public class ServiceProfil {
      * les pièces de paiement doivent être conservées pour la comptabilité. On retire donc
      * <b>l'identité</b>, pas <b>l'historique</b> :
      * <ol>
+     *   <li>ses visites à venir sont annulées : le créneau redevient libre et l'agent est prévenu ;</li>
      *   <li>les favoris, purement personnels, sont supprimés ;</li>
      *   <li>le contenu de ses messages est effacé (il peut contenir des données personnelles) ;</li>
      *   <li>le compte est anonymisé en place : nom, prénom, e-mail, téléphone et photo sont remplacés,
@@ -95,17 +98,18 @@ public class ServiceProfil {
         // La trace d'audit est écrite AVANT l'anonymisation : elle référence le compte, pas l'identité.
         audit.enregistrer(membre, "desinscription", "utilisateur#" + id, ip);
 
-        favoris.deleteByIdMembreId(id);                                              // 1. favoris supprimés
-        for (Message message : messages.findByMembreId(id)) {                          // 2. messages vidés
+        rendezVous.annulerLesVisitesAVenir(membre, ip);                                // 1. visites à venir annulées
+        favoris.deleteByIdMembreId(id);                                              // 2. favoris supprimés
+        for (Message message : messages.findByMembreId(id)) {                          // 3. messages vidés
             message.setContenu("[Contenu supprimé à la demande du membre]");
         }
-        membre.setNom("Supprimé");                                                     // 3. identité neutralisée
+        membre.setNom("Supprimé");                                                     // 4. identité neutralisée
         membre.setPrenom("Membre");
         membre.setEmail("supprime-" + id + "@anonyme.immoconnect.be");
         membre.setTelephone(null);
         membre.setPhotoUrl(null);
         membre.setMotDePasse(encodeur.encode(UUID.randomUUID().toString()));
-        // 4. rendez-vous, paiements et audit : conservés, désormais sans identité
+        // 5. rendez-vous, paiements et audit : conservés, désormais sans identité
     }
 
     private Utilisateur charger(Integer id) {

@@ -222,6 +222,17 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Utilisateur' }
+    delete:
+      tags: [Authentification]
+      summary: Se désinscrire (droit à l'oubli, règle RA11)
+      description: >-
+        Suppression logique, réservée aux membres. Les visites à venir sont annulées (créneau libéré, agent prévenu,
+        paiement remboursé selon RA14), les favoris supprimés, les messages vidés et l'identité anonymisée.
+        Les rendez-vous, paiements et lignes du journal d'audit sont conservés sans identité.
+      responses:
+        '204': { description: Compte anonymisé }
+        '401': { $ref: '#/components/responses/ErreurAuthentification' }
+        '403': { description: Compte agent ou administrateur — géré par l'administrateur }
   /auth/me/export:
     get:
       tags: [Authentification]
