@@ -2,6 +2,7 @@ package be.immoconnect.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -101,6 +102,36 @@ class ProfilControleurTest {
         assertThat(compter("paiement", "membre_id")).isEqualTo(paiementsAvant);
         assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM journal_audit WHERE utilisateur_id = ? AND action = 'desinscription'",
                 Integer.class, MEMBRE_ID)).isEqualTo(1);
+    }
+
+    /** Une visite à venir ne reste pas dans l'agenda de l'agent au nom d'un compte anonyme : elle est annulée. */
+    @Test
+    void laDesinscriptionAnnuleLesVisitesAVenirEtLibereLeCreneau() throws Exception {
+        String email = "paul.desinscrit@test.immoconnect.be";
+        var inscription = mvc.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"nom\":\"Desinscrit\",\"prenom\":\"Paul\",\"email\":\"" + email
+                                + "\",\"motDePasse\":\"Visite-Bruxelles-2026!\",\"cguAcceptees\":true}"))
+                .andExpect(status().isCreated()).andReturn();
+        String jeton = json.readTree(inscription.getResponse().getContentAsString()).get("jeton").asString();
+        var creneaux = json.readTree(mvc.perform(get("/api/v1/biens/3/creneaux").header("Authorization", "Bearer " + jeton))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
+        String creneau = creneaux.valueStream().filter(c -> "standard".equals(c.get("type").asString())).findFirst().orElseThrow()
+                .get("dateHeure").asString();
+        int visite = json.readTree(mvc.perform(post("/api/v1/rendez-vous").header("Authorization", "Bearer " + jeton)
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"bienId\":3,\"dateHeure\":\"" + creneau + "\"}"))
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()).get("id").asInt();
+
+        mvc.perform(delete("/api/v1/auth/me").header("Authorization", "Bearer " + jeton)).andExpect(status().isNoContent());
+
+        // La visite est conservée dans l'historique, mais annulée ; l'annulation est tracée
+        assertThat(jdbc.queryForObject("SELECT statut FROM rendez_vous WHERE id = ?", String.class, visite)).isEqualTo("annule");
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM journal_audit WHERE action = 'annulation_rdv' AND entite = ?",
+                Integer.class, "rendez_vous#" + visite)).isEqualTo(1);
+        // Le créneau est de nouveau proposé aux autres membres
+        String autre = connecter("juliette.nguyen@mail.be", "password");
+        mvc.perform(get("/api/v1/biens/3/creneaux").header("Authorization", "Bearer " + autre))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.dateHeure == '" + creneau + "')]").isNotEmpty());
     }
 
     private int compter(String table, String colonne) {
