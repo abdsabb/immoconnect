@@ -98,7 +98,7 @@ export default function ArticleFormulaire() {
       <form onSubmit={handleSubmit(enregistrer)} noValidate className="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
         <div className="grid sm:grid-cols-3 gap-4">
           <div className="sm:col-span-2">
-            <Champ label={t('annonce.titre')} erreur={errors.titre?.message}>
+            <Champ label={t('admin.article.titre')} erreur={errors.titre?.message}>
               <input maxLength="150" className={classeInput(errors.titre)} {...register('titre', requis)} />
             </Champ>
           </div>

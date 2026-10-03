@@ -565,7 +565,8 @@
       "imageRetirer": "Afbeelding verwijderen",
       "imageAnnuler": "Afbeelding behouden",
       "imageAucune": "Geen afbeelding",
-      "imageErreur": "Het artikel is opgeslagen, maar de afbeelding kon niet worden toegevoegd: {{message}}"
+      "imageErreur": "Het artikel is opgeslagen, maar de afbeelding kon niet worden toegevoegd: {{message}}",
+      "titre": "Titel van het artikel"
     },
     "parametre": {
       "explication": "Identiteit van het kantoor op de site en talen die de bezoekers krijgen. Betaal- en e-mailsleutels worden hier niet ingesteld: die blijven op de server.",

@@ -59,7 +59,7 @@ export default function Articles() {
             <table className={classeTableau}>
               <thead>
                 <tr className={classeEnTete}>
-                  <th>{t('annonce.titre')}</th><th>{t('annonce.categorie')}</th><th>{t('bien.statutLabel')}</th><th>{t('bien.publieLe')}</th><th></th>
+                  <th>{t('admin.article.titre')}</th><th>{t('annonce.categorie')}</th><th>{t('bien.statutLabel')}</th><th>{t('bien.publieLe')}</th><th></th>
                 </tr>
               </thead>
               <tbody>

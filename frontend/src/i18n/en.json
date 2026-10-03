@@ -565,7 +565,8 @@
       "imageRetirer": "Remove the image",
       "imageAnnuler": "Keep the image",
       "imageAucune": "No image",
-      "imageErreur": "The article is saved, but the image could not be added: {{message}}"
+      "imageErreur": "The article is saved, but the image could not be added: {{message}}",
+      "titre": "Title of the article"
     },
     "parametre": {
       "explication": "Agency identity shown on the site and languages offered to visitors. Payment and e-mail keys are not set here: they stay on the server.",

@@ -565,7 +565,8 @@
       "imageRetirer": "Retirer l’image",
       "imageAnnuler": "Garder l’image",
       "imageAucune": "Aucune image",
-      "imageErreur": "L’article est enregistré, mais l’image n’a pas pu être ajoutée : {{message}}"
+      "imageErreur": "L’article est enregistré, mais l’image n’a pas pu être ajoutée : {{message}}",
+      "titre": "Titre de l’article"
     },
     "parametre": {
       "explication": "Identité de l’agence affichée sur le site et langues proposées aux visiteurs. Les clés de paiement et de courriel ne se règlent pas ici : elles restent sur le serveur.",
