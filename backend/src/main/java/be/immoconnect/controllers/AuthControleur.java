@@ -182,7 +182,7 @@ public class AuthControleur {
     @DeleteMapping("/me")
     @SecurityRequirement(name = "jwt")
     @Operation(summary = "Se désinscrire (droit à l'oubli)",
-            description = "Soft delete (règle RA11) : favoris supprimés, messages vidés, identité anonymisée ; "
+            description = "Soft delete (règle RA11) : visites à venir annulées, favoris supprimés, messages vidés, identité anonymisée ; "
                     + "rendez-vous, paiements et journal d'audit conservés sans identité.")
     public ResponseEntity<Void> desinscrire(@AuthenticationPrincipal Jwt jeton, HttpServletRequest http) {
         profil.desinscrire(Integer.valueOf(jeton.getSubject()), adresseIp(http));

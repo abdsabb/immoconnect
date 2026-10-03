@@ -221,6 +221,26 @@ public class ServiceRendezVous {
         if (!parLAgent && !rdv.getMembre().getId().equals(utilisateurId)) {
             throw new OperationInterditeException("Ce rendez-vous ne vous appartient pas");
         }
+        annuler(rdv, parLAgent, ip);
+        return parLAgent ? RendezVousResume.pourAgent(rdv) : RendezVousResume.pourMembre(rdv);
+    }
+
+    /**
+     * Désinscription d'un membre (RA11) : ses visites à venir sont annulées comme s'il les annulait lui-même.
+     * Le créneau redevient libre dans l'agenda de l'agent, qui est prévenu ; un créneau payé suit RA14.
+     * Les visites passées restent telles quelles : elles font partie de l'historique conservé.
+     *
+     * @return le nombre de visites annulées
+     */
+    @Transactional
+    public int annulerLesVisitesAVenir(Membre membre, String ip) {
+        List<RendezVous> aVenir = rendezVous.findByMembreIdAndStatutInAndDateHeureAfter(membre.getId(), RendezVousRepository.ACTIFS, maintenant());
+        aVenir.forEach(rdv -> annuler(rdv, false, ip));
+        return aVenir.size();
+    }
+
+    private void annuler(RendezVous rdv, boolean parLAgent, String ip) {
+        Integer id = rdv.getId();
         LocalDateTime maintenant = maintenant();
         boolean remboursable = rdv.remboursable(maintenant, parLAgent);
         rdv.annuler(maintenant);
@@ -238,7 +258,6 @@ public class ServiceRendezVous {
             }
         }
         publier(rdv, parLAgent ? EvenementRendezVous.Type.annule_par_agent : EvenementRendezVous.Type.annule_par_membre);
-        return parLAgent ? RendezVousResume.pourAgent(rdv) : RendezVousResume.pourMembre(rdv);
     }
 
     /** Demande dont la date est passée sans réponse : l'agent la classe sans suite (demande -> annule), sans e-mail. */
