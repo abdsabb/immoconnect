@@ -25,8 +25,17 @@ Vérifier :
 
 ```bash
 fail2ban-client status immoconnect          # prison active, adresses bannies
-fail2ban-regex /var/lib/docker/containers/*/*-json.log /etc/fail2ban/filter.d/immoconnect.conf
-fail2ban-client set immoconnect unbanip 203.0.113.9   # lever un bannissement
+
+# Tester le filtre sur le journal du backend (un seul fichier à la fois) ; « 0 matched » tant qu'aucune alerte n'a eu lieu
+cd /opt/immoconnect
+fail2ban-regex "$(docker inspect --format '{{.LogPath}}' "$(docker compose -f docker-compose.prod.yml ps -q backend)")" \
+  /etc/fail2ban/filter.d/immoconnect.conf
+```
+
+Lever un bannissement, en remplaçant l'adresse d'exemple par celle qui figure dans la liste des adresses bannies :
+
+```bash
+fail2ban-client set immoconnect unbanip 203.0.113.9
 ```
 
 fail2ban surveille aussi SSH par défaut (prison `sshd`) : les tentatives de connexion au serveur lui-même
