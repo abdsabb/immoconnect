@@ -219,11 +219,14 @@ public class ServiceRenduPublic {
             return null;
         }
         String corps = "<article><p><a href=\"/blog\">" + e(t.get("blog")) + "</a> › " + e(a.categorie()) + "</p><h1>" + e(a.titre()) + "</h1><p>"
-                + e(t.get("publie")) + " " + a.publieLe() + " · " + e(a.auteur()) + "</p><div>" + paragraphes(a.contenu()) + "</div></article>";
+                + e(t.get("publie")) + " " + a.publieLe() + " · " + e(a.auteur()) + "</p>"
+                + (a.imageUrl() == null ? "" : "<img src=\"" + e(a.imageUrl()) + "\" alt=\"" + e(a.titre()) + "\">")
+                + "<div>" + paragraphes(a.contenu()) + "</div></article>";
         String jsonLd = "{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":" + j(a.titre()) + ",\"description\":" + j(a.extrait())
+                + (a.imageUrl() == null ? "" : ",\"image\":" + j(a.imageUrl()))
                 + ",\"datePublished\":\"" + a.publieLe() + "\",\"author\":{\"@type\":\"Person\",\"name\":" + j(a.auteur()) + "},\"publisher\":{\"@type\":\"Organization\",\"name\":"
                 + j(parametres.site().nom()) + "},\"articleSection\":" + j(a.categorie()) + ",\"inLanguage\":\"fr\"}";
-        return new Page_(a.titre() + " — " + parametres.site().nom(), a.extrait(), "/blog/" + a.id(), l, jsonLd, corps, true, null);
+        return new Page_(a.titre() + " — " + parametres.site().nom(), a.extrait(), "/blog/" + a.id(), l, jsonLd, corps, true, a.imageUrl());
     }
 
     private static String cartes(List<BienResume> liste, Map<String, String> t) {
@@ -245,11 +248,22 @@ public class ServiceRenduPublic {
         return type == TypeOffre.location ? montant + " " + t.get("mois") : montant;
     }
 
+    /** Texte brut d'un article ou d'une annonce : paragraphes, intertitres (« ## ») et listes (« - »). */
     private static String paragraphes(String texte) {
         StringBuilder s = new StringBuilder();
         for (String p : (texte == null ? "" : texte).split("\\n\\s*\\n")) {
-            if (!p.isBlank()) {
-                s.append("<p>").append(e(p.trim()).replace("\n", "<br>")).append("</p>");
+            String bloc = p.trim();
+            if (bloc.isEmpty()) {
+                continue;
+            }
+            if (bloc.startsWith("## ")) {
+                s.append("<h2>").append(e(bloc.substring(3).trim())).append("</h2>");
+            } else if (bloc.lines().allMatch(ligne -> ligne.startsWith("- "))) {
+                s.append("<ul>");
+                bloc.lines().forEach(ligne -> s.append("<li>").append(e(ligne.substring(2).trim())).append("</li>"));
+                s.append("</ul>");
+            } else {
+                s.append("<p>").append(e(bloc).replace("\n", "<br>")).append("</p>");
             }
         }
         return s.toString();

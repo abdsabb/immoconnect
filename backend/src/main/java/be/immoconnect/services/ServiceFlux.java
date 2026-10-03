@@ -1,6 +1,7 @@
 package be.immoconnect.services;
 
 import be.immoconnect.config.ConfigurationHorloge;
+import be.immoconnect.dto.ArticleVue;
 import be.immoconnect.entities.Article;
 import be.immoconnect.entities.Bien;
 import be.immoconnect.entities.StatutArticle;
@@ -85,7 +86,7 @@ public class ServiceFlux {
     }
 
     private Element element(Article article) {
-        return new Element(article.getTitre(), site + "/blog/" + article.getId(), resume(article.getContenu()),
+        return new Element(article.getTitre(), site + "/blog/" + article.getId(), resume(ArticleVue.sansMarques(article.getContenu())),
                 article.getCategorie().getNom(), article.getAdministrateur().getNomComplet(),
                 minuit(article.getPublieLe()), null);
     }
