@@ -142,7 +142,7 @@ Les photos téléversées sont enregistrées dans `backend/stockage/` (variable 
 - **Inscription** : acceptation des conditions générales obligatoire et horodatée (`cgu_acceptees_le`), consentement
   aux communications distinct.
 - **Droits RGPD** : accès et rectification (profil), portabilité (`GET /auth/me/export`, fichier JSON), effacement
-  (désinscription RA11).
+  (désinscription RA11 : identité anonymisée, visites à venir annulées, historique conservé).
 - **Supervision** : l'agence est une structure privée ; l'administrateur gestionnaire voit et modifie les annonces de
   tous les agents et lit leur messagerie (lecture seule, consultation journalisée).
 
