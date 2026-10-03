@@ -424,7 +424,11 @@
     "toutes": "Alle",
     "vide": "Nog geen artikels in deze categorie.",
     "introuvable": "Dit artikel bestaat niet of is niet meer gepubliceerd.",
-    "retour": "Terug naar de blog"
+    "retour": "Terug naar de blog",
+    "aLaUne": "Uitgelicht",
+    "lire": "Artikel lezen",
+    "lecture": "{{minutes}} min leestijd",
+    "aLireAussi": "Lees ook"
   },
   "admin": {
     "titre": "Beheer",
@@ -549,12 +553,18 @@
       "modifier": "Artikel wijzigen",
       "retour": "Terug naar de artikels",
       "contenu": "Inhoud",
-      "consigne": "Platte tekst: regeleinden blijven behouden, geen enkele tag wordt geïnterpreteerd. Een nieuw artikel is een concept, onzichtbaar voor het publiek tot het gepubliceerd is.",
+      "consigne": "Platte tekst: geen enkele tag wordt geïnterpreteerd. Laat een lege regel tussen twee alinea’s; een regel die met « ## » begint wordt een tussentitel, met « - » een lijstitem. Een nieuw artikel is een concept, onzichtbaar voor het publiek tot het gepubliceerd is.",
       "publier": "Publiceren",
       "publie": "Artikel gepubliceerd.",
       "archive": "Artikel gearchiveerd.",
       "supprime": "Artikel verwijderd.",
-      "confirmerSuppression": "« {{titre}} » definitief verwijderen?"
+      "confirmerSuppression": "« {{titre}} » definitief verwijderen?",
+      "image": "Omslagafbeelding",
+      "imageAide": "JPEG of PNG, hoogstens 5 MB. Ze illustreert het artikel in de blog en bovenaan zijn pagina.",
+      "imageRetirer": "Afbeelding verwijderen",
+      "imageAnnuler": "Afbeelding behouden",
+      "imageAucune": "Geen afbeelding",
+      "imageErreur": "Het artikel is opgeslagen, maar de afbeelding kon niet worden toegevoegd: {{message}}"
     },
     "parametre": {
       "explication": "Identiteit van het kantoor op de site en talen die de bezoekers krijgen. Betaal- en e-mailsleutels worden hier niet ingesteld: die blijven op de server.",

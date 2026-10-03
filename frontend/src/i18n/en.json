@@ -424,7 +424,11 @@
     "toutes": "All",
     "vide": "No article in this category yet.",
     "introuvable": "This article does not exist or is no longer published.",
-    "retour": "Back to the blog"
+    "retour": "Back to the blog",
+    "aLaUne": "Featured",
+    "lire": "Read the article",
+    "lecture": "{{minutes}} min read",
+    "aLireAussi": "Read also"
   },
   "admin": {
     "titre": "Administration",
@@ -549,12 +553,18 @@
       "modifier": "Edit article",
       "retour": "Back to articles",
       "contenu": "Content",
-      "consigne": "Plain text: line breaks are kept, no tag is interpreted. A new article is a draft, hidden from the public until it is published.",
+      "consigne": "Plain text: no tag is interpreted. Leave an empty line between two paragraphs; a line starting with “##” becomes a subheading, with “-” a list item. A new article is a draft, hidden from the public until it is published.",
       "publier": "Publish",
       "publie": "Article published.",
       "archive": "Article archived.",
       "supprime": "Article deleted.",
-      "confirmerSuppression": "Permanently delete “{{titre}}”?"
+      "confirmerSuppression": "Permanently delete “{{titre}}”?",
+      "image": "Cover image",
+      "imageAide": "JPEG or PNG, 5 MB at most. It illustrates the article in the blog and at the top of its page.",
+      "imageRetirer": "Remove the image",
+      "imageAnnuler": "Keep the image",
+      "imageAucune": "No image",
+      "imageErreur": "The article is saved, but the image could not be added: {{message}}"
     },
     "parametre": {
       "explication": "Agency identity shown on the site and languages offered to visitors. Payment and e-mail keys are not set here: they stay on the server.",

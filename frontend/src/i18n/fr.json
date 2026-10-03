@@ -424,7 +424,11 @@
     "toutes": "Toutes",
     "vide": "Aucun article dans cette catégorie pour le moment.",
     "introuvable": "Cet article n'existe pas ou n'est plus publié.",
-    "retour": "Retour au blog"
+    "retour": "Retour au blog",
+    "aLaUne": "À la une",
+    "lire": "Lire l’article",
+    "lecture": "{{minutes}} min de lecture",
+    "aLireAussi": "À lire aussi"
   },
   "admin": {
     "titre": "Administration",
@@ -549,12 +553,18 @@
       "modifier": "Modifier l'article",
       "retour": "Retour aux articles",
       "contenu": "Contenu",
-      "consigne": "Texte brut : les sauts de ligne sont conservés, aucune balise n'est interprétée. Un nouvel article est un brouillon, invisible du public tant qu'il n'est pas publié.",
+      "consigne": "Texte brut : aucune balise n’est interprétée. Laissez une ligne vide entre deux paragraphes ; une ligne qui commence par « ## » devient un intertitre, par « - » un élément de liste. Un nouvel article est un brouillon, invisible du public tant qu’il n’est pas publié.",
       "publier": "Publier",
       "publie": "Article publié.",
       "archive": "Article archivé.",
       "supprime": "Article supprimé.",
-      "confirmerSuppression": "Supprimer définitivement « {{titre}} » ?"
+      "confirmerSuppression": "Supprimer définitivement « {{titre}} » ?",
+      "image": "Image de couverture",
+      "imageAide": "JPEG ou PNG, 5 Mo au plus. Elle illustre l’article dans le blog et en haut de sa page.",
+      "imageRetirer": "Retirer l’image",
+      "imageAnnuler": "Garder l’image",
+      "imageAucune": "Aucune image",
+      "imageErreur": "L’article est enregistré, mais l’image n’a pas pu être ajoutée : {{message}}"
     },
     "parametre": {
       "explication": "Identité de l’agence affichée sur le site et langues proposées aux visiteurs. Les clés de paiement et de courriel ne se règlent pas ici : elles restent sur le serveur.",
