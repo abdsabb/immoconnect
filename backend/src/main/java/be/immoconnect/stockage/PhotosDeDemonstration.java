@@ -61,12 +61,12 @@ public class PhotosDeDemonstration implements ApplicationRunner {
 
     /** Catégorie du blog (données de test) → thèmes qui l'illustrent ; plusieurs thèmes évitent de répéter la même image. */
     private static final Map<Integer, List<String>> THEMES_DU_BLOG = Map.of(
-            1, List.of("facade"),
+            1, List.of("facade", "sejour"),
             2, List.of("sejour", "chambre", "hall"),
             3, List.of("vue", "terrasse", "jardin"),
-            4, List.of("cuisine", "bains", "garage"),
-            5, List.of("plan", "terrain"),
-            6, List.of("commerce"));
+            4, List.of("cuisine", "bains"),
+            5, List.of("plan", "facade"),
+            6, List.of("hall", "facade"));
     private static final List<String> THEMES_DU_BLOG_PAR_DEFAUT = List.of("facade", "vue");
 
     /** Sans légende, la position décide : la couverture montre l'extérieur, la suite l'intérieur. */
