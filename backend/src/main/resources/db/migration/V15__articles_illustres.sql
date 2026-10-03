@@ -5,6 +5,11 @@ ALTER TABLE article ADD COLUMN image_url VARCHAR(255) NULL AFTER contenu;
 
 UPDATE article SET image_url = CONCAT('/storage/articles/', id, '/couverture.jpg');
 
+-- Titres des articles de test : l'agence travaille à Bruxelles, et « un maison » était une faute.
+UPDATE article SET titre = REPLACE(REPLACE(titre, 'en Wallonie', 'en Région bruxelloise'), 'en Flandre', 'en Région bruxelloise')
+ WHERE titre LIKE 'Droits d\'enregistrement en %';
+UPDATE article SET titre = REPLACE(titre, 'Acheter un maison', 'Acheter une maison') WHERE titre LIKE 'Acheter un maison%';
+
 -- Les articles de test tenaient en un seul paragraphe, le même pour tous. Ils reçoivent un texte structuré selon leur
 -- catégorie : chapeau, intertitres (ligne « ## ») et listes (lignes « - »). Un article rédigé depuis le back-office
 -- ne contient pas la phrase type : il n'est pas touché.
