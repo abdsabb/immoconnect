@@ -43,6 +43,10 @@ public class Article {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String contenu;
 
+    /** Image de couverture, facultative : URL publique sous /storage/articles/. */
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "ENUM('brouillon','publie','archive')")
     private StatutArticle statut = StatutArticle.brouillon;

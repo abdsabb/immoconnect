@@ -1,6 +1,7 @@
 package be.immoconnect.stockage;
 
 import be.immoconnect.entities.Photo;
+import be.immoconnect.repositories.ArticleRepository;
 import be.immoconnect.repositories.PhotoRepository;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,10 +26,11 @@ import org.springframework.stereotype.Component;
 
 /**
  * Photos des données de test. Les annonces chargées par Flyway référencent des fichiers
- * /storage/biens/{id}/photo-{n}.jpg qu'aucun serveur neuf ne possède : au démarrage, chaque fichier
- * manquant est créé à partir d'un jeu de photos sous licence libre embarqué dans l'application
- * (auteurs et licences : photos-demo/CREDITS.md). La photo est choisie d'après la légende.
- * Une photo téléversée par un agent porte un nom aléatoire : elle n'est jamais concernée.
+ * /storage/biens/{id}/photo-{n}.jpg, et les articles du blog une couverture /storage/articles/{id}/couverture.jpg,
+ * qu'aucun serveur neuf ne possède : au démarrage, chaque fichier manquant est créé à partir d'un jeu de photos
+ * sous licence libre embarqué dans l'application (auteurs et licences : photos-demo/CREDITS.md). La photo d'une
+ * annonce est choisie d'après sa légende, la couverture d'un article d'après sa catégorie.
+ * Une image téléversée par un agent ou un administrateur porte un nom aléatoire : elle n'est jamais concernée.
  */
 @Component
 @ConditionalOnProperty(name = "immoconnect.demonstration.photos", havingValue = "true")
@@ -37,6 +39,7 @@ public class PhotosDeDemonstration implements ApplicationRunner {
     private static final Logger journal = LoggerFactory.getLogger(PhotosDeDemonstration.class);
     private static final String CATALOGUE = "classpath:/photos-demo/*.jpg";
     private static final Pattern PHOTO_DE_TEST = Pattern.compile("^/storage/(biens/(\\d+)/photo-\\d+\\.jpg)$");
+    private static final Pattern COUVERTURE_DE_TEST = Pattern.compile("^/storage/(articles/(\\d+)/couverture\\.jpg)$");
     private static final String THEME_PAR_DEFAUT = "sejour";
 
     /** Légende des données de test → thème du catalogue. */
@@ -56,14 +59,26 @@ public class PhotosDeDemonstration implements ApplicationRunner {
             Map.entry("Garage", "garage"),
             Map.entry("Espace commercial", "commerce"));
 
+    /** Catégorie du blog (données de test) → thèmes qui l'illustrent ; plusieurs thèmes évitent de répéter la même image. */
+    private static final Map<Integer, List<String>> THEMES_DU_BLOG = Map.of(
+            1, List.of("facade", "sejour"),
+            2, List.of("sejour", "chambre", "hall"),
+            3, List.of("vue", "terrasse", "jardin"),
+            4, List.of("cuisine", "bains"),
+            5, List.of("plan", "facade"),
+            6, List.of("hall", "facade"));
+    private static final List<String> THEMES_DU_BLOG_PAR_DEFAUT = List.of("facade", "vue");
+
     /** Sans légende, la position décide : la couverture montre l'extérieur, la suite l'intérieur. */
     private static final List<String> THEMES_SANS_LEGENDE = List.of("facade", "sejour", "cuisine", "chambre", "bains", "terrasse");
 
     private final PhotoRepository photos;
+    private final ArticleRepository articles;
     private final Path racine;
 
-    public PhotosDeDemonstration(PhotoRepository photos, StockageDisque stockage) {
+    public PhotosDeDemonstration(PhotoRepository photos, ArticleRepository articles, StockageDisque stockage) {
         this.photos = photos;
+        this.articles = articles;
         this.racine = stockage.racine();
     }
 
@@ -102,13 +117,37 @@ public class PhotosDeDemonstration implements ApplicationRunner {
             // Deux photos du même bien diffèrent par leur position : elles reçoivent deux images différentes
             int bienId = Integer.parseInt(url.group(2));
             Resource image = choix.get(Math.floorMod(bienId * 3 + photo.getOrdre(), choix.size()));
-            Files.createDirectories(fichier.getParent());
-            try (InputStream contenu = image.getInputStream()) {
-                Files.copy(contenu, fichier);
+            copier(image, fichier);
+            creees++;
+        }
+        for (ArticleRepository.Couverture couverture : articles.couvertures(StockagePhotos.PREFIXE_URL)) {
+            Matcher url = COUVERTURE_DE_TEST.matcher(couverture.url());
+            if (!url.matches()) {
+                continue;
             }
+            Path fichier = racine.resolve(url.group(1)).normalize();
+            if (!fichier.startsWith(racine) || Files.exists(fichier)) {
+                continue;
+            }
+            List<Resource> choix = THEMES_DU_BLOG.getOrDefault(couverture.categorieId(), THEMES_DU_BLOG_PAR_DEFAUT).stream()
+                    .flatMap(theme -> catalogue.getOrDefault(theme, List.of()).stream()).toList();
+            if (choix.isEmpty()) {
+                choix = catalogue.get(THEME_PAR_DEFAUT);
+            }
+            if (choix == null) {
+                continue;
+            }
+            copier(choix.get(Math.floorMod(couverture.articleId(), choix.size())), fichier);
             creees++;
         }
         return creees;
+    }
+
+    private static void copier(Resource image, Path fichier) throws IOException {
+        Files.createDirectories(fichier.getParent());
+        try (InputStream contenu = image.getInputStream()) {
+            Files.copy(contenu, fichier);
+        }
     }
 
     /** Catalogue embarqué : photos-demo/{thème}-{numéro}.jpg, regroupées par thème. */

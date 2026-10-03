@@ -7,16 +7,19 @@ import be.immoconnect.dto.CategorieBlog;
 import be.immoconnect.dto.PageReponse;
 import be.immoconnect.dto.RequeteArticle;
 import be.immoconnect.entities.StatutArticle;
+import be.immoconnect.exceptions.DonneeInvalideException;
 import be.immoconnect.services.ServiceBlog;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /** Blog (livrable 15, §6.7) : lecture publique sous /articles, gestion sous /admin/articles. */
 @RestController
@@ -110,6 +114,26 @@ public class BlogControleur {
     @Operation(summary = "Archiver un article (administrateur)")
     public ArticleVue archiver(@AuthenticationPrincipal Jwt jeton, @PathVariable Integer id, HttpServletRequest http) {
         return service.archiver(identifiant(jeton), id, adresseIp(http));
+    }
+
+    @PostMapping(path = "/admin/articles/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @SecurityRequirement(name = "jwt")
+    @Operation(summary = "Choisir l'image de couverture d'un article (administrateur)",
+            description = "JPEG ou PNG, 5 Mo au plus. Le type est vérifié sur le contenu et l'image est ré-encodée en JPEG ; elle remplace la précédente.")
+    public ArticleVue definirImage(@AuthenticationPrincipal Jwt jeton, @PathVariable Integer id,
+                                   @RequestParam("fichier") MultipartFile fichier, HttpServletRequest http) {
+        try {
+            return service.definirImage(identifiant(jeton), id, fichier.getBytes(), adresseIp(http));
+        } catch (IOException e) {
+            throw new DonneeInvalideException("fichier", "le fichier n'a pas pu être lu");
+        }
+    }
+
+    @DeleteMapping("/admin/articles/{id}/image")
+    @SecurityRequirement(name = "jwt")
+    @Operation(summary = "Retirer l'image de couverture d'un article (administrateur)")
+    public ArticleVue retirerImage(@AuthenticationPrincipal Jwt jeton, @PathVariable Integer id, HttpServletRequest http) {
+        return service.retirerImage(identifiant(jeton), id, adresseIp(http));
     }
 
     @DeleteMapping("/admin/articles/{id}")

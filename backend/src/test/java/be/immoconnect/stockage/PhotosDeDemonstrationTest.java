@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import be.immoconnect.entities.Photo;
+import be.immoconnect.repositories.ArticleRepository;
 import be.immoconnect.repositories.PhotoRepository;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,6 +24,7 @@ class PhotosDeDemonstrationTest {
     Path dossier;
 
     private final PhotoRepository photos = mock(PhotoRepository.class);
+    private final ArticleRepository articles = mock(ArticleRepository.class);
 
     private final Map<String, List<Resource>> catalogue = Map.of(
             "facade", List.of(image("facade-01"), image("facade-02")),
@@ -88,6 +90,22 @@ class PhotosDeDemonstrationTest {
     }
 
     @Test
+    void laCouvertureDUnArticleEstChoisieDApresSaCategorie() throws IOException {
+        // Catégorie 1 (conseils d'achat) : une façade ; catégorie inconnue : façade aussi, à défaut de vue dans ce catalogue
+        when(articles.couvertures(StockagePhotos.PREFIXE_URL)).thenReturn(List.of(
+                new ArticleRepository.Couverture(3, 1, "/storage/articles/3/couverture.jpg"),
+                new ArticleRepository.Couverture(4, 1, "/storage/articles/4/couverture.jpg"),
+                new ArticleRepository.Couverture(8, 99, "/storage/articles/8/couverture.jpg"),
+                new ArticleRepository.Couverture(9, 1, "/storage/articles/9/0b9c1f0e-7d0c-4f7e-9a53-0c2d7f1f4a11.jpg")));
+
+        assertThat(installer()).isEqualTo(3);
+        assertThat(contenu("articles/3/couverture.jpg")).startsWith("facade-").isNotEqualTo(contenu("articles/4/couverture.jpg"));
+        assertThat(contenu("articles/8/couverture.jpg")).startsWith("facade-");
+        // L'image téléversée par un administrateur n'est pas recréée
+        assertThat(dossier.resolve("articles/9")).doesNotExist();
+    }
+
+    @Test
     void leCatalogueEmbarqueCouvreTousLesThemes() throws IOException {
         Map<String, List<Resource>> embarque = PhotosDeDemonstration.charger();
 
@@ -98,7 +116,7 @@ class PhotosDeDemonstrationTest {
     }
 
     private int installer() throws IOException {
-        return new PhotosDeDemonstration(photos, new StockageDisque(dossier)).installer(catalogue);
+        return new PhotosDeDemonstration(photos, articles, new StockageDisque(dossier)).installer(catalogue);
     }
 
     private void enBase(Photo... lignes) {

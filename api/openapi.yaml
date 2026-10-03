@@ -1027,6 +1027,38 @@ paths:
       summary: Supprimer un article (éditeur)
       responses:
         '204': { description: Article supprimé }
+  /admin/articles/{id}/image:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: integer } }
+    post:
+      tags: [Administration]
+      summary: Choisir l'image de couverture d'un article (éditeur)
+      description: JPEG ou PNG, 5 Mo au plus. Le type est vérifié sur le contenu et l'image est ré-encodée en JPEG ; elle remplace la précédente.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [fichier]
+              properties:
+                fichier: { type: string, format: binary }
+      responses:
+        '200':
+          description: Article illustré
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Article' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+    delete:
+      tags: [Administration]
+      summary: Retirer l'image de couverture d'un article (éditeur)
+      responses:
+        '200':
+          description: Article sans image
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Article' }
   /admin/articles/{id}/publier:
     patch:
       tags: [Administration]
@@ -1699,8 +1731,10 @@ components:
       properties:
         id: { type: integer }
         titre: { type: string, example: 'Acheter un appartement à Ixelles : le guide complet' }
-        extrait: { type: string, description: Début du contenu (220 caractères) }
-        contenu: { type: string, nullable: true, description: Texte brut ; absent des listes }
+        extrait: { type: string, description: Premier paragraphe du contenu (220 caractères au plus) }
+        contenu: { type: string, nullable: true, description: 'Texte brut ; absent des listes. Deux marques en début de ligne : « ## » pour un intertitre, « - » pour un élément de liste' }
+        imageUrl: { type: string, nullable: true, example: /storage/articles/3/couverture.jpg, description: Image de couverture }
+        minutesDeLecture: { type: integer, example: 2, description: Temps de lecture estimé (200 mots par minute) }
         categorieId: { type: integer }
         categorie: { type: string, example: Conseils achat }
         statut: { type: string, enum: [brouillon, publie, archive] }

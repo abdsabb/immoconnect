@@ -4,6 +4,7 @@ import { useQuery, useQueryClient, keepPreviousData } from '@tanstack/react-quer
 import { useTranslation } from 'react-i18next'
 import { changerStatutArticle, chargerArticlesAdmin, formatDate, supprimerArticle } from '../../services/admin'
 import { erreursApi } from '../../components/Formulaire'
+import { Photo } from '../../components/CarteBien'
 import { Avis, Pagination, classeBouton, classeEnTete, classeLigne, classeTableau } from './Administration'
 
 const BADGES = { brouillon: 'bg-ambre/30 text-nuit', publie: 'bg-succes/10 text-succes', archive: 'bg-gray-200 text-gray-600' }
@@ -58,13 +59,18 @@ export default function Articles() {
             <table className={classeTableau}>
               <thead>
                 <tr className={classeEnTete}>
-                  <th>{t('annonce.titre')}</th><th>{t('annonce.categorie')}</th><th>{t('bien.statutLabel')}</th><th>{t('bien.publieLe')}</th><th></th>
+                  <th>{t('admin.article.titre')}</th><th>{t('annonce.categorie')}</th><th>{t('bien.statutLabel')}</th><th>{t('bien.publieLe')}</th><th></th>
                 </tr>
               </thead>
               <tbody>
                 {data.contenu.map((a) => (
                   <tr key={a.id} className={classeLigne}>
-                    <td className="font-semibold text-nuit">{a.titre}<span className="block text-xs font-normal text-gray-500">{a.auteur}</span></td>
+                    <td className="font-semibold text-nuit">
+                      <div className="flex items-center gap-3">
+                        <Photo src={a.imageUrl} alt="" className="h-10 w-14 shrink-0 rounded" />
+                        <span>{a.titre}<span className="block text-xs font-normal text-gray-500">{a.auteur}</span></span>
+                      </div>
+                    </td>
                     <td>{a.categorie}</td>
                     <td><span className={`text-xs font-semibold px-2 py-1 rounded-full ${BADGES[a.statut]}`}>{t(`admin.article.statut.${a.statut}`)}</span></td>
                     <td className="whitespace-nowrap">{formatDate(a.publieLe, i18n.resolvedLanguage)}</td>
