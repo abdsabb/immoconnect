@@ -108,12 +108,11 @@ export STRIPE_WEBHOOK_SECRET=whsec_...       # affiché par : stripe listen --fo
 | Membre | alice.benali@mail.be |
 | Agent immobilier | sarah.dubois@mail.be |
 | Administrateur — super-administrateur (niveau 3) | david.moreau@mail.be |
-| Administrateur — gestionnaire (niveau 2) | lotte.goossens@mail.be |
-| Administrateur — éditeur (niveau 1) | yasmine.benali@mail.be |
 
-Le niveau d'accès d'un administrateur limite ce qu'il peut faire dans le back-office : l'éditeur gère le blog,
-les catégories et les traductions ; le gestionnaire gère en plus les comptes, le journal d'audit, les statistiques
-et les clés API ; le super-administrateur agit aussi sur les comptes des administrateurs.
+Le super-administrateur a accès à tout le back-office. Le niveau d'accès d'un administrateur limite ce qu'il peut
+y faire : l'éditeur (niveau 1) gère le blog, les catégories et les traductions ; le gestionnaire (niveau 2) gère en
+plus les comptes, le journal d'audit, les statistiques et les clés API ; le super-administrateur (niveau 3) agit
+aussi sur les comptes des administrateurs.
 
 Tous les comptes de test se connectent directement, avec l'e-mail et le mot de passe. La connexion en deux étapes
 est facultative : celui qui l'active dans son profil reçoit ensuite un code à six chiffres par e-mail à chaque
