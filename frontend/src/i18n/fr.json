@@ -255,7 +255,7 @@
       "confirmation": "Confirmation"
     },
     "reserveAuxMembres": "La prise de rendez-vous est réservée aux membres.",
-    "legende": "Les créneaux en journée sont gratuits. Les créneaux premium, en soirée et le week-end, coûtent {{prix}}.",
+    "legende": "Les créneaux en journée sont gratuits. Les créneaux premium, en soirée et le week-end, coûtent {{prix}}. Réservation au moins 2 h à l’avance, 24 h pour un créneau premium.",
     "aucunCreneau": "Aucun créneau n'est libre dans les deux prochaines semaines.",
     "premium": "Premium",
     "gratuit": "Gratuit",

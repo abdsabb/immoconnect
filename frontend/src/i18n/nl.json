@@ -255,7 +255,7 @@
       "confirmation": "Bevestiging"
     },
     "reserveAuxMembres": "Alleen leden kunnen een afspraak maken.",
-    "legende": "Tijdslots overdag zijn gratis. Premium tijdslots, 's avonds en in het weekend, kosten {{prix}}.",
+    "legende": "Tijdslots overdag zijn gratis. Premium tijdslots, 's avonds en in het weekend, kosten {{prix}}. Reserveren kan tot 2 uur op voorhand, 24 uur voor een premium tijdslot.",
     "aucunCreneau": "Er is geen enkel tijdslot vrij in de komende twee weken.",
     "premium": "Premium",
     "gratuit": "Gratis",

@@ -434,7 +434,7 @@ public class ServiceRendezVous {
 
     private void exigerReservable(LocalDateTime dateHeure) {
         if (!grille.estReservable(dateHeure)) {
-            throw new DonneeInvalideException("dateHeure", "ce créneau n'existe pas dans la grille des visites");
+            throw new DonneeInvalideException("dateHeure", "ce créneau n'est pas réservable : hors de la grille des visites, trop proche ou trop lointain");
         }
     }
 

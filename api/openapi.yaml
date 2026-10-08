@@ -576,7 +576,8 @@ paths:
       description: >
         Créneaux de la grille de l'agence encore libres dans l'agenda de l'agent du bien.
         Standard (gratuit) : du lundi au vendredi en journée. Premium (payant) : en soirée
-        à partir de 18 h et le week-end. Période par défaut : 14 jours à partir d'aujourd'hui ;
+        à partir de 18 h et le week-end. Délai minimum de réservation : 2 heures pour un créneau standard,
+        24 heures pour un créneau premium. Période par défaut : 14 jours à partir d'aujourd'hui ;
         31 jours au plus ; réservation jusqu'à 60 jours à l'avance.
       parameters:
         - { name: id, in: path, required: true, schema: { type: integer } }
