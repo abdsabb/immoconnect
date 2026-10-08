@@ -50,9 +50,23 @@ class GrilleCreneauxTest {
     }
 
     @Test
+    void unCreneauTropProcheNEstPasReservable() {
+        // Standard : deux heures. Mercredi 12 h : 14 h passe tout juste, 10 h 30 est passé.
+        assertThat(grille.estReservable(MERCREDI.atTime(14, 0))).isTrue();
+        // Premium : vingt-quatre heures. Le soir même est trop proche, le lendemain soir et le samedi conviennent.
+        assertThat(grille.estReservable(MERCREDI.atTime(18, 30))).isFalse();
+        assertThat(grille.estReservable(MERCREDI.atTime(20, 0))).isFalse();
+        assertThat(grille.estReservable(MERCREDI.plusDays(1).atTime(18, 30))).isTrue();
+        assertThat(grille.estReservable(SAMEDI.atTime(10, 30))).isTrue();
+        assertThat(grille.delaiMinimum(MERCREDI.atTime(14, 0))).isEqualTo(GrilleCreneaux.DELAI_STANDARD);
+        assertThat(grille.delaiMinimum(SAMEDI.atTime(14, 0))).isEqualTo(GrilleCreneaux.DELAI_PREMIUM);
+    }
+
+    @Test
     void laPeriodeNeContientQueLesCreneauxEncoreAVenir() {
-        // Mercredi à 12 h : il reste 14 h, 15 h 30, 17 h, 18 h 30 et 20 h ; jeudi compte ses 7 créneaux.
-        assertThat(grille.entre(MERCREDI, MERCREDI.plusDays(1))).hasSize(12)
+        // Mercredi à 12 h : il reste 14 h, 15 h 30 et 17 h (les deux créneaux premium du soir sont à moins de
+        // 24 h) ; jeudi compte ses 7 créneaux.
+        assertThat(grille.entre(MERCREDI, MERCREDI.plusDays(1))).hasSize(10)
                 .first().isEqualTo(MERCREDI.atTime(14, 0));
         assertThat(grille.entre(SAMEDI, SAMEDI)).hasSize(3);
     }

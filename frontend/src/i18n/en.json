@@ -255,7 +255,7 @@
       "confirmation": "Confirmation"
     },
     "reserveAuxMembres": "Only members can book a visit.",
-    "legende": "Daytime slots are free. Premium slots, in the evening and at the weekend, cost {{prix}}.",
+    "legende": "Daytime slots are free. Premium slots, in the evening and at the weekend, cost {{prix}}. Book at least 2 hours ahead, 24 hours for a premium slot.",
     "aucunCreneau": "No time slot is free in the next two weeks.",
     "premium": "Premium",
     "gratuit": "Free",
