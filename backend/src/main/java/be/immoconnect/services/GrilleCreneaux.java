@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
  * </ul>
  * C'est la grille — jamais le client — qui décide si un créneau est payant et à quel prix.
  * <p>
- * Un créneau se réserve avec un délai minimum : deux heures pour un créneau standard (l'agent doit
+ * Un créneau se réserve avec un délai minimum (RA17) : deux heures pour un créneau standard (l'agent doit
  * encore pouvoir le confirmer ou le refuser), vingt-quatre heures pour un créneau premium, qui est
  * payé et confirmé d'office — ce délai est aussi celui de l'annulation remboursée (RA14) : tout
  * créneau premium est donc encore annulable gratuitement au moment où il est réservé.
