@@ -333,7 +333,7 @@
     "a": "To",
     "repeter": "Repeat",
     "semaines_one": "Once only",
-    "semaines_other": "Every week, {{count}} weeks",
+    "semaines_other": "{{count}} weeks in a row",
     "apercu_one": "This period offers {{count}} viewing slot: {{heures}}.",
     "apercu_other": "This period offers {{count}} viewing slots: {{heures}}.",
     "apercuVide": "This period is too short: a viewing lasts one hour.",

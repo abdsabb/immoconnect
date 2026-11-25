@@ -333,7 +333,7 @@
     "a": "À",
     "repeter": "Répéter",
     "semaines_one": "Une seule fois",
-    "semaines_other": "Chaque semaine, {{count}} semaines",
+    "semaines_other": "{{count}} semaines de suite",
     "apercu_one": "Cette plage offre {{count}} créneau de visite : {{heures}}.",
     "apercu_other": "Cette plage offre {{count}} créneaux de visite : {{heures}}.",
     "apercuVide": "Cette plage est trop courte : une visite dure une heure.",

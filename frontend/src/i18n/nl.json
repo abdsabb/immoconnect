@@ -333,7 +333,7 @@
     "a": "Tot",
     "repeter": "Herhalen",
     "semaines_one": "Eenmalig",
-    "semaines_other": "Elke week, {{count}} weken",
+    "semaines_other": "{{count}} weken na elkaar",
     "apercu_one": "Deze periode biedt {{count}} tijdslot: {{heures}}.",
     "apercu_other": "Deze periode biedt {{count}} tijdslots: {{heures}}.",
     "apercuVide": "Deze periode is te kort: een bezoek duurt een uur.",
