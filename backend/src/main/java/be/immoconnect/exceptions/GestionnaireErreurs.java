@@ -53,6 +53,14 @@ public class GestionnaireErreurs {
         return probleme(HttpStatus.CONFLICT, "Créneau indisponible", e.getMessage(), "creneau-indisponible");
     }
 
+    /** Retrait d'une disponibilité où des visites sont prévues : 409, avec leur nombre, tant que l'agent n'a pas confirmé. */
+    @ExceptionHandler(VisitesPrevuesException.class)
+    ProblemDetail visitesPrevues(VisitesPrevuesException e) {
+        ProblemDetail pd = probleme(HttpStatus.CONFLICT, "Visites prévues", e.getMessage(), "visites-prevues");
+        pd.setProperty("visites", e.getVisites());
+        return pd;
+    }
+
     /** Cas d'erreur E3 : le bien a été retiré de la vente. */
     @ExceptionHandler(BienIndisponibleException.class)
     ProblemDetail bienIndisponible(BienIndisponibleException e) {
