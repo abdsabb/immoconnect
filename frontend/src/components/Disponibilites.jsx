@@ -8,6 +8,8 @@ import {
 } from '../services/disponibilites'
 
 const HORIZON_JOURS = 60
+// La liste montre d'abord les deux prochaines semaines : un agenda ouvert sur deux mois compte des dizaines de plages
+const JOURS_AFFICHES = 14
 const jourIso = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 const dansJours = (jours) => { const d = new Date(); d.setDate(d.getDate() + jours); return jourIso(d) }
 
@@ -26,8 +28,11 @@ export default function Disponibilites({ disponibilites }) {
   const [erreur, setErreur] = useState(null)
   const [message, setMessage] = useState(null)
   const [enCours, setEnCours] = useState(false)
+  const [tout, setTout] = useState(false)
 
   const aVenir = useMemo(() => disponibilites.filter((d) => new Date(d.fin) > new Date()), [disponibilites])
+  const proches = useMemo(() => aVenir.filter((d) => jourDe(d.debut) <= dansJours(JOURS_AFFICHES)), [aVenir])
+  const affichees = tout ? aVenir : proches
   const apercu = creneauxDeLaPlage(plage.de, plage.a)
 
   const rafraichir = () => {
@@ -120,7 +125,7 @@ export default function Disponibilites({ disponibilites }) {
         <h2 className="text-xl font-bold text-nuit">{t('dispo.mesPlages')} ({aVenir.length})</h2>
         {aVenir.length === 0 && <p role="alert" className="mt-2 rounded-lg bg-ambre/30 px-4 py-3 text-nuit">{t('dispo.aucune')}</p>}
         <ul className="mt-3 divide-y divide-gray-200 rounded-xl border border-gray-200 bg-white shadow-sm">
-          {aVenir.map((d) => (
+          {affichees.map((d) => (
             <li key={d.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2 text-sm">
               <span>
                 <span className="font-titre font-bold text-nuit first-letter:uppercase">{formatJour(d.debut, langue)}</span>
@@ -135,6 +140,11 @@ export default function Disponibilites({ disponibilites }) {
             </li>
           ))}
         </ul>
+        {aVenir.length > proches.length && (
+          <button type="button" onClick={() => setTout(!tout)} className="mt-3 font-semibold text-turquoise underline">
+            {tout ? t('dispo.voirMoins') : t('dispo.voirTout', { count: aVenir.length })}
+          </button>
+        )}
       </section>
 
       <form onSubmit={(e) => { e.preventDefault(); retirer((annuler) => retirerPeriode(absence.du, absence.au, annuler)) }}
