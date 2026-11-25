@@ -31,6 +31,7 @@ documentée ainsi qu'un volet Open Data.
 │   └── src/main/resources/db/migration/   V1 = schéma (17 tables), V2 = données de test,
 │                                          V3 = expéditeur des messages, V4 = back-office administrateur,
 │                                          V5 = légendes des photos de test, V6 = biens à vendre ou à louer
+│                                          … V16 = disponibilités des agents, V17 = visites de test conformes (22 tables)
 │   └── src/main/resources/photos-demo/    Photos des annonces et des articles de test (licences libres, voir CREDITS.md)
 ├── frontend/                SPA React (Vite) — Dockerfile + nginx.conf
 ├── api/openapi.yaml         Spécification OpenAPI 3.0 de l'API (livrable 15)
