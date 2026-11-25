@@ -23,6 +23,8 @@ tags:
   - name: Biens
   - name: Favoris
   - name: Messages
+  - name: Disponibilités
+    description: Plages pendant lesquelles un agent reçoit en visite ; les créneaux proposés aux membres en sortent
   - name: Rendez-vous
   - name: Paiements
   - name: Blog
@@ -574,7 +576,9 @@ paths:
       tags: [Rendez-vous]
       summary: Créneaux de visite disponibles pour un bien (membre)
       description: >
-        Créneaux de la grille de l'agence encore libres dans l'agenda de l'agent du bien.
+        Créneaux encore libres dans les plages de disponibilité ouvertes par l'agent du bien (règle RA15) :
+        un agent qui n'a ouvert aucune plage ne propose aucun créneau. Une plage est découpée en visites d'une
+        heure, espacées d'une demi-heure (9 h – 12 h : créneaux de 9 h et de 10 h 30).
         Standard (gratuit) : du lundi au vendredi en journée. Premium (payant) : en soirée
         à partir de 18 h et le week-end. Délai minimum de réservation : 2 heures pour un créneau standard,
         24 heures pour un créneau premium. Période par défaut : 14 jours à partir d'aujourd'hui ;
@@ -595,6 +599,86 @@ paths:
         '404': { $ref: '#/components/responses/ErreurIntrouvable' }
         '409': { $ref: '#/components/responses/ErreurConflit' }
         '422': { $ref: '#/components/responses/ErreurValidation' }
+  /disponibilites:
+    get:
+      tags: [Disponibilités]
+      summary: Mes disponibilités (agent)
+      description: >
+        Plages ouvertes par l'agent connecté. Période par défaut : de la semaine passée aux 60 prochains jours.
+      parameters:
+        - { name: du, in: query, description: Premier jour, schema: { type: string, format: date } }
+        - { name: au, in: query, description: Dernier jour inclus, schema: { type: string, format: date } }
+      responses:
+        '200':
+          description: Plages de disponibilité, dans l'ordre chronologique
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Disponibilite' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+    post:
+      tags: [Disponibilités]
+      summary: Ouvrir une plage de disponibilité (agent)
+      description: >
+        L'agent ouvre une plage pendant laquelle il reçoit en visite. La plage est à venir, tient dans une seule
+        journée, entre 8 h et 21 h, par demi-heures, et dure une heure au moins. Deux plages du même agent ne se
+        chevauchent pas. « semaines » répète la plage chaque semaine (8 au plus), sans dépasser l'horizon de
+        réservation de 60 jours : si une seule répétition est refusée, aucune plage n'est ouverte.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DisponibiliteRequete' }
+      responses:
+        '201':
+          description: Plages ouvertes (une par semaine demandée)
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Disponibilite' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+    delete:
+      tags: [Disponibilités]
+      summary: Se déclarer indisponible sur une période (agent)
+      description: >
+        Retire toutes les plages à venir de l'agent entre deux jours, bornes incluses (maladie, congé).
+        Si des visites y sont prévues, la réponse est 409 et rien n'est retiré ; avec annulerVisites=true,
+        elles sont annulées : chaque membre est prévenu par e-mail et un créneau payé est remboursé (règle RA16).
+      parameters:
+        - { name: du, in: query, required: true, description: Premier jour, schema: { type: string, format: date } }
+        - { name: au, in: query, required: true, description: Dernier jour inclus, schema: { type: string, format: date } }
+        - { name: annulerVisites, in: query, schema: { type: boolean, default: false } }
+      responses:
+        '200':
+          description: Plages retirées et visites annulées
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RetraitDisponibilites' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+        '409': { $ref: '#/components/responses/ErreurVisitesPrevues' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
+  /disponibilites/{id}:
+    delete:
+      tags: [Disponibilités]
+      summary: Retirer une plage de disponibilité (son agent)
+      description: >
+        Mêmes règles que le retrait sur une période : 409 si des visites sont prévues dans la plage, sauf avec
+        annulerVisites=true (règle RA16). Une plage passée ne se retire plus.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+        - { name: annulerVisites, in: query, schema: { type: boolean, default: false } }
+      responses:
+        '200':
+          description: Plage retirée et visites annulées
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RetraitDisponibilites' }
+        '403': { $ref: '#/components/responses/ErreurDroits' }
+        '404': { $ref: '#/components/responses/ErreurIntrouvable' }
+        '409': { $ref: '#/components/responses/ErreurVisitesPrevues' }
   /rendez-vous:
     get:
       tags: [Rendez-vous]
@@ -1493,6 +1577,18 @@ components:
       content:
         application/problem+json:
           schema: { $ref: '#/components/schemas/Erreur' }
+    ErreurVisitesPrevues:
+      description: >
+        Des visites sont prévues pendant la disponibilité à retirer (type « visites-prevues ») : rien n'est retiré.
+        Le champ « visites » donne leur nombre ; renvoyer la demande avec annulerVisites=true les annule.
+      content:
+        application/problem+json:
+          schema:
+            allOf:
+              - { $ref: '#/components/schemas/Erreur' }
+              - type: object
+                properties:
+                  visites: { type: integer, example: 2 }
     ErreurPaiement:
       description: Le prestataire de paiement ne répond pas ; rien n'a été écrit
       content:
@@ -1708,6 +1804,31 @@ components:
         dateHeure: { type: string, format: date-time, example: '2026-08-29T18:30:00' }
         type: { type: string, enum: [standard, premium] }
         prix: { type: number, example: 15.00, description: 0 pour un créneau standard }
+    Disponibilite:
+      type: object
+      description: Plage pendant laquelle un agent reçoit en visite. Elle tient dans une seule journée.
+      properties:
+        id: { type: integer, example: 731 }
+        debut: { type: string, format: date-time, example: '2026-12-01T09:00:00' }
+        fin: { type: string, format: date-time, example: '2026-12-01T12:00:00' }
+        creneaux: { type: integer, example: 2, description: Nombre de créneaux de visite que la plage offre }
+    DisponibiliteRequete:
+      type: object
+      required: [debut, fin]
+      properties:
+        debut: { type: string, format: date-time, example: '2026-12-01T09:00:00' }
+        fin: { type: string, format: date-time, example: '2026-12-01T12:00:00' }
+        semaines:
+          type: integer
+          minimum: 1
+          maximum: 8
+          default: 1
+          description: Répète la plage chaque semaine, le même jour aux mêmes heures
+    RetraitDisponibilites:
+      type: object
+      properties:
+        plagesRetirees: { type: integer, example: 2 }
+        visitesAnnulees: { type: integer, example: 1 }
     RendezVous:
       type: object
       properties:
