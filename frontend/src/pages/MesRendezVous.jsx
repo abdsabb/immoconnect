@@ -6,6 +6,8 @@ import { useAuth } from '../auth/AuthContext'
 import { changerStatut, chargerRendezVous, formatHeure, formatJour, formatMontant } from '../services/rendezVous'
 import { erreursApi } from '../components/Formulaire'
 import AgendaAgent from '../components/AgendaAgent'
+import Disponibilites from '../components/Disponibilites'
+import { chargerDisponibilites } from '../services/disponibilites'
 
 // Badges alignés sur l'énumération StatutRendezVous (diagramme d'état-transition)
 const BADGES = {
@@ -59,6 +61,13 @@ export default function MesRendezVous() {
     queryFn: chargerRendezVous,
     enabled: role !== 'admin',
   })
+  // Cas AG7 : les plages que l'agent a ouvertes ; sans plage à venir, ses biens ne proposent aucun créneau
+  const disponibilites = useQuery({
+    queryKey: ['disponibilites', utilisateur?.id],
+    queryFn: chargerDisponibilites,
+    enabled: role === 'agent',
+  })
+  const sansDisponibilite = disponibilites.data && !disponibilites.data.some((d) => new Date(d.fin) > new Date())
   const transition = useMutation({
     mutationFn: ({ id, action }) => changerStatut(id, action),
     onMutate: () => setErreur(null),
@@ -89,7 +98,7 @@ export default function MesRendezVous() {
 
       {data && role === 'agent' && (
         <div role="group" aria-label={t('rdv.affichage')} className="mt-6 flex gap-2">
-          {['liste', 'agenda'].map((v) => (
+          {['liste', 'agenda', 'disponibilites'].map((v) => (
             <button key={v} type="button" onClick={() => setVue(v)} aria-pressed={vue === v}
               className={`rounded-lg px-3 py-2 text-sm font-titre font-semibold ${vue === v ? 'bg-nuit text-white' : 'bg-perle text-nuit hover:bg-gray-200'}`}>
               {t(`rdv.vue.${v}`)}
@@ -97,7 +106,16 @@ export default function MesRendezVous() {
           ))}
         </div>
       )}
-      {data && vue === 'agenda' && <AgendaAgent rendezVous={data} langue={langue} onChoix={choisir} />}
+      {role === 'agent' && sansDisponibilite && vue !== 'disponibilites' && (
+        <p role="alert" className="mt-6 rounded-lg bg-ambre/30 px-4 py-3 text-nuit">
+          {t('dispo.aucune')}{' '}
+          <button type="button" onClick={() => setVue('disponibilites')} className="font-semibold underline">{t('dispo.ouvrir')}</button>
+        </p>
+      )}
+      {data && vue === 'agenda' && (
+        <AgendaAgent rendezVous={data} disponibilites={disponibilites.data ?? []} langue={langue} onChoix={choisir} />
+      )}
+      {role === 'agent' && vue === 'disponibilites' && disponibilites.data && <Disponibilites disponibilites={disponibilites.data} />}
 
       {data && vue === 'liste' && (
         <>
