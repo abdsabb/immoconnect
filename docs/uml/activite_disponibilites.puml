@@ -1,0 +1,44 @@
+@startuml activite_disponibilites
+title Diagramme d'activité — L'agent n'est plus disponible : retirer ses disponibilités
+skinparam shadowing false
+skinparam dpi 220
+skinparam defaultFontName Arial
+skinparam activity {
+  BackgroundColor #F8FAFC
+  BorderColor #1B3A4B
+}
+
+|Agent immobilier|
+start
+:Ouvrir « Mes disponibilités »
+dans son agenda;
+:Choisir la plage à retirer, ou la période
+d'indisponibilité (maladie, congé);
+|Système ImmoConnect|
+if (Des visites sont prévues\npendant cette période ?) then (oui)
+  :Annoncer le nombre de visites
+  et demander confirmation (RA16);
+  |Agent immobilier|
+  if (Confirmer l'annulation\ndes visites ?) then (non)
+    |Système ImmoConnect|
+    :Ne rien retirer :
+    les visites restent prévues;
+    stop
+  else (oui)
+    |Système ImmoConnect|
+    :Annuler chaque visite et
+    rembourser les créneaux payés (RA8);
+    |Serveur SMTP|
+    :Prévenir chaque membre par e-mail :
+    visite annulée, choisir un autre créneau;
+  endif
+else (non)
+endif
+|Système ImmoConnect|
+:Retirer les plages : leurs créneaux
+ne sont plus proposés aux membres (RA15);
+:Journaliser le retrait (RA13);
+:Afficher le bilan : plages retirées,
+visites annulées;
+stop
+@enduml

@@ -19,9 +19,15 @@ if (Bien encore disponible ?) then (non — E3)
   stop
 else (oui)
 endif
+if (L'agent a ouvert des créneaux ?) then (non)
+  :Informer le membre : aucun créneau libre,
+  proposer d'écrire à l'agent;
+  stop
+else (oui — RA15)
+endif
 repeat
-  :Afficher les créneaux disponibles
-  de l'agent responsable;
+  :Afficher les créneaux libres des
+  disponibilités ouvertes par l'agent;
   |Membre|
   :Choisir un créneau
   (+ motif optionnel);
