@@ -24,6 +24,7 @@ import be.immoconnect.paiement.PasserellePaiement;
 import be.immoconnect.paiement.PasserellePaiement.IntentionIntrouvableException;
 import be.immoconnect.repositories.AgentImmobilierRepository;
 import be.immoconnect.repositories.BienRepository;
+import be.immoconnect.repositories.DisponibiliteRepository;
 import be.immoconnect.repositories.MembreRepository;
 import be.immoconnect.repositories.PaiementRepository;
 import be.immoconnect.repositories.RendezVousRepository;
@@ -77,6 +78,7 @@ public class ServiceRendezVous {
     private final BienRepository biens;
     private final MembreRepository membres;
     private final AgentImmobilierRepository agents;
+    private final DisponibiliteRepository disponibilites;
     private final GrilleCreneaux grille;
     private final PasserellePaiement passerelle;
     private final ServiceAudit audit;
@@ -84,8 +86,8 @@ public class ServiceRendezVous {
     private final Clock horloge;
 
     public ServiceRendezVous(RendezVousRepository rendezVous, PaiementRepository paiements, BienRepository biens,
-                             MembreRepository membres, AgentImmobilierRepository agents, GrilleCreneaux grille,
-                             PasserellePaiement passerelle, ServiceAudit audit, ApplicationEventPublisher evenements,
+                             MembreRepository membres, AgentImmobilierRepository agents, DisponibiliteRepository disponibilites,
+                             GrilleCreneaux grille, PasserellePaiement passerelle, ServiceAudit audit, ApplicationEventPublisher evenements,
                              Clock horloge) {
         this.evenements = evenements;
         this.rendezVous = rendezVous;
@@ -93,13 +95,17 @@ public class ServiceRendezVous {
         this.biens = biens;
         this.membres = membres;
         this.agents = agents;
+        this.disponibilites = disponibilites;
         this.grille = grille;
         this.passerelle = passerelle;
         this.audit = audit;
         this.horloge = horloge;
     }
 
-    /** Créneaux de la grille encore libres dans l'agenda de l'agent responsable du bien. */
+    /**
+     * Créneaux encore libres pour visiter le bien : ceux des plages que son agent a ouvertes (RA15), moins les
+     * créneaux déjà pris et ceux qui sont trop proches ou trop lointains. Un agent sans plage ouverte ne propose rien.
+     */
     @Transactional(readOnly = true)
     public List<Creneau> creneauxLibres(Integer bienId, LocalDate du, LocalDate au) {
         Bien bien = bienVisitable(bienId);
@@ -111,9 +117,12 @@ public class ServiceRendezVous {
         if (fin.isAfter(debut.plusDays(PERIODE_MAX_JOURS - 1))) {
             throw new DonneeInvalideException("au", "la période ne peut dépasser " + PERIODE_MAX_JOURS + " jours");
         }
-        Set<LocalDateTime> occupes = new HashSet<>(rendezVous.creneauxOccupes(bien.getAgent().getId(),
+        Integer agentId = bien.getAgent().getId();
+        Set<LocalDateTime> occupes = new HashSet<>(rendezVous.creneauxOccupes(agentId,
                 RendezVousRepository.ACTIFS, debut.atStartOfDay(), fin.atTime(LocalTime.MAX)));
-        return grille.entre(debut, fin).stream()
+        return disponibilites.dansLaPeriode(agentId, debut.atStartOfDay(), fin.plusDays(1).atStartOfDay()).stream()
+                .flatMap(plage -> grille.decouper(plage.getDebut(), plage.getFin()).stream())
+                .filter(grille::dansLesDelais)
                 .filter(dateHeure -> !occupes.contains(dateHeure))
                 .map(grille::creneau)
                 .toList();
@@ -139,7 +148,7 @@ public class ServiceRendezVous {
     public ReponseIntention preparerPaiement(Integer membreId, RequetePaiement requete) {
         Membre membre = membre(membreId);
         Bien bien = bienVisitable(requete.bienId());
-        exigerReservable(requete.dateHeure());
+        exigerReservable(bien, requete.dateHeure());
         if (!grille.estPremium(requete.dateHeure())) {
             throw new DonneeInvalideException("dateHeure", "un créneau standard est gratuit : il se réserve sans paiement");
         }
@@ -171,11 +180,12 @@ public class ServiceRendezVous {
             return RendezVousResume.pourMembre(reserverPremium(membre, requete, ip));
         }
         Bien bien = bienVisitable(requete.bienId());
-        exigerReservable(requete.dateHeure());
+        // Le verrou d'abord : l'agent ne peut pas retirer sa plage pendant que la réservation se décide
+        verrouillerAgenda(bien);
+        exigerReservable(bien, requete.dateHeure());
         if (grille.estPremium(requete.dateHeure())) {
             throw new DonneeInvalideException("paymentIntentId", "un créneau premium doit être payé avant d'être réservé");
         }
-        verrouillerAgenda(bien);
         exigerCreneauLibre(membre, bien, requete.dateHeure());
         RendezVous rdv = rendezVous.save(new RendezVous(membre, bien, requete.dateHeure(), nettoyer(requete.motif())));
         audit.enregistrer(membre, "creation_rdv", "rendez_vous#" + rdv.getId(), ip);
@@ -237,6 +247,26 @@ public class ServiceRendezVous {
         List<RendezVous> aVenir = rendezVous.findByMembreIdAndStatutInAndDateHeureAfter(membre.getId(), RendezVousRepository.ACTIFS, maintenant());
         aVenir.forEach(rdv -> annuler(rdv, false, ip));
         return aVenir.size();
+    }
+
+    /**
+     * L'agent retire une plage de disponibilité (maladie, empêchement) : les visites à venir qu'elle contient
+     * sont annulées comme s'il les annulait une à une — membre prévenu par e-mail, créneau payé remboursé (RA8).
+     *
+     * @return le nombre de visites annulées
+     */
+    @Transactional
+    public int annulerLesVisitesDeLaPlage(Integer agentId, LocalDateTime debut, LocalDateTime fin, String ip) {
+        List<RendezVous> prevues = visitesPrevues(agentId, debut, fin);
+        prevues.forEach(rdv -> annuler(rdv, true, ip));
+        return prevues.size();
+    }
+
+    /** Visites à venir de l'agent, demandées ou confirmées, dont l'heure tombe dans la période [debut, fin[. */
+    @Transactional(readOnly = true)
+    public List<RendezVous> visitesPrevues(Integer agentId, LocalDateTime debut, LocalDateTime fin) {
+        LocalDateTime maintenant = maintenant();
+        return rendezVous.actifsDeLAgentEntre(agentId, RendezVousRepository.ACTIFS, debut.isAfter(maintenant) ? debut : maintenant, fin);
     }
 
     private void annuler(RendezVous rdv, boolean parLAgent, String ip) {
@@ -316,17 +346,17 @@ public class ServiceRendezVous {
     /**
      * Étapes 8 du scénario nominal : rendez-vous confirmé et paiement réussi enregistrés ensemble.
      * Le membre a déjà payé : si la visite ne peut finalement pas être créée (créneau pris entre-temps,
-     * bien retiré de la vente), il est remboursé avant que l'erreur ne lui soit renvoyée.
+     * plage retirée par l'agent, bien retiré de la vente), il est remboursé avant que l'erreur ne lui soit renvoyée.
      */
     private RendezVous creerRendezVousPaye(Membre membre, Integer bienId, LocalDateTime dateHeure, String motif,
                                           IntentionPaiement intention, String origine) {
         try {
             Bien bien = bienVisitable(bienId);
-            exigerReservable(dateHeure);
+            verrouillerAgenda(bien);
+            exigerReservable(bien, dateHeure);
             if (!DEVISE.equals(intention.devise()) || intention.montantCentimes() != centimes(grille.prix(dateHeure))) {
                 throw new DonneeInvalideException("paymentIntentId", "le montant payé ne correspond pas au prix du créneau");
             }
-            verrouillerAgenda(bien);
             // Relu sous verrou : la réservation et la notification du prestataire peuvent arriver ensemble.
             Optional<Paiement> dejaEnregistre = paiements.findByStripePaymentIntentId(intention.id());
             if (dejaEnregistre.isPresent()) {
@@ -432,9 +462,13 @@ public class ServiceRendezVous {
         }
     }
 
-    private void exigerReservable(LocalDateTime dateHeure) {
-        if (!grille.estReservable(dateHeure)) {
-            throw new DonneeInvalideException("dateHeure", "ce créneau n'est pas réservable : hors de la grille des visites, trop proche ou trop lointain");
+    /** RA15 : le créneau doit sortir d'une plage ouverte par l'agent du bien, et respecter les délais de réservation. */
+    private void exigerReservable(Bien bien, LocalDateTime dateHeure) {
+        boolean ouvert = disponibilites.couvrant(bien.getAgent().getId(), dateHeure)
+                .map(plage -> grille.decouper(plage.getDebut(), plage.getFin()).contains(dateHeure))
+                .orElse(false);
+        if (!ouvert || !grille.dansLesDelais(dateHeure)) {
+            throw new DonneeInvalideException("dateHeure", "ce créneau n'est pas réservable : hors des disponibilités de l'agent, trop proche ou trop lointain");
         }
     }
 

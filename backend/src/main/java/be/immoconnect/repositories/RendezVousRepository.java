@@ -45,6 +45,15 @@ public interface RendezVousRepository extends JpaRepository<RendezVous, Integer>
             """)
     List<Object[]> compterAVenirParBien(Integer agentId, Collection<StatutRendezVous> statuts, LocalDateTime apres);
 
+    /** Visites d'un agent qui occupent un créneau dans la période [du, au[, dans l'ordre chronologique. */
+    @EntityGraph(attributePaths = {"membre", "agent", "bien", "paiement"})
+    @Query("""
+            select r from RendezVous r
+            where r.agent.id = :agentId and r.statut in :statuts and r.dateHeure >= :du and r.dateHeure < :au
+            order by r.dateHeure
+            """)
+    List<RendezVous> actifsDeLAgentEntre(Integer agentId, Collection<StatutRendezVous> statuts, LocalDateTime du, LocalDateTime au);
+
     /** Créneaux déjà pris dans l'agenda d'un agent sur une période. */
     @Query("""
             select r.dateHeure from RendezVous r

@@ -14,13 +14,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * Grille horaire des visites de l'agence.
+ * Règles horaires des visites de l'agence.
+ * <p>
+ * Les créneaux ne sont pas fixés d'avance : chaque agent ouvre ses plages de disponibilité, et la grille
+ * découpe une plage en créneaux — une visite dure une heure, suivie d'une demi-heure de battement pour le
+ * trajet de l'agent. Une plage de 9 h à 12 h donne ainsi deux créneaux : 9 h et 10 h 30.
  * <ul>
  *   <li>créneaux <b>standard</b>, gratuits : du lundi au vendredi, en journée ;</li>
  *   <li>créneaux <b>premium</b>, payants : en soirée (à partir de 18 h) et le week-end.</li>
  * </ul>
- * La grille est la seule source de vérité : une date qui n'y figure pas n'est pas réservable,
- * et c'est elle — jamais le client — qui décide si un créneau est payant et à quel prix.
+ * C'est la grille — jamais le client — qui décide si un créneau est payant et à quel prix.
  * <p>
  * Un créneau se réserve avec un délai minimum : deux heures pour un créneau standard (l'agent doit
  * encore pouvoir le confirmer ou le refuser), vingt-quatre heures pour un créneau premium, qui est
@@ -36,15 +39,15 @@ public class GrilleCreneaux {
     public static final Duration DELAI_STANDARD = Duration.ofHours(2);
     /** Délai minimum avant un créneau premium : payé et confirmé d'office, il doit rester annulable sans frais. */
     public static final Duration DELAI_PREMIUM = Duration.ofHours(24);
+    /** Durée d'une visite. */
+    public static final Duration DUREE_VISITE = Duration.ofHours(1);
+    /** Écart entre deux créneaux d'une même plage : la visite, puis le trajet de l'agent. */
+    public static final Duration PAS = Duration.ofMinutes(90);
+    /** L'agence ne fait pas visiter avant 8 h ni après 21 h. */
+    public static final LocalTime OUVERTURE = LocalTime.of(8, 0);
+    public static final LocalTime FERMETURE = LocalTime.of(21, 0);
 
     private static final LocalTime DEBUT_SOIREE = LocalTime.of(18, 0);
-
-    private static final List<LocalTime> SEMAINE = List.of(
-            LocalTime.of(9, 0), LocalTime.of(10, 30), LocalTime.of(14, 0), LocalTime.of(15, 30), LocalTime.of(17, 0),
-            LocalTime.of(18, 30), LocalTime.of(20, 0));
-
-    private static final List<LocalTime> WEEK_END = List.of(
-            LocalTime.of(10, 30), LocalTime.of(14, 0), LocalTime.of(15, 30));
 
     private final BigDecimal prixPremium;
     private final Clock horloge;
@@ -77,36 +80,26 @@ public class GrilleCreneaux {
     }
 
     /**
-     * Un créneau est réservable s'il figure dans la grille, s'il respecte le délai minimum de son type
-     * et s'il est dans l'horizon de réservation.
+     * Créneaux d'une plage de disponibilité : le premier à l'ouverture de la plage, puis toutes les 90 minutes,
+     * tant que la visite se termine avant la fin de la plage.
      */
-    public boolean estReservable(LocalDateTime dateHeure) {
-        LocalDateTime maintenant = LocalDateTime.now(horloge);
-        return heures(dateHeure.toLocalDate()).contains(dateHeure.toLocalTime())
-                && !dateHeure.isBefore(maintenant.plus(delaiMinimum(dateHeure)))
-                && !dateHeure.toLocalDate().isAfter(maintenant.toLocalDate().plusDays(HORIZON_JOURS));
-    }
-
-    /** Tous les créneaux réservables de la période, bornes incluses, dans l'ordre chronologique. */
-    public List<LocalDateTime> entre(LocalDate du, LocalDate au) {
+    public List<LocalDateTime> decouper(LocalDateTime debut, LocalDateTime fin) {
         List<LocalDateTime> creneaux = new ArrayList<>();
-        for (LocalDate jour = du; !jour.isAfter(au); jour = jour.plusDays(1)) {
-            for (LocalTime heure : heures(jour)) {
-                LocalDateTime dateHeure = jour.atTime(heure);
-                if (estReservable(dateHeure)) {
-                    creneaux.add(dateHeure);
-                }
-            }
+        for (LocalDateTime creneau = debut; !creneau.plus(DUREE_VISITE).isAfter(fin); creneau = creneau.plus(PAS)) {
+            creneaux.add(creneau);
         }
         return creneaux;
     }
 
-    public LocalDate aujourdHui() {
-        return LocalDate.now(horloge);
+    /** Un créneau se réserve s'il respecte le délai minimum de son type et s'il est dans l'horizon de réservation. */
+    public boolean dansLesDelais(LocalDateTime dateHeure) {
+        LocalDateTime maintenant = LocalDateTime.now(horloge);
+        return !dateHeure.isBefore(maintenant.plus(delaiMinimum(dateHeure)))
+                && !dateHeure.toLocalDate().isAfter(maintenant.toLocalDate().plusDays(HORIZON_JOURS));
     }
 
-    private static List<LocalTime> heures(LocalDate jour) {
-        return estWeekEnd(jour) ? WEEK_END : SEMAINE;
+    public LocalDate aujourdHui() {
+        return LocalDate.now(horloge);
     }
 
     private static boolean estWeekEnd(LocalDate jour) {
