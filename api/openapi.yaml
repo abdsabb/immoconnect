@@ -224,6 +224,32 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Utilisateur' }
+    patch:
+      tags: [Authentification]
+      summary: Modifier son profil
+      description: Nom, prénom, téléphone, langue préférée, connexion en deux étapes et consentement aux communications (cas M6). Un choix absent reste inchangé.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nom, prenom]
+              properties:
+                nom: { type: string, maxLength: 80 }
+                prenom: { type: string, maxLength: 80 }
+                telephone: { type: string, example: '+32 470 12 34 56', description: Facultatif }
+                langue: { type: string, enum: [fr, nl, en] }
+                doubleFacteur: { type: boolean, description: Demander un code par e-mail à chaque connexion }
+                consentementCommunications: { type: boolean }
+      responses:
+        '200':
+          description: Profil mis à jour
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Utilisateur' }
+        '401': { $ref: '#/components/responses/ErreurAuthentification' }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
     delete:
       tags: [Authentification]
       summary: Se désinscrire (droit à l'oubli, règle RA11)
@@ -235,6 +261,25 @@ paths:
         '204': { description: Compte anonymisé }
         '401': { $ref: '#/components/responses/ErreurAuthentification' }
         '403': { description: Compte agent ou administrateur — géré par l'administrateur }
+  /auth/me/mot-de-passe:
+    put:
+      tags: [Authentification]
+      summary: Changer son mot de passe
+      description: L'ancien mot de passe est exigé pour prouver la possession du compte. Le changement est journalisé.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ancienMotDePasse, nouveauMotDePasse]
+              properties:
+                ancienMotDePasse: { type: string, format: password }
+                nouveauMotDePasse: { $ref: '#/components/schemas/MotDePasse' }
+      responses:
+        '204': { description: Mot de passe changé }
+        '401': { description: Ancien mot de passe incorrect, ou jeton absent }
+        '422': { $ref: '#/components/responses/ErreurValidation' }
   /auth/me/export:
     get:
       tags: [Authentification]
