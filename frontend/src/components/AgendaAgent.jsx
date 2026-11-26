@@ -5,6 +5,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import fr from '@fullcalendar/core/locales/fr'
 import nl from '@fullcalendar/core/locales/nl'
 import enGb from '@fullcalendar/core/locales/en-gb'
+import { creneauxNonReserves } from '../services/disponibilites'
 
 const LOCALES = { fr, nl, en: enGb }
 // Couleurs de la charte selon l'état du rendez-vous : demande en attente (ambre), confirmé (turquoise),
@@ -18,11 +19,17 @@ const COULEURS = {
 const DUREE_VISITE_MS = 60 * 60 * 1000
 // Plage ouverte par l'agent : un fond turquoise clair, derrière les visites
 const COULEUR_DISPONIBILITE = '#2A9D8F'
+// Créneau de visite encore libre dans une plage : une case blanche bordée de turquoise, avec son heure
+const COULEURS_LIBRE = { backgroundColor: '#ffffff', borderColor: COULEUR_DISPONIBILITE, textColor: '#1B3A4B' }
+// Créneau passé que personne n'a réservé : la même case, en gris
+const COULEURS_PASSE = { backgroundColor: '#F3F4F6', borderColor: '#9CA3AF', textColor: '#4B5563' }
 
 /**
  * Agenda de l'agent (cas AG5) : ses visites sur une grille hebdomadaire FullCalendar, en plus de la
- * liste, sur le fond de ses disponibilités (cas AG7). Un clic sur un créneau fait défiler la page jusqu'au
- * rendez-vous, où se prennent les décisions.
+ * liste, sur le fond de ses disponibilités (cas AG7). Chaque créneau d'une plage est écrit dans sa case :
+ * « Libre » tant que personne ne l'a réservé (« Non réservé » une fois l'heure passée), sinon le membre et le
+ * bien de la visite. Un clic sur une visite
+ * fait défiler la page jusqu'au rendez-vous, où se prennent les décisions.
  */
 export default function AgendaAgent({ rendezVous, disponibilites = [], langue, onChoix }) {
   const { t } = useTranslation()
@@ -38,6 +45,10 @@ export default function AgendaAgent({ rendezVous, disponibilites = [], langue, o
   const plages = disponibilites.map((d) => ({
     id: `plage-${d.id}`, start: d.debut, end: d.fin, display: 'background', backgroundColor: COULEUR_DISPONIBILITE,
   }))
+  const libres = disponibilites.flatMap((d) => creneauxNonReserves(d, rendezVous)).map((creneau) => ({
+    id: `libre-${creneau.debut}`, title: t(creneau.passe ? 'dispo.nonReserve' : 'dispo.libre'), start: creneau.debut, end: creneau.fin,
+    ...(creneau.passe ? COULEURS_PASSE : COULEURS_LIBRE), extendedProps: { libre: true, type: creneau.type },
+  }))
   return (
     <div className="mt-6 rounded-xl border border-gray-200 bg-white p-3 text-sm shadow-sm" data-testid="agenda">
       <FullCalendar
@@ -51,14 +62,26 @@ export default function AgendaAgent({ rendezVous, disponibilites = [], langue, o
         allDaySlot={false}
         height="auto"
         nowIndicator
-        events={[...plages, ...evenements]}
-        eventClick={(info) => { info.jsEvent.preventDefault(); onChoix?.(Number(info.event.id)) }}
-        eventContent={(arg) => arg.event.display === 'background' ? null : (
-          <div className="overflow-hidden px-1 leading-tight">
-            <div className="text-[11px] font-semibold">{arg.timeText}{arg.event.extendedProps.type === 'premium' ? ' ★' : ''}</div>
-            <div className="truncate text-[11px]">{arg.event.title}</div>
-          </div>
-        )}
+        views={{ dayGridMonth: { dayMaxEvents: 4 } }}
+        events={[...plages, ...libres, ...evenements]}
+        eventClick={(info) => {
+          info.jsEvent.preventDefault()
+          if (!info.event.extendedProps.libre) onChoix?.(Number(info.event.id))
+        }}
+        eventContent={(arg) => {
+          if (arg.event.display === 'background') return null
+          const heure = `${arg.timeText}${arg.event.extendedProps.type === 'premium' ? ' ★' : ''}`
+          // Vue du mois : une seule ligne par créneau, pour que la journée tienne dans sa case
+          if (arg.view.type === 'dayGridMonth') {
+            return <div className="truncate px-1 text-[11px]"><span className="font-semibold">{heure}</span> {arg.event.title}</div>
+          }
+          return (
+            <div className="overflow-hidden px-1 leading-tight">
+              <div className="text-[11px] font-semibold">{heure}</div>
+              <div className="truncate text-[11px]">{arg.event.title}</div>
+            </div>
+          )
+        }}
       />
       <p className="mt-2 flex flex-wrap gap-3 text-xs text-gray-600">
         {Object.entries(COULEURS).map(([statut, c]) => (
@@ -71,6 +94,10 @@ export default function AgendaAgent({ rendezVous, disponibilites = [], langue, o
         <span className="flex items-center gap-1">
           <span className="inline-block h-3 w-3 rounded opacity-30" style={{ backgroundColor: COULEUR_DISPONIBILITE }} aria-hidden="true" />
           {t('dispo.legende')}
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="inline-block h-3 w-3 rounded border bg-white" style={{ borderColor: COULEUR_DISPONIBILITE }} aria-hidden="true" />
+          {t('dispo.creneauLibre')}
         </span>
       </p>
     </div>

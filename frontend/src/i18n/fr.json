@@ -360,7 +360,10 @@
     "du": "Du",
     "au": "Au",
     "boutonIndisponible": "Retirer mes disponibilités",
-    "legende": "Disponibilité ouverte"
+    "legende": "Disponibilité ouverte",
+    "libre": "Libre",
+    "nonReserve": "Non réservé",
+    "creneauLibre": "Créneau libre"
   },
   "favori": {
     "titre": "Mes favoris",

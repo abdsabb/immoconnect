@@ -360,7 +360,10 @@
     "du": "Van",
     "au": "Tot en met",
     "boutonIndisponible": "Mijn beschikbaarheid intrekken",
-    "legende": "Opengestelde beschikbaarheid"
+    "legende": "Opengestelde beschikbaarheid",
+    "libre": "Vrij",
+    "nonReserve": "Niet geboekt",
+    "creneauLibre": "Vrij tijdslot"
   },
   "favori": {
     "titre": "Mijn favorieten",
