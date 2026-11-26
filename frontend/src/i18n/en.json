@@ -360,7 +360,10 @@
     "du": "From",
     "au": "Until",
     "boutonIndisponible": "Remove my availability",
-    "legende": "Open availability"
+    "legende": "Open availability",
+    "libre": "Free",
+    "nonReserve": "Not booked",
+    "creneauLibre": "Free slot"
   },
   "favori": {
     "titre": "My favourites",

@@ -40,6 +40,28 @@ export function creneauxDeLaPlage(de, a) {
   return creneaux
 }
 
+const UNE_HEURE_MS = DUREE_VISITE * 60 * 1000
+const DEBUT_SOIREE = 18 * 60
+const OCCUPE = ['demande', 'confirme', 'honore']
+
+/**
+ * Créneaux d'une plage que personne n'a réservés, pour l'agenda de l'agent : ceux qu'aucune visite demandée,
+ * confirmée ou effectuée n'occupe. Une visite annulée libère son créneau. Un créneau dont l'heure est passée
+ * est signalé (passe) : il n'est plus réservable.
+ * Renvoie des dates à l'heure de l'agence, sans fuseau : { debut: « 2026-12-01T09:00:00 », fin: « …T10:00:00 », type, passe }.
+ * Le type suit la règle du serveur : premium en soirée (à partir de 18 h) et le week-end, standard sinon.
+ */
+export function creneauxNonReserves(plage, rendezVous, maintenant = new Date()) {
+  const jour = plage.debut.slice(0, 10)
+  const weekEnd = [0, 6].includes(new Date(plage.debut).getDay())
+  const type = (heure) => (weekEnd || enMinutes(heure) >= DEBUT_SOIREE ? 'premium' : 'standard')
+  const visites = rendezVous.filter((rdv) => OCCUPE.includes(rdv.statut)).map((rdv) => new Date(rdv.dateHeure).getTime())
+  return creneauxDeLaPlage(plage.debut.slice(11, 16), plage.fin.slice(11, 16))
+    .map((heure) => ({ debut: `${jour}T${heure}:00`, fin: `${jour}T${enHeure(enMinutes(heure) + DUREE_VISITE)}:00`, type: type(heure) }))
+    .map((creneau) => ({ ...creneau, passe: new Date(creneau.debut) <= maintenant }))
+    .filter((creneau) => !visites.some((visite) => Math.abs(visite - new Date(creneau.debut).getTime()) < UNE_HEURE_MS))
+}
+
 /** Heures proposées dans les listes du formulaire, par demi-heure, entre deux bornes incluses. */
 export function demiHeures(de = OUVERTURE, a = FERMETURE) {
   const heures = []
