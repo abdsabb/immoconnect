@@ -16,12 +16,15 @@ const COULEURS = {
   annule: { backgroundColor: '#9CA3AF', borderColor: '#9CA3AF', textColor: '#ffffff' },
 }
 const DUREE_VISITE_MS = 60 * 60 * 1000
+// Plage ouverte par l'agent : un fond turquoise clair, derrière les visites
+const COULEUR_DISPONIBILITE = '#2A9D8F'
 
 /**
  * Agenda de l'agent (cas AG5) : ses visites sur une grille hebdomadaire FullCalendar, en plus de la
- * liste. Un clic sur un créneau fait défiler la page jusqu'au rendez-vous, où se prennent les décisions.
+ * liste, sur le fond de ses disponibilités (cas AG7). Un clic sur un créneau fait défiler la page jusqu'au
+ * rendez-vous, où se prennent les décisions.
  */
-export default function AgendaAgent({ rendezVous, langue, onChoix }) {
+export default function AgendaAgent({ rendezVous, disponibilites = [], langue, onChoix }) {
   const { t } = useTranslation()
   const evenements = rendezVous.map((rdv) => ({
     id: String(rdv.id),
@@ -31,6 +34,9 @@ export default function AgendaAgent({ rendezVous, langue, onChoix }) {
     ...COULEURS[rdv.statut],
     classNames: rdv.statut === 'annule' ? ['line-through', 'opacity-70'] : [],
     extendedProps: { statut: rdv.statut, type: rdv.type },
+  }))
+  const plages = disponibilites.map((d) => ({
+    id: `plage-${d.id}`, start: d.debut, end: d.fin, display: 'background', backgroundColor: COULEUR_DISPONIBILITE,
   }))
   return (
     <div className="mt-6 rounded-xl border border-gray-200 bg-white p-3 text-sm shadow-sm" data-testid="agenda">
@@ -45,9 +51,9 @@ export default function AgendaAgent({ rendezVous, langue, onChoix }) {
         allDaySlot={false}
         height="auto"
         nowIndicator
-        events={evenements}
+        events={[...plages, ...evenements]}
         eventClick={(info) => { info.jsEvent.preventDefault(); onChoix?.(Number(info.event.id)) }}
-        eventContent={(arg) => (
+        eventContent={(arg) => arg.event.display === 'background' ? null : (
           <div className="overflow-hidden px-1 leading-tight">
             <div className="text-[11px] font-semibold">{arg.timeText}{arg.event.extendedProps.type === 'premium' ? ' ★' : ''}</div>
             <div className="truncate text-[11px]">{arg.event.title}</div>
@@ -62,6 +68,10 @@ export default function AgendaAgent({ rendezVous, langue, onChoix }) {
           </span>
         ))}
         <span>★ {t('rdv.premium')}</span>
+        <span className="flex items-center gap-1">
+          <span className="inline-block h-3 w-3 rounded opacity-30" style={{ backgroundColor: COULEUR_DISPONIBILITE }} aria-hidden="true" />
+          {t('dispo.legende')}
+        </span>
       </p>
     </div>
   )

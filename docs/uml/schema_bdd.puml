@@ -1,5 +1,5 @@
 @startuml schema_bdd
-title Schéma de base de données — ImmoConnect (MySQL, 17 tables)
+title Schéma de base de données — ImmoConnect (MySQL, 22 tables)
 skinparam shadowing false
 skinparam dpi 220
 skinparam defaultFontName Arial
@@ -22,6 +22,13 @@ entity utilisateur {
   o photo_url : VARCHAR(255)
   * date_inscription : DATE
   * role : ENUM
+  * actif : BOOLEAN
+  * email_verifie : BOOLEAN
+  * double_facteur : BOOLEAN
+  * echecs_connexion : TINYINT
+  o verrouille_jusqu_a : DATETIME
+  o cgu_acceptees_le : DATETIME
+  * consentement_communications : BOOLEAN
 }
 
 entity membre {
@@ -68,6 +75,37 @@ entity journal_audit {
   * ip : VARCHAR(45)
 }
 
+entity jeton {
+  * id : INT <<PK>>
+  --
+  * utilisateur_id : INT <<FK, cascade>>
+  * type : ENUM
+  * empreinte : CHAR(64) <<UQ>>
+  o empreinte_code : CHAR(64)
+  * essais : TINYINT
+  * cree_le : DATETIME
+  * expire_le : DATETIME
+  o utilise_le : DATETIME
+  * ip : VARCHAR(45)
+}
+
+entity alerte_securite {
+  * id : INT <<PK>>
+  --
+  * type : ENUM
+  * ip : VARCHAR(45)
+  * detail : VARCHAR(255)
+  * cree_le : DATETIME
+}
+
+entity parametre {
+  * cle : VARCHAR(60) <<PK>>
+  --
+  * valeur : VARCHAR(1000)
+  * modifie_le : DATETIME
+  o modifie_par : INT <<FK>>
+}
+
 entity categorie {
   * id : INT <<PK>>
   --
@@ -80,11 +118,13 @@ entity bien {
   --
   * agent_id : INT <<FK>>
   * categorie_id : INT <<FK>>
+  * type_offre : ENUM
   * titre : VARCHAR(150)
   * description : TEXT
   * prix : DECIMAL(12,2)
   * superficie : DECIMAL(8,2)
   * nb_chambres : TINYINT
+  * peb : ENUM
   * adresse : VARCHAR(150)
   * ville : VARCHAR(80)
   * code_postal : VARCHAR(10)
@@ -92,6 +132,7 @@ entity bien {
   * longitude : DECIMAL(9,6)
   * statut : ENUM
   * publie_le : DATE
+  * nb_vues : INT
 }
 
 entity photo {
@@ -115,9 +156,19 @@ entity message {
   --
   * membre_id : INT <<FK>>
   * agent_id : INT <<FK>>
+  * expediteur : ENUM
   * contenu : TEXT
   * envoye_le : DATETIME
   * lu : BOOLEAN
+}
+
+entity disponibilite {
+  * id : INT <<PK>>
+  --
+  * agent_id : INT <<FK, cascade>>
+  * debut : DATETIME
+  * fin : DATETIME
+  * cree_le : DATETIME
 }
 
 entity rendez_vous {
@@ -149,6 +200,7 @@ entity article {
   * categorie_article_id : INT <<FK>>
   * titre : VARCHAR(150)
   * contenu : TEXT
+  o image_url : VARCHAR(255)
   * statut : ENUM
   o publie_le : DATE
 }
@@ -163,9 +215,25 @@ entity cle_api {
   * id : INT <<PK>>
   --
   * administrateur_id : INT <<FK>>
-  * cle : VARCHAR(64) <<UQ>>
+  * cle : VARCHAR(64) <<UQ>> «empreinte»
+  o libelle : VARCHAR(80)
   * cree_le : DATE
   * active : BOOLEAN
+  o derniere_utilisation : DATETIME
+}
+
+entity demande_contact {
+  * id : INT <<PK>>
+  --
+  * nom : VARCHAR(100)
+  * email : VARCHAR(150)
+  o telephone : VARCHAR(30)
+  * sujet : VARCHAR(150)
+  * message : TEXT
+  * cree_le : DATETIME
+  * ip : VARCHAR(45)
+  o traite_le : DATETIME
+  o traite_par : INT <<FK>>
 }
 
 ' — Héritage (spécialisation 1-1)
@@ -177,6 +245,8 @@ utilisateur ||--o| administrateur
 langue ||--o{ utilisateur
 langue ||--o{ traduction
 utilisateur ||--o{ journal_audit
+utilisateur ||--o{ jeton
+administrateur |o--o{ parametre
 
 ' — Biens
 agent_immobilier ||--o{ bien
@@ -188,19 +258,23 @@ bien ||--o{ favori
 ' — Interactions
 membre ||--o{ message
 agent_immobilier ||--o{ message
+agent_immobilier ||--o{ disponibilite
 membre ||--o{ rendez_vous
 agent_immobilier ||--o{ rendez_vous
 bien ||--o{ rendez_vous
 rendez_vous ||--o| paiement
 membre ||--o{ paiement
 
-' — Blog et API
+' — Blog, API et contact
 administrateur ||--o{ article
 categorie_article ||--o{ article
 administrateur ||--o{ cle_api
+administrateur |o--o{ demande_contact
 
 legend bottom
   Notation « patte d'oie » — RA6 : un bien publié possède au moins une photo (contrainte applicative).
   Lien rendez_vous—paiement [1-0..1] : clé étrangère unique, au plus un paiement par rendez-vous.
+  disponibilite : plages ouvertes par l'agent ; un rendez-vous n'est accepté que dans une de ces plages (RA15).
+  alerte_securite n'a pas de clé étrangère : elle retient une adresse IP, pas un compte.
 endlegend
 @enduml

@@ -9,6 +9,7 @@ Plateforme web d'agence immobilière — Épreuve intégrée, Bachelier en Infor
 ImmoConnect permet à une agence immobilière bruxelloise de publier ses biens, de mettre en relation
 visiteurs et agents, et de digitaliser la **prise de rendez-vous de visite** — avec des créneaux
 standard gratuits et des créneaux **premium payants** (soirée/week-end, 15 €, paiement Stripe).
+Chaque agent ouvre lui-même ses disponibilités : seuls ses créneaux ouverts sont proposés aux membres.
 Le site est multilingue (FR/NL/EN), cartographié avec OpenStreetMap, et expose une API REST
 documentée ainsi qu'un volet Open Data.
 
@@ -30,6 +31,7 @@ documentée ainsi qu'un volet Open Data.
 │   └── src/main/resources/db/migration/   V1 = schéma (17 tables), V2 = données de test,
 │                                          V3 = expéditeur des messages, V4 = back-office administrateur,
 │                                          V5 = légendes des photos de test, V6 = biens à vendre ou à louer
+│                                          … V16 = disponibilités des agents, V17 = visites de test conformes (22 tables)
 │   └── src/main/resources/photos-demo/    Photos des annonces et des articles de test (licences libres, voir CREDITS.md)
 ├── frontend/                SPA React (Vite) — Dockerfile + nginx.conf
 ├── api/openapi.yaml         Spécification OpenAPI 3.0 de l'API (livrable 15)
@@ -155,6 +157,23 @@ mensuel. Le site a une page par type (`/a-vendre`, `/a-louer`) et l'API filtre p
 appliquées par le service et par une contrainte de la base : un bien à vendre ne devient pas « loué », un bien à
 louer ne devient pas « vendu ». Les statistiques ne mélangent jamais un prix de vente et un loyer.
 
+### Disponibilités des agents et créneaux de visite
+
+Un bien ne se visite que quand son agent est disponible. Chaque agent ouvre donc lui-même, dans son agenda
+(« Mes disponibilités »), les plages pendant lesquelles il reçoit : un jour, une heure de début, une heure de fin,
+et au besoin une répétition chaque semaine. Le site découpe la plage en visites d'une heure espacées d'une
+demi-heure — de 9 h à 12 h : deux créneaux, 9 h et 10 h 30 — et ne propose aux membres que ces créneaux-là.
+Un agent qui n'a rien ouvert ne propose aucun créneau (règle RA15).
+
+Un agent qui n'est plus disponible (maladie, congé, empêchement) retire une plage, ou toutes ses plages d'une
+période. Si des visites y sont déjà prévues, le site le lui signale et attend sa confirmation ; elles sont alors
+annulées, chaque membre est prévenu par e-mail et un créneau payé est remboursé (règle RA16).
+
+Les agents de test reçoivent au démarrage un agenda différent pour chacun (un jour de repos, deux soirées, un
+samedi pour un agent sur deux, jamais le dimanche), prolongé jusqu'à l'horizon de réservation de 60 jours ; une
+plage retirée n'est jamais recréée. `DEMO_DISPONIBILITES=false` désactive cette étape. Un agent créé par un
+administrateur ouvre ses plages lui-même.
+
 ### Flux RSS
 
 Deux flux RSS 2.0 publics annoncent les nouveautés du site : les 20 derniers articles du blog et les 20 dernières
@@ -208,7 +227,9 @@ page `/credits-photos`.
 | GET | `/api/v1/auth/me/export` — toutes mes données en JSON (portabilité, RGPD) | JWT |
 | GET / PATCH / DELETE | `/api/v1/auth/me` — profil, modification, désinscription (soft delete RA11) | JWT |
 | PUT | `/api/v1/auth/me/mot-de-passe` | JWT |
-| GET | `/api/v1/biens/{id}/creneaux` — créneaux de visite libres, standard et premium | JWT membre |
+| GET | `/api/v1/biens/{id}/creneaux` — créneaux de visite libres, standard et premium, dans les disponibilités de l'agent du bien (RA15) | JWT membre |
+| GET / POST | `/api/v1/disponibilites` — mes plages de disponibilité, en ouvrir une (répétable chaque semaine) | JWT agent |
+| DELETE | `/api/v1/disponibilites/{id}` · `/disponibilites?du=&au=` — retirer une plage ou toutes celles d'une période ; 409 si des visites sont prévues, annulées avec `annulerVisites=true` (RA16) | JWT agent de la plage |
 | GET | `/api/v1/rendez-vous` — mes visites (membre) ou mon agenda (agent) | JWT |
 | POST | `/api/v1/rendez-vous` — réserver un créneau (409 si le créneau vient d'être pris) | JWT membre |
 | PATCH | `/api/v1/rendez-vous/{id}/confirmer` · `/honorer` · `/classer` (demande dont la date est passée sans réponse) | JWT agent du rendez-vous |

@@ -23,10 +23,10 @@ Honore : la visite a eu lieu
 [*] -down-> Confirme : créneau premium\n[paiement réussi]\n/ enregistrer le\nPaiement + e-mail
 
 Demande -down-> Confirme : confirmation par l'agent\n/ e-mail au membre
-Demande -down-> Annule : refus de l'agent ou\nannulation du membre
+Demande -down-> Annule : refus de l'agent,\nannulation du membre\nou demande classée sans\nsuite [dateHeure passée]
 
 Confirme -down-> Honore : visite effectuée\n[dateHeure\npassée] (RA2)
-Confirme -down-> Annule : annulation\n[avant dateHeure] (RA2)\n/ remboursement si\npremium payé (RA8)
+Confirme -down-> Annule : annulation\n[avant dateHeure] (RA2)\n/ remboursement si premium\npayé (RA8, RA14)
 
 Annule -down-> [*]
 Honore -down-> [*]
@@ -34,5 +34,8 @@ Honore -down-> [*]
 legend bottom
   RA1 — seules les transitions de ce diagramme sont acceptées :
   un rendez-vous honoré ne peut plus être annulé, quel que soit le rôle.
+  RA16 — l'agent qui retire une disponibilité annule les visites qu'elle contient :
+  même transition vers « Annule », membre prévenu par e-mail, créneau payé remboursé.
+  RA14 — le membre qui annule un créneau payé moins de 24 h avant la visite n'est pas remboursé.
 endlegend
 @enduml

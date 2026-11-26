@@ -20,6 +20,7 @@ rectangle "Stripe\n(paiement)\n«système externe»" as STRIPE
 rectangle "OpenStreetMap\n(cartographie)\n«système externe»" as OSM
 rectangle "Serveur e-mail\n(SMTP)\n«système externe»" as SMTP
 rectangle "API RESTful\n(consommateurs)\n«système externe»" as API
+rectangle "Have I Been Pwned\n(mots de passe divulgués)\n«système externe»" as HIBP
 
 V -down- SYS
 M -down- SYS
@@ -30,4 +31,5 @@ SYS -down- STRIPE
 SYS -down- OSM
 SYS -down- SMTP
 SYS -down- API
+SYS -down- HIBP
 @enduml

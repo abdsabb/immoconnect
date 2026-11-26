@@ -52,6 +52,8 @@ public class ConfigurationSecurite {
                 .requestMatchers(HttpMethod.POST, "/api/v1/rendez-vous").hasRole("MEMBRE")
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/rendez-vous/*/confirmer", "/api/v1/rendez-vous/*/honorer",
                         "/api/v1/rendez-vous/*/classer").hasRole("AGENT")
+                // Disponibilités : chaque agent ouvre et retire les plages de son propre agenda
+                .requestMatchers("/api/v1/disponibilites", "/api/v1/disponibilites/**").hasRole("AGENT")
                 // Favoris : propres au membre connecté
                 .requestMatchers("/api/v1/biens/*/favori", "/api/v1/membres/moi/**").hasRole("MEMBRE")
                 // Paiement : le webhook est public mais authentifié par la signature de Stripe.

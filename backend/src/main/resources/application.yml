@@ -58,6 +58,7 @@ immoconnect:
     dossier: ${STORAGE_DIR:./stockage}            # photos des biens ; un volume Docker en production
   demonstration:
     photos: ${DEMO_PHOTOS:true}     # crée au démarrage les photos manquantes des annonces de test
+    disponibilites: ${DEMO_DISPONIBILITES:true}   # prolonge au démarrage l'agenda des agents de test (plages datées par rapport au jour)
     boite-courriels: ${DEMO_BOITE_COURRIELS:}   # adresse de la boîte où arrivent les e-mails (Mailpit), vide en exploitation réelle
   mesure:
     site-id: ${MATOMO_SITE_ID:}     # numéro du site dans Matomo ; vide : aucune mesure d'audience

@@ -16,7 +16,7 @@ participant "Serveur\nSMTP" as SMTP
 actor "Agent\nimmobilier" as AG
 
 Membre -> SYS : cliquer « Prendre rendez-vous » (bien)
-SYS --> Membre : créneaux disponibles de l'agent
+SYS --> Membre : créneaux libres des disponibilités\nouvertes par l'agent (RA15)
 
 Membre -> SYS : choisirCreneau(premium, motif)
 SYS --> Membre : récapitulatif (créneau + 15 €)

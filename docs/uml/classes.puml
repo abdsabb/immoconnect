@@ -9,6 +9,7 @@ skinparam class {
   BorderColor #1B3A4B
 }
 hide circle
+left to right direction
 
 abstract class Utilisateur {
   -id : Integer
@@ -18,6 +19,8 @@ abstract class Utilisateur {
   -motDePasse : String «bcrypt»
   -photo : URL [0..1]
   -dateInscription : Date
+  -actif : Boolean
+  -doubleFacteur : Boolean
   +exporterDonnees() : Fichier
   +supprimerCompte()
 }
@@ -35,13 +38,30 @@ class Administrateur {
   -niveauAcces : Integer
 }
 
+class Disponibilite {
+  -debut : DateTime
+  -fin : DateTime
+  +creneaux() : DateTime [*]
+}
+
+class DemandeContact {
+  -nom : String
+  -email : String
+  -sujet : String
+  -message : Text
+  -creeLe : DateTime
+  -traiteLe : DateTime [0..1]
+}
+
 class Bien {
   -id : Integer
+  -typeOffre : TypeOffre
   -titre : String
   -description : Text
   -prix : Money
   -superficie : Float
   -nbChambres : Integer
+  -peb : Peb
   -adresse : String
   -ville : String
   -codePostal : String
@@ -49,6 +69,7 @@ class Bien {
   -longitude : Float
   -statut : StatutBien
   -publieLe : Date
+  -nbVues : Integer
   +estDisponible() : Boolean
 }
 
@@ -68,6 +89,7 @@ class Favori <<association class>> {
 }
 
 class Message {
+  -expediteur : membre | agent
   -contenu : Text
   -envoyeLe : DateTime
   -lu : Boolean
@@ -80,6 +102,8 @@ class RendezVous {
   -motif : String [0..1]
   +confirmer()
   +annuler()
+  +honorer()
+  +classerSansSuite()
 }
 
 class Paiement {
@@ -95,6 +119,7 @@ class Article {
   -id : Integer
   -titre : String
   -contenu : Text
+  -image : URL [0..1]
   -statut : StatutArticle
   -publieLe : Date [0..1]
   +publier()
@@ -136,6 +161,11 @@ enum StatutBien {
   archive
 }
 
+enum TypeOffre {
+  vente
+  location
+}
+
 enum StatutRendezVous {
   demande
   confirme
@@ -165,6 +195,7 @@ Utilisateur "1" -- "0..*" JournalAudit : génère >
 Langue "1" -- "0..*" Traduction : possède >
 
 AgentImmobilier "1" -- "0..*" Bien : publie >
+AgentImmobilier "1" -- "0..*" Disponibilite : ouvre >
 Categorie "1" -- "0..*" Bien : regroupe <
 Bien "1" *-- "1..*" Photo : illustré par >
 
@@ -183,4 +214,9 @@ Membre "1" -- "0..*" Paiement : payeur >
 Administrateur "1" -- "0..*" Article : rédige >
 CategorieArticle "1" -- "0..*" Article : regroupe <
 Administrateur "1" -- "0..*" CleAPI : gère >
+Administrateur "0..1" -- "0..*" DemandeContact : traite >
+
+legend bottom
+  RA15 — un créneau de visite n'est proposé que dans une Disponibilite ouverte par l'agent du bien.
+endlegend
 @enduml

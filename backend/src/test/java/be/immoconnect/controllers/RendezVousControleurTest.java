@@ -237,6 +237,18 @@ class RendezVousControleurTest {
                 Integer.class, "rendez_vous#" + id)).isEqualTo(1);
     }
 
+    /** RA7 dans les données de test : une visite payée est sur un créneau premium, une visite gratuite sur un créneau standard. */
+    @Test
+    void lesVisitesDesDonneesDeTestRespectentLaRegleDesCreneaux() {
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM paiement p JOIN rendez_vous r ON r.id = p.rendez_vous_id "
+                + "WHERE r.date_heure < '2026-11-01' AND WEEKDAY(r.date_heure) < 5 AND HOUR(r.date_heure) < 18", Integer.class)).isZero();
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM rendez_vous r LEFT JOIN paiement p ON p.rendez_vous_id = r.id "
+                + "WHERE p.id IS NULL AND r.date_heure < '2026-11-01' AND (WEEKDAY(r.date_heure) >= 5 OR HOUR(r.date_heure) >= 18)", Integer.class)).isZero();
+        // Aucun agent ni aucun membre n'a deux visites à la même heure
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM (SELECT agent_id, date_heure FROM rendez_vous WHERE date_heure < '2026-11-01' "
+                + "GROUP BY agent_id, date_heure HAVING COUNT(*) > 1) doublons", Integer.class)).isZero();
+    }
+
     private ResultActions reserver(String jeton, int bienId, String dateHeure, String motif) throws Exception {
         String corps = "{\"bienId\":" + bienId + ",\"dateHeure\":\"" + dateHeure + "\""
                 + (motif == null ? "" : ",\"motif\":\"" + motif + "\"") + "}";
