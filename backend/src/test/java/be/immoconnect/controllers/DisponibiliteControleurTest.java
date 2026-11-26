@@ -1,6 +1,7 @@
 package be.immoconnect.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
@@ -21,7 +22,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -212,14 +212,15 @@ class DisponibiliteControleurTest {
                 .andExpect(jsonPath("$.visitesAnnulees").value(1));
         assertThat(statut(visite)).isEqualTo("annule");
         assertThat(plages(agent, mercredi, mercredi)).isEmpty();
-        ArgumentCaptor<MimeMessage> envois = ArgumentCaptor.forClass(MimeMessage.class);
-        verify(messagerie, timeout(ATTENTE_MS).atLeastOnce()).send(envois.capture());
-        assertThat(envois.getAllValues().stream().map(CourrielRecu::de))
-                .anySatisfy(courriel -> {
-                    assertThat(courriel.destinataires()).containsExactly("lina.peeters@test.immoconnect.be");
-                    assertThat(courriel.sujet()).startsWith("[ImmoConnect] Votre visite est annulée");
-                    assertThat(courriel.texte()).contains("a dû annuler votre visite", "choisir un autre créneau");
-                });
+        // Les e-mails partent en arrière-plan : ceux des réservations qui précèdent peuvent encore arriver.
+        // On attend donc précisément l'e-mail d'annulation adressé au membre, pas le premier e-mail venu.
+        verify(messagerie, timeout(ATTENTE_MS)).send(argThat((MimeMessage message) -> {
+            CourrielRecu courriel = CourrielRecu.de(message);
+            return courriel.destinataires().equals(List.of("lina.peeters@test.immoconnect.be"))
+                    && courriel.sujet().startsWith("[ImmoConnect] Votre visite est annulée")
+                    && courriel.texte().contains("a dû annuler votre visite")
+                    && courriel.texte().contains("choisir un autre créneau");
+        }));
         // Le créneau n'existe plus : il ne se réserve plus
         reserver(membre, creneau, null).andExpect(status().isUnprocessableContent());
         assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM journal_audit WHERE action = 'retrait_disponibilite' AND entite = ?",
